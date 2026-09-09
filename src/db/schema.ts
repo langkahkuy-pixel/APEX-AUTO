@@ -18,7 +18,11 @@ export const users = pgTable('users', {
   password_hash: text('password_hash').notNull(),
   role: varchar('role', { length: 50 }).notNull().default('sales'), // 'owner' | 'sales'
   phone: varchar('phone', { length: 50 }),
+  reset_token: varchar('reset_token', { length: 255 }),
+  reset_token_expires_at: timestamp('reset_token_expires_at', { withTimezone: true }),
+  is_active: boolean('is_active').notNull().default(true),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Tabel cars (Inventaris Mobil Showroom)
