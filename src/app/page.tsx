@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { CatalogSection } from '@/components/CatalogSection';
+import { ContactShowroomSection } from '@/components/ContactShowroomSection';
 import { Footer } from '@/components/Footer';
 
 export default function HomePage() {
@@ -9,6 +10,7 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <CatalogSection />
+      <ContactShowroomSection />
       <Footer />
     </main>
   );

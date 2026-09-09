@@ -7,6 +7,7 @@ import { MOCK_CARS } from '@/data/mock-cars';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { CarDetailGallery } from '@/components/CarDetailGallery';
+import { CarInquiryForm } from '@/components/CarInquiryForm';
 import {
   Calendar,
   Gauge,
@@ -121,19 +122,51 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
             </div>
 
             {/* Price & Status Block */}
-            <div className="flex flex-col sm:flex-row lg:flex-col sm:items-end gap-2 bg-slate-900/90 border border-slate-800 p-5 rounded-2xl lg:min-w-[280px]">
-              <div className="text-xs text-slate-400">Harga Jual Nett (SGD)</div>
-              <div className="text-3xl font-black text-white">
+            <div className="flex flex-col sm:flex-row lg:flex-col sm:items-end gap-3 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-6 rounded-3xl lg:min-w-[320px] shadow-xl">
+              <div className="flex items-center justify-between sm:justify-end gap-3 w-full">
+                <div className="text-xs text-slate-400 font-medium">Harga Tunai Nett (SGD)</div>
+                <span
+                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                    car.status === 'available'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      : car.status === 'reserved'
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                  }`}
+                >
+                  {car.status === 'available'
+                    ? 'Unit Tersedia'
+                    : car.status === 'reserved'
+                    ? 'Dalam Reservasi'
+                    : 'Sudah Terjual'}
+                </span>
+              </div>
+
+              <div className="text-3xl sm:text-4xl font-black text-white tracking-tight">
                 SGD ${car.price.toLocaleString('en-US')}
               </div>
-              <div className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Termasuk COE, GST & Transfer LTA
-              </div>
-              {car.depreciation_sgd && (
-                <div className="text-xs text-amber-300 font-semibold mt-1">
-                  Est. Depresiasi: SGD ${car.depreciation_sgd.toLocaleString('en-US')}/tahun
+
+              {/* Singapore Pricing Inclusions */}
+              <div className="w-full space-y-1.5 pt-2 border-t border-slate-800 text-xs">
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="text-slate-400">COE & GST (9%):</span>
+                  <span className="font-semibold text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Sudah Termasuk (Nett)
+                  </span>
                 </div>
-              )}
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="text-slate-400">Biaya Alih LTA:</span>
+                  <span className="font-semibold text-slate-200">Bebas Biaya</span>
+                </div>
+                {car.depreciation_sgd && (
+                  <div className="flex items-center justify-between text-slate-300 pt-1 border-t border-slate-800/80">
+                    <span className="text-slate-400">Est. Depresiasi:</span>
+                    <span className="font-bold text-amber-400">
+                      SGD ${car.depreciation_sgd.toLocaleString('en-US')} / tahun
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -144,13 +177,17 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
               {/* Photo Gallery Component */}
               <CarDetailGallery images={car.images} alt={`${car.brand} ${car.model}`} />
 
-              {/* Quick Specs Matrix */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-lg">
-                <h2 className="text-base font-bold text-white mb-4 flex items-center gap-2">
-                  <FileCheck className="w-4 h-4 text-amber-400" />
-                  Spesifikasi Kendaraan
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* Full Technical Specifications Matrix */}
+              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-lg space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <h2 className="text-base font-bold text-white flex items-center gap-2">
+                    <FileCheck className="w-4 h-4 text-amber-400" />
+                    Spesifikasi Lengkap Kendaraan
+                  </h2>
+                  <span className="text-xs text-slate-400">Verifikasi Resmi LTA</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80">
                     <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
                       <Calendar className="w-3.5 h-3.5 text-amber-500" />
@@ -166,6 +203,18 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                     </div>
                     <div className="text-sm font-bold text-white">
                       {car.mileage_km.toLocaleString('en-US')} km
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80">
+                    <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
+                      <Fuel className="w-3.5 h-3.5 text-amber-500" />
+                      Kapasitas Mesin
+                    </div>
+                    <div className="text-sm font-bold text-white">
+                      {car.engine_capacity_cc && car.engine_capacity_cc > 0
+                        ? `${car.engine_capacity_cc.toLocaleString('en-US')} cc`
+                        : 'Dual Motor EV'}
                     </div>
                   </div>
 
@@ -188,11 +237,19 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                   <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80">
                     <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
                       <BadgeDollarSign className="w-3.5 h-3.5 text-amber-500" />
-                      COE Expiry
+                      Masa Berlaku COE
                     </div>
                     <div className="text-sm font-bold text-white">
-                      {car.coe_expiry || '10 Tahun'}
+                      {car.coe_expiry || '10 Tahun COE'}
                     </div>
+                  </div>
+
+                  <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80">
+                    <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
+                      <Award className="w-3.5 h-3.5 text-amber-500" />
+                      Tipe Bodi
+                    </div>
+                    <div className="text-sm font-bold text-white">{car.body_type}</div>
                   </div>
 
                   <div className="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80">
@@ -202,6 +259,22 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                     </div>
                     <div className="text-sm font-bold text-white truncate">{car.color}</div>
                   </div>
+                </div>
+
+                {/* Inspection & Certificate Banner */}
+                <div className="bg-gradient-to-r from-emerald-950/40 via-slate-950 to-slate-950 p-4 rounded-2xl border border-emerald-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-white">Sertifikasi Inspeksi 100 Titik Selesai</div>
+                      <div className="text-slate-400">Unit bebas tabrakan berat, bebas banjir, dan kilometer orisinil terverifikasi.</div>
+                    </div>
+                  </div>
+                  <span className="shrink-0 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold text-[11px]">
+                    Garansi 12-24 Bulan
+                  </span>
                 </div>
               </div>
 
@@ -235,17 +308,25 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
               </div>
             </div>
 
-            {/* Right Column: Sticky Contact & Showroom Card (4 Cols) */}
+            {/* Right Column: Sticky Contact & Inquiry Form (4 Cols) */}
             <div className="lg:col-span-4 space-y-6">
-              {/* WhatsApp & Fast Contact Card */}
-              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl sticky top-24 space-y-5">
-                <div className="border-b border-slate-800 pb-4">
-                  <div className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">
-                    Status Ketersediaan
-                  </div>
+              {/* Availability Status Card */}
+              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-lg space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                    Status Showroom
+                  </span>
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-sm font-bold text-white capitalize">
+                    <span
+                      className={`w-2.5 h-2.5 rounded-full ${
+                        car.status === 'available'
+                          ? 'bg-emerald-500 animate-pulse'
+                          : car.status === 'reserved'
+                          ? 'bg-amber-500'
+                          : 'bg-rose-500'
+                      }`}
+                    />
+                    <span className="text-xs font-bold text-white capitalize">
                       {car.status === 'available'
                         ? 'Tersedia di Showroom'
                         : car.status === 'reserved'
@@ -255,27 +336,30 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                   </div>
                 </div>
 
-                {/* Direct WhatsApp Action */}
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-sm shadow-lg shadow-emerald-900/30 transition-all hover:scale-[1.02]"
-                >
-                  <MessageCircle className="w-5 h-5 fill-white/20" />
-                  <span>Hubungi Sales via WhatsApp</span>
-                </a>
-
-                <div className="text-center">
-                  <span className="text-xs text-slate-500">atau hubungi telepon showroom</span>
-                  <a
-                    href="tel:+6581234567"
-                    className="flex items-center justify-center gap-2 mt-2 py-2.5 px-4 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
-                  >
-                    <Phone className="w-3.5 h-3.5 text-amber-500" />
-                    <span>+65 8123 4567 (Hotline)</span>
-                  </a>
+                <div className="flex items-center justify-between text-xs text-slate-300">
+                  <span className="flex items-center gap-1 text-slate-400">
+                    <MapPin className="w-3.5 h-3.5 text-amber-500" /> Lokasi Unit:
+                  </span>
+                  <span className="font-semibold text-white truncate max-w-[180px]">
+                    {car.location.split(',')[0]}
+                  </span>
                 </div>
+              </div>
+
+              {/* Inquiry & Contact Form */}
+              <CarInquiryForm car={car} />
+
+              {/* Showroom Hotline Card */}
+              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-lg space-y-3">
+                <span className="text-xs text-slate-400">Hotline Showroom Resmi:</span>
+                <a
+                  href="tel:+6581234567"
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 hover:text-white text-xs font-semibold transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5 text-amber-500" />
+                  <span>+65 8123 4567 (Telepon Langsung)</span>
+                </a>
+              </div>
 
                 {/* Showroom Location Summary */}
                 <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 text-xs space-y-2">
@@ -304,10 +388,9 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
   );
 }

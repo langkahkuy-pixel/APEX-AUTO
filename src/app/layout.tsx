@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { WhatsAppButton } from '@/components/WhatsAppButton';
+
 export default function RootLayout({
   children,
 }: {
@@ -37,6 +39,7 @@ export default function RootLayout({
     <html lang="id" className={`${jakarta.variable} scroll-smooth`}>
       <body className="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
         {children}
+        <WhatsAppButton variant="floating" />
       </body>
     </html>
   );
