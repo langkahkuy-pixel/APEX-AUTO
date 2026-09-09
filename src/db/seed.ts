@@ -38,6 +38,10 @@ async function seed() {
           status: mockCar.status,
           location: mockCar.location,
           is_featured: mockCar.is_featured,
+          depreciation_sgd: mockCar.depreciation_sgd ? mockCar.depreciation_sgd.toString() : null,
+          coe_expiry: mockCar.coe_expiry || null,
+          engine_capacity_cc: mockCar.engine_capacity_cc || null,
+          monthly_est_sgd: mockCar.monthly_est_sgd ? mockCar.monthly_est_sgd.toString() : null,
           created_by: owner ? owner.id : null,
         })
         .returning();
