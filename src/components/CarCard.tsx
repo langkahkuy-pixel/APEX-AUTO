@@ -25,20 +25,22 @@ export function CarCard({ car }: CarCardProps) {
     switch (car.status) {
       case 'available':
         return (
-          <span className="bg-emerald-500/90 text-white font-semibold text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
-            Tersedia
+          <span className="inline-flex items-center gap-1 bg-emerald-500/90 text-white font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-sm border border-emerald-400/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            <span>Tersedia</span>
           </span>
         );
       case 'reserved':
         return (
-          <span className="bg-amber-500/90 text-slate-950 font-semibold text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
-            Dipesan
+          <span className="inline-flex items-center gap-1 bg-amber-500 text-slate-950 font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-sm border border-amber-300/40">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />
+            <span>Dipesan</span>
           </span>
         );
       case 'sold':
         return (
-          <span className="bg-rose-600/90 text-white font-semibold text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
-            Terjual
+          <span className="inline-flex items-center gap-1 bg-rose-600/90 text-white font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-sm border border-rose-400/30">
+            <span>Terjual</span>
           </span>
         );
       default:
