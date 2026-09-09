@@ -70,3 +70,5 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
 
   return <>{children}</>;
 }
+
+export default AdminRouteGuard;
