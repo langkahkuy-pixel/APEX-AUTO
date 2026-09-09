@@ -59,9 +59,25 @@ export const car_images = pgTable('car_images', {
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
+// Tabel inquiries (Pesan / Pertanyaan Calon Pembeli Showroom)
+export const inquiries = pgTable('inquiries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  car_id: uuid('car_id').references(() => cars.id, { onDelete: 'set null' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  contact: varchar('contact', { length: 255 }).notNull(), // WhatsApp / Telepon / Email
+  interest: varchar('interest', { length: 255 }), // Model yang diminati atau topik konsultasi
+  message: text('message').notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'), // 'pending' | 'contacted' | 'scheduled' | 'closed'
+  assigned_to: uuid('assigned_to').references(() => users.id, { onDelete: 'set null' }),
+  notes: text('notes'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 // Relasi antar tabel Drizzle ORM
 export const usersRelations = relations(users, ({ many }) => ({
   cars: many(cars),
+  assignedInquiries: many(inquiries),
 }));
 
 export const carsRelations = relations(cars, ({ one, many }) => ({
@@ -70,12 +86,24 @@ export const carsRelations = relations(cars, ({ one, many }) => ({
     references: [users.id],
   }),
   images: many(car_images),
+  inquiries: many(inquiries),
 }));
 
 export const carImagesRelations = relations(car_images, ({ one }) => ({
   car: one(cars, {
     fields: [car_images.car_id],
     references: [cars.id],
+  }),
+}));
+
+export const inquiriesRelations = relations(inquiries, ({ one }) => ({
+  car: one(cars, {
+    fields: [inquiries.car_id],
+    references: [cars.id],
+  }),
+  assignedUser: one(users, {
+    fields: [inquiries.assigned_to],
+    references: [users.id],
   }),
 }));
 
@@ -87,3 +115,6 @@ export type NewCarRecord = typeof cars.$inferInsert;
 
 export type CarImageRecord = typeof car_images.$inferSelect;
 export type NewCarImageRecord = typeof car_images.$inferInsert;
+
+export type InquiryRecord = typeof inquiries.$inferSelect;
+export type NewInquiryRecord = typeof inquiries.$inferInsert;
