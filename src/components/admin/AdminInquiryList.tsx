@@ -17,6 +17,10 @@ import {
   Tag,
   Building2,
   UserCheck,
+  ExternalLink,
+  Sparkles,
+  X,
+  FileText,
 } from 'lucide-react';
 
 interface AdminInquiryListProps {
@@ -24,12 +28,47 @@ interface AdminInquiryListProps {
   onStatusChange: (id: string, newStatus: AdminInquiry['status']) => void;
 }
 
+interface QuickTemplate {
+  id: string;
+  title: string;
+  description: string;
+  generateText: (inq: AdminInquiry) => string;
+}
+
+const TEMPLATES: QuickTemplate[] = [
+  {
+    id: 'general_followup',
+    title: 'Konfirmasi Ketersediaan & COE Ready',
+    description: 'Menyapa ramah, konfirmasi unit ready stock di showroom, dan kesiapan dokumen COE.',
+    generateText: (inq) =>
+      `Halo ${inq.customerName},\n\nTerima kasih telah menghubungi Apex Auto Singapore.\n\nUnit ${inq.carName} (S$${inq.carPriceSGD.toLocaleString('en-US')}) saat ini berstatus READY STOCK di showroom kami (${inq.branch || 'Leng Kee Flagship'}). Dokumen COE & sertifikasi inspeksi 160-titik STA Grade A lengkap siap dicek.\n\nApakah Anda berencana test drive akhir pekan ini?`,
+  },
+  {
+    id: 'test_drive_booking',
+    title: 'Jadwal Test Drive Resmi Showroom',
+    description: 'Mengajak calon pembeli menentukan waktu dan cabang untuk test drive unit.',
+    generateText: (inq) =>
+      `Halo ${inq.customerName},\n\nKami siap mengatur sesi VIP Test Drive untuk unit ${inq.carName}.\n\nLokasi Hub: ${inq.branch || 'Apex Auto Flagship @ Leng Kee Road'}\nJam Operasional: 09:00 - 19:00 SGT\n\nKira-kira hari dan jam berapa yang paling nyaman untuk jadwal kunjungan Anda?`,
+  },
+  {
+    id: 'loan_simulation',
+    title: 'Simulasi Pembiayaan & Trade-In',
+    description: 'Memberikan informasi skema DP promo, bunga kredit 1.88%, dan taksiran trade-in.',
+    generateText: (inq) =>
+      `Halo ${inq.customerName},\n\nMenindaklanjuti rencana pembelian unit ${inq.carName}${inq.tradeInCar && inq.tradeInCar !== 'None' ? ` dan rencana Trade-In (${inq.tradeInCar})` : ''}:\n\nKami memiliki program bunga loan preferensial mulai 1.88% flat/tahun dengan persetujuan cepat (DBS/OCBC/In-house).\n\nBoleh kami bantu buatkan simulasi angsuran bulanan sesuai budget DP Anda?`,
+  },
+];
+
 export default function AdminInquiryList({
   inquiries,
   onStatusChange,
 }: AdminInquiryListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedInquiryForModal, setSelectedInquiryForModal] = useState<AdminInquiry | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('general_followup');
+  const [customMessage, setCustomMessage] = useState<string>('');
+  const [toastNotice, setToastNotice] = useState<string | null>(null);
 
   const filteredInquiries = inquiries.filter((inq) => {
     const matchSearch =
@@ -82,12 +121,75 @@ export default function AdminInquiryList({
     }
   };
 
+  const handleOpenWhatsAppModal = (inq: AdminInquiry) => {
+    setSelectedInquiryForModal(inq);
+    const defaultTpl = TEMPLATES[0];
+    setSelectedTemplateId(defaultTpl.id);
+    setCustomMessage(defaultTpl.generateText(inq));
+  };
+
+  const handleSelectTemplate = (tplId: string) => {
+    setSelectedTemplateId(tplId);
+    if (!selectedInquiryForModal) return;
+    const tpl = TEMPLATES.find((t) => t.id === tplId);
+    if (tpl) {
+      setCustomMessage(tpl.generateText(selectedInquiryForModal));
+    }
+  };
+
+  const handleSendWhatsAppAndMark = (newStatus: AdminInquiry['status'] = 'contacted') => {
+    if (!selectedInquiryForModal) return;
+
+    const cleanPhone = selectedInquiryForModal.phone.replace(/[^0-9]/g, '');
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(customMessage)}`;
+
+    // Open WhatsApp
+    window.open(waUrl, '_blank');
+
+    // Update status
+    onStatusChange(selectedInquiryForModal.id, newStatus);
+    setToastNotice(`WhatsApp dibuka & status inquiry "${selectedInquiryForModal.customerName}" otomatis diperbarui.`);
+    setSelectedInquiryForModal(null);
+
+    setTimeout(() => setToastNotice(null), 4000);
+  };
+
+  const handleDirectWhatsAppClick = (inq: AdminInquiry) => {
+    const cleanPhone = inq.phone.replace(/[^0-9]/g, '');
+    const defaultMsg = `Halo ${inq.customerName}, kami dari Apex Auto Singapore menindaklanjuti pesan Anda terkait unit ${inq.carName}. Apakah masih ada informasi spesifikasi atau jadwal test drive yang ingin dikoordinasikan?`;
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(defaultMsg)}`;
+
+    window.open(waUrl, '_blank');
+    if (inq.status === 'new') {
+      onStatusChange(inq.id, 'contacted');
+      setToastNotice(`WhatsApp dibuka & status diperbarui menjadi "Sudah Dihubungi".`);
+      setTimeout(() => setToastNotice(null), 3000);
+    }
+  };
+
   const countNew = inquiries.filter((i) => i.status === 'new').length;
   const countContacted = inquiries.filter((i) => i.status === 'contacted').length;
   const countScheduled = inquiries.filter((i) => i.status === 'scheduled_test_drive').length;
 
   return (
     <div className="space-y-6">
+      {/* Toast Notice */}
+      {toastNotice && (
+        <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3 text-emerald-400 text-xs animate-in fade-in shadow-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span className="font-semibold">{toastNotice}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setToastNotice(null)}
+            className="text-emerald-400/80 hover:text-emerald-300 font-bold"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Header & Filter Controls */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -130,11 +232,6 @@ export default function AdminInquiryList({
       <div className="space-y-4">
         {filteredInquiries.length > 0 ? (
           filteredInquiries.map((inq) => {
-            const cleanPhone = inq.phone.replace(/[^0-9]/g, '');
-            const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-              `Halo ${inq.customerName}, kami dari Apex Auto Singapore menindaklanjuti pesan Anda terkait unit ${inq.carName}. Apakah masih ada informasi spesifikasi atau jadwal test drive yang ingin dikoordinasikan?`
-            )}`;
-
             return (
               <div
                 key={inq.id}
@@ -184,16 +281,23 @@ export default function AdminInquiryList({
                       <option value="cancelled">Tandai: Batal</option>
                     </select>
 
-                    <a
-                      href={waUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => inq.status === 'new' && onStatusChange(inq.id, 'contacted')}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                    <button
+                      type="button"
+                      onClick={() => handleOpenWhatsAppModal(inq)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-semibold border border-amber-500/20 transition-colors cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Template Pesan</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDirectWhatsAppClick(inq)}
+                      className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Chat WhatsApp</span>
-                    </a>
+                      <span>Buka WhatsApp & Perbarui Status</span>
+                    </button>
                   </div>
                 </div>
 
@@ -249,6 +353,118 @@ export default function AdminInquiryList({
           </div>
         )}
       </div>
+
+      {/* WhatsApp Quick Reply Template Modal */}
+      {selectedInquiryForModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setSelectedInquiryForModal(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <Send className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    Balas Pesan WhatsApp Resmi Showroom
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Kirim ke: <strong className="text-white">{selectedInquiryForModal.customerName}</strong> ({selectedInquiryForModal.phone})
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedInquiryForModal(null)}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Template Selector */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-slate-300">
+                Pilih Format Balasan Template Otomatis:
+              </label>
+              <div className="grid grid-cols-1 gap-2">
+                {TEMPLATES.map((tpl) => {
+                  const isSelected = tpl.id === selectedTemplateId;
+                  return (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleSelectTemplate(tpl.id)}
+                      className={`text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-500/10 border-amber-500 text-white'
+                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-300 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="font-bold text-xs text-white">{tpl.title}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">{tpl.description}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Message Preview / Edit */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                Isi Pesan WhatsApp yang Akan Terkirim:
+              </label>
+              <textarea
+                rows={5}
+                value={customMessage}
+                onChange={(e) => setCustomMessage(e.target.value)}
+                className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500 font-sans leading-relaxed"
+              />
+            </div>
+
+            {/* Submit Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-800">
+              <div className="text-[11px] text-slate-400">
+                Status akan otomatis diperbarui setelah WhatsApp terbuka.
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setSelectedInquiryForModal(null)}
+                  className="w-1/3 sm:w-auto py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSendWhatsAppAndMark('scheduled_test_drive')}
+                  className="flex-1 sm:flex-initial py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Kirim & Set Jadwal</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSendWhatsAppAndMark('contacted')}
+                  className="flex-1 sm:flex-initial py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Kirim via WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
