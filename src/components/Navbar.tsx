@@ -72,6 +72,12 @@ export function Navbar() {
 
         {/* Action Button */}
         <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+          >
+            <span>Login Pemilik</span>
+          </Link>
           <a
             href="https://wa.me/6581234567?text=Halo%20Apex%20Auto%20Singapore,%20saya%20ingin%20konsultasi%20pembelian%20mobil%20atau%20COE"
             target="_blank"
