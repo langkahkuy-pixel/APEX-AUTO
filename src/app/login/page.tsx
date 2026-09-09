@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -25,6 +25,16 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [logoutNotice, setLogoutNotice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('logout') === 'success') {
+        setLogoutNotice(true);
+      }
+    }
+  }, []);
 
   // Mock accounts database
   const DEMO_OWNER = {
@@ -149,6 +159,14 @@ export default function LoginPage() {
             </div>
           ) : (
             <form onSubmit={handleLogin} className="space-y-4">
+              {/* Logout Success Banner */}
+              {logoutNotice && (
+                <div className="bg-emerald-500/15 border border-emerald-500/40 rounded-xl p-3.5 flex items-start gap-2.5 text-emerald-300 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs">Sesi manajemen showroom Anda telah berhasil diakhiri.</p>
+                </div>
+              )}
+
               {/* Error Alert */}
               {error && (
                 <div className="bg-rose-500/15 border border-rose-500/40 rounded-xl p-3.5 flex items-start gap-2.5 text-rose-300 animate-in fade-in">

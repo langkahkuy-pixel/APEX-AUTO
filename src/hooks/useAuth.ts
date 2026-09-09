@@ -40,7 +40,7 @@ export function useAuth() {
   const logout = () => {
     localStorage.removeItem('apex_auth_session');
     setSession(null);
-    router.push('/login');
+    router.push('/login?logout=success');
   };
 
   return {
