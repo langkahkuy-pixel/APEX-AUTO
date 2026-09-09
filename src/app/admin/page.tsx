@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import AdminRouteGuard from '@/components/AdminRouteGuard';
 import AdminCarFormModal from '@/components/admin/AdminCarFormModal';
+import QuickStatusChanger from '@/components/admin/QuickStatusChanger';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { MOCK_PROMOS } from '@/data/mock-promos';
 import { Car as CarType, CarStatus } from '@/types/car';
@@ -672,21 +673,12 @@ function AdminDashboardContent() {
                           </td>
                           <td className="py-3.5 px-4 text-slate-400">{car.location}</td>
                           <td className="py-3.5 px-4">
-                            <select
-                              value={car.status}
-                              onChange={(e) => handleQuickStatusChange(car.id, e.target.value as CarStatus)}
-                              className={`py-1 px-2 rounded-lg text-[10px] font-bold uppercase tracking-wider border cursor-pointer ${
-                                car.status === 'available'
-                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                  : car.status === 'reserved'
-                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                                  : 'bg-slate-800 text-slate-400 border-slate-700'
-                              }`}
-                            >
-                              <option value="available" className="bg-slate-900 text-emerald-400">Tersedia</option>
-                              <option value="reserved" className="bg-slate-900 text-amber-400">Dipesan</option>
-                              <option value="sold" className="bg-slate-900 text-slate-400">Terjual</option>
-                            </select>
+                            <QuickStatusChanger
+                              carId={car.id}
+                              currentStatus={car.status}
+                              carName={`${car.brand} ${car.model}`}
+                              onStatusChange={handleQuickStatusChange}
+                            />
                           </td>
                           <td className="py-3.5 px-4 text-right">
                             <div className="inline-flex items-center justify-end gap-2">
