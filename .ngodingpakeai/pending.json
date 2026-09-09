@@ -1,0 +1,162 @@
+{
+  "repo": "showroomcar",
+  "generatedForCommit": "6bf108f1a41f73e173f685511fd77eb45135377c",
+  "files": [
+    {
+      "path": ".agents/skills/design-taste-frontend/SKILL.md",
+      "reason": "new",
+      "language": "markdown",
+      "size": 88459
+    },
+    {
+      "path": ".cursor/skills/ngodingpakeai/SKILL.md",
+      "reason": "new",
+      "language": "markdown",
+      "size": 17863
+    },
+    {
+      "path": ".gitignore",
+      "reason": "new",
+      "language": null,
+      "size": 480
+    },
+    {
+      "path": ".ngodingpakeaiignore",
+      "reason": "new",
+      "language": null,
+      "size": 269
+    },
+    {
+      "path": "AGENTS.md",
+      "reason": "new",
+      "language": "markdown",
+      "size": 17617
+    },
+    {
+      "path": "eslint.config.mjs",
+      "reason": "new",
+      "language": "javascript",
+      "size": 465
+    },
+    {
+      "path": "next.config.ts",
+      "reason": "new",
+      "language": "typescript",
+      "size": 237
+    },
+    {
+      "path": "package-lock.json",
+      "reason": "new",
+      "language": "json",
+      "size": 237141
+    },
+    {
+      "path": "package.json",
+      "reason": "new",
+      "language": "json",
+      "size": 564
+    },
+    {
+      "path": "postcss.config.mjs",
+      "reason": "new",
+      "language": "javascript",
+      "size": 94
+    },
+    {
+      "path": "README.md",
+      "reason": "new",
+      "language": "markdown",
+      "size": 1450
+    },
+    {
+      "path": "skills-lock.json",
+      "reason": "new",
+      "language": "json",
+      "size": 284
+    },
+    {
+      "path": "src/app/globals.css",
+      "reason": "new",
+      "language": "css",
+      "size": 488
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 1340
+    },
+    {
+      "path": "src/app/mobil/[id]/page.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 14170
+    },
+    {
+      "path": "src/app/page.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 401
+    },
+    {
+      "path": "src/components/CarCard.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 6457
+    },
+    {
+      "path": "src/components/CarDetailGallery.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 1915
+    },
+    {
+      "path": "src/components/CarDetailModal.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 10783
+    },
+    {
+      "path": "src/components/CatalogSection.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 26625
+    },
+    {
+      "path": "src/components/Footer.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 6271
+    },
+    {
+      "path": "src/components/Hero.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 5375
+    },
+    {
+      "path": "src/components/Navbar.tsx",
+      "reason": "new",
+      "language": "typescript",
+      "size": 4368
+    },
+    {
+      "path": "src/data/mock-cars.ts",
+      "reason": "new",
+      "language": "typescript",
+      "size": 9154
+    },
+    {
+      "path": "src/types/car.ts",
+      "reason": "new",
+      "language": "typescript",
+      "size": 1173
+    },
+    {
+      "path": "tsconfig.json",
+      "reason": "new",
+      "language": "json",
+      "size": 670
+    }
+  ]
+}
