@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Car, CarStatus, BodyType, FuelType, Transmission } from '@/types/car';
+import { Car, CarStatus, BodyType, FuelType, Transmission, CarImage } from '@/types/car';
+import AdminCarPhotoManager from './AdminCarPhotoManager';
 import {
   X,
   Save,
@@ -548,51 +549,11 @@ export default function AdminCarFormModal({
               </div>
             </div>
 
-            {/* Image URLs */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                URL Foto Kendaraan
-              </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="url"
-                  value={imageUrlInput}
-                  onChange={(e) => setImageUrlInput(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddImage}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold"
-                >
-                  Tambah Foto
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-2">
-                {formData.images?.map((img, i) => (
-                  <div
-                    key={img.id || i}
-                    className="relative rounded-xl overflow-hidden aspect-video bg-slate-950 border border-slate-800 group"
-                  >
-                    <img src={img.url} alt="Car" className="w-full h-full object-cover" />
-                    {img.is_main && (
-                      <span className="absolute top-1.5 left-1.5 bg-amber-500 text-slate-950 text-[9px] font-bold px-1.5 py-0.2 rounded">
-                        Foto Utama
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(img.id)}
-                      className="absolute top-1.5 right-1.5 bg-rose-600/80 hover:bg-rose-600 text-white p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Galeri & Foto Utama */}
+            <AdminCarPhotoManager
+              images={formData.images || []}
+              onChange={(newImages) => setFormData({ ...formData, images: newImages })}
+            />
 
             {/* Deskripsi */}
             <div>
