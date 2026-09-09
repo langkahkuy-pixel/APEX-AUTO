@@ -7,9 +7,11 @@ import { useAuth } from '@/hooks/useAuth';
 import AdminRouteGuard from '@/components/AdminRouteGuard';
 import AdminCarFormModal from '@/components/admin/AdminCarFormModal';
 import AdminPromoFormModal from '@/components/admin/AdminPromoFormModal';
+import AdminInquiryList from '@/components/admin/AdminInquiryList';
 import QuickStatusChanger from '@/components/admin/QuickStatusChanger';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { MOCK_PROMOS } from '@/data/mock-promos';
+import { MOCK_INQUIRIES, AdminInquiry } from '@/data/mock-inquiries';
 import { Car as CarType, CarStatus } from '@/types/car';
 import { PromoItem } from '@/types/promo';
 import {
@@ -158,7 +160,7 @@ function AdminDashboardContent() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'reserved' | 'sold'>('all');
 
   // Inquiries state
-  const [inquiriesList, setInquiriesList] = useState<InquiryItem[]>(INITIAL_INQUIRIES);
+  const [inquiriesList, setInquiriesList] = useState<AdminInquiry[]>(MOCK_INQUIRIES);
 
   // Update tab in URL query params
   const handleTabChange = (tab: AdminTab) => {
@@ -254,10 +256,12 @@ function AdminDashboardContent() {
     setTimeout(() => setToastNotice(null), 3000);
   };
 
-  const markInquiryContacted = (id: string) => {
+  const handleInquiryStatusChange = (id: string, newStatus: AdminInquiry['status']) => {
     setInquiriesList((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: 'contacted' } : item))
+      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
     );
+    setToastNotice(`Status inquiry berhasil diperbarui menjadi ${newStatus.toUpperCase()}`);
+    setTimeout(() => setToastNotice(null), 3000);
   };
 
   return (
@@ -516,8 +520,10 @@ function AdminDashboardContent() {
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-white">{inq.name}</span>
-                          <span className="text-[10px] text-slate-400 font-mono">{inq.timeAgo}</span>
+                          <span className="font-bold text-xs text-white">{inq.customerName}</span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {new Date(inq.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                           <span
                             className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
                               inq.status === 'new'
@@ -532,10 +538,10 @@ function AdminDashboardContent() {
                         <p className="text-[11px] text-slate-400 line-clamp-1">{inq.message}</p>
                       </div>
                       <a
-                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Halo%20${encodeURIComponent(inq.name)},%20kami%20dari%20Apex%20Auto%20Singapore%20menindaklanjuti%20inquiry%20unit%20${encodeURIComponent(inq.carName)}`}
+                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Halo%20${encodeURIComponent(inq.customerName)},%20kami%20dari%20Apex%20Auto%20Singapore%20menindaklanjuti%20inquiry%20unit%20${encodeURIComponent(inq.carName)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={() => markInquiryContacted(inq.id)}
+                        onClick={() => handleInquiryStatusChange(inq.id, 'contacted')}
                         className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap"
                       >
                         <Send className="w-3 h-3" />
@@ -865,90 +871,11 @@ function AdminDashboardContent() {
         {/* TAB 4: INQUIRIES */}
         {/* ========================================================= */}
         {activeTab === 'inquiries' && (
-          <div className="space-y-6 animate-in fade-in">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">Daftar Pertanyaan & Inquiry Masuk</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Respons langsung pesan calon pembeli mobil Singapura via WhatsApp resmi.
-                </p>
-              </div>
-              <div className="text-xs text-slate-300 bg-slate-950 px-3.5 py-2 rounded-xl border border-slate-800">
-                Total: <strong className="text-white">{inquiriesList.length}</strong> Inquiry ({newInquiriesCount} Menunggu Tindak Lanjut)
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {inquiriesList.map((inq) => (
-                <div
-                  key={inq.id}
-                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 hover:border-slate-700 transition-colors"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">
-                        {inq.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="font-bold text-sm text-white flex items-center gap-2">
-                          <span>{inq.name}</span>
-                          <span
-                            className={`text-[9px] px-2 py-0.5 rounded font-bold uppercase ${
-                              inq.status === 'new'
-                                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                                : inq.status === 'contacted'
-                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                            }`}
-                          >
-                            {inq.status}
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 flex items-center gap-3 mt-0.5">
-                          <span>{inq.phone}</span>
-                          <span>•</span>
-                          <span>{inq.email}</span>
-                          <span>•</span>
-                          <span className="text-amber-400/90 font-mono">{inq.timeAgo}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                      {inq.status === 'new' && (
-                        <button
-                          type="button"
-                          onClick={() => markInquiryContacted(inq.id)}
-                          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
-                        >
-                          Tandai Dihubungi
-                        </button>
-                      )}
-                      <a
-                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Halo%20${encodeURIComponent(inq.name)},%20kami%20dari%20Apex%20Auto%20Singapore%20menindaklanjuti%20inquiry%20unit%20${encodeURIComponent(inq.carName)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => markInquiryContacted(inq.id)}
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Chat WhatsApp</span>
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800/80 space-y-1.5">
-                    <div className="text-xs text-amber-400 font-bold flex items-center gap-1.5">
-                      <Car className="w-3.5 h-3.5" />
-                      Unit Tertarik: {inq.carName}
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed italic">
-                      "{inq.message}"
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="animate-in fade-in">
+            <AdminInquiryList
+              inquiries={inquiriesList}
+              onStatusChange={handleInquiryStatusChange}
+            />
           </div>
         )}
 
