@@ -183,6 +183,12 @@ export default function LoginPage() {
                   <label className="block text-xs font-semibold text-slate-300">
                     Kata Sandi
                   </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-[11px] text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    Lupa kata sandi?
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
