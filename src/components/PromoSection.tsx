@@ -19,6 +19,24 @@ import {
 
 export function PromoSection() {
   const [selectedPromo, setSelectedPromo] = useState<PromoItem | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('Semua');
+
+  const categories = [
+    { id: 'Semua', label: 'Semua Promo Aktif' },
+    { id: 'COE', label: 'Subsidi COE' },
+    { id: 'Financing', label: 'Bunga Kredit 1.88%' },
+    { id: 'Trade-In', label: 'Trade-In Bonus' },
+    { id: 'EV', label: 'Green Mobility EV' },
+  ];
+
+  const filteredPromos = MOCK_PROMOS.filter((promo) => {
+    if (activeCategory === 'Semua') return true;
+    if (activeCategory === 'COE') return promo.badge.includes('COE') || promo.id.includes('coe');
+    if (activeCategory === 'Financing') return promo.badge.includes('FINANCING') || promo.id.includes('interest');
+    if (activeCategory === 'Trade-In') return promo.badge.includes('TRADE-IN') || promo.id.includes('tradein');
+    if (activeCategory === 'EV') return promo.badge.includes('EV') || promo.id.includes('ev');
+    return true;
+  });
 
   return (
     <section id="promo" className="py-16 sm:py-24 bg-slate-950 text-white relative overflow-hidden border-t border-slate-800">
@@ -144,112 +162,151 @@ export function PromoSection() {
           );
         })()}
 
-        {/* Section Sub-header for other promos */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Tag className="w-4 h-4 text-amber-400" />
-            <span>Koleksi Paket Promo & Insentif Lainnya</span>
-          </h3>
-          <span className="text-xs text-slate-400 font-medium">4 Program Aktif</span>
+        {/* Section Sub-header & Category Filter for Active Promos */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Tag className="w-4 h-4 text-amber-400" />
+              <span>Daftar Promo Aktif Terbaru</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Pilih kategori promo yang sesuai dengan kebutuhan rencana pembelian Anda
+            </p>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeCategory === cat.id
+                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Promo Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {MOCK_PROMOS.map((promo) => {
-            const waText = encodeURIComponent(promo.cta_whatsapp_text);
-            const waUrl = `https://wa.me/6581234567?text=${waText}`;
+        {filteredPromos.length === 0 ? (
+          <div className="text-center py-12 bg-slate-900/40 rounded-3xl border border-slate-800 p-8 space-y-3">
+            <Tag className="w-8 h-8 text-slate-600 mx-auto" />
+            <p className="text-sm text-slate-300 font-medium">Tidak ada promo aktif dalam kategori ini.</p>
+            <button
+              onClick={() => setActiveCategory('Semua')}
+              className="text-xs text-amber-400 hover:underline font-bold"
+            >
+              Lihat Semua Promo Aktif
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {filteredPromos.map((promo) => {
+              const waText = encodeURIComponent(promo.cta_whatsapp_text);
+              const waUrl = `https://wa.me/6581234567?text=${waText}`;
 
-            return (
-              <div
-                key={promo.id}
-                className="group bg-slate-900/80 border border-slate-800 hover:border-amber-500/40 rounded-3xl overflow-hidden shadow-xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  {/* Promo Image & Banner Header */}
-                  <div className="relative h-56 w-full overflow-hidden bg-slate-950">
-                    <Image
-                      src={promo.image_url}
-                      alt={promo.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+              return (
+                <div
+                  key={promo.id}
+                  className="group bg-slate-900/80 border border-slate-800 hover:border-amber-500/40 rounded-3xl overflow-hidden shadow-xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Promo Image & Banner Header */}
+                    <div className="relative h-56 w-full overflow-hidden bg-slate-950">
+                      <Image
+                        src={promo.image_url}
+                        alt={promo.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
 
-                    {/* Badge */}
-                    <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-md">
-                        {promo.badge}
-                      </span>
-                      {promo.discount_sgd && (
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wide bg-emerald-500/90 backdrop-blur-sm text-white shadow-md">
-                          Hemat S${promo.discount_sgd.toLocaleString('en-US')}
+                      {/* Badge & Active Tag */}
+                      <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                        <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-md">
+                          {promo.badge}
                         </span>
-                      )}
-                    </div>
-
-                    {/* Expiry Pill */}
-                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-slate-200">
-                      <span className="flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-800">
-                        <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Berlaku hingga: {promo.valid_until}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content Body */}
-                  <div className="p-6 sm:p-7 space-y-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-white group-hover:text-amber-400 transition-colors leading-snug">
-                        {promo.title}
-                      </h3>
-                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                        {promo.tagline}
-                      </p>
-                    </div>
-
-                    {/* Benefit Checklist */}
-                    <div className="space-y-2 pt-2 border-t border-slate-800/80">
-                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        Keuntungan Utama Promo:
+                        {promo.discount_sgd && (
+                          <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wide bg-emerald-500/90 backdrop-blur-sm text-white shadow-md">
+                            Hemat S${promo.discount_sgd.toLocaleString('en-US')}
+                          </span>
+                        )}
                       </div>
-                      <ul className="space-y-1.5">
-                        {promo.benefits.slice(0, 3).map((benefit, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                            <span>{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
+
+                      {/* Active Status & Expiry Pill */}
+                      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-slate-200">
+                        <span className="flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-800">
+                          <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Berlaku hingga: {promo.valid_until}</span>
+                        </span>
+                        <span className="flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span>AKTIF</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content Body */}
+                    <div className="p-6 sm:p-7 space-y-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-white group-hover:text-amber-400 transition-colors leading-snug">
+                          {promo.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                          {promo.tagline}
+                        </p>
+                      </div>
+
+                      {/* Benefit Checklist */}
+                      <div className="space-y-2 pt-2 border-t border-slate-800/80">
+                        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                          Keuntungan Utama Promo:
+                        </div>
+                        <ul className="space-y-1.5">
+                          {promo.benefits.slice(0, 3).map((benefit, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Card Action Footer */}
-                <div className="p-6 sm:p-7 pt-0 flex flex-col sm:flex-row items-center gap-3">
-                  <a
-                    href={waUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>{promo.cta_text}</span>
-                  </a>
+                  {/* Card Action Footer */}
+                  <div className="p-6 sm:p-7 pt-0 flex flex-col sm:flex-row items-center gap-3">
+                    <a
+                      href={waUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>{promo.cta_text}</span>
+                    </a>
 
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPromo(promo)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors"
-                  >
-                    <Info className="w-3.5 h-3.5" />
-                    <span>Syarat & Ketentuan</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPromo(promo)}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                      <span>Syarat & Ketentuan</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Terms & Details Modal */}
