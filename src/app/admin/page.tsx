@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import AdminRouteGuard from '@/components/AdminRouteGuard';
-import AdminCarEditModal from '@/components/admin/AdminCarEditModal';
+import AdminCarFormModal from '@/components/admin/AdminCarFormModal';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { MOCK_PROMOS } from '@/data/mock-promos';
 import { Car as CarType, CarStatus } from '@/types/car';
@@ -145,7 +145,8 @@ function AdminDashboardContent() {
   // Cars inventory state
   const [carsList, setCarsList] = useState<CarType[]>(MOCK_CARS);
   const [selectedCarForEdit, setSelectedCarForEdit] = useState<CarType | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [formModalMode, setFormModalMode] = useState<'create' | 'edit'>('create');
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [toastNotice, setToastNotice] = useState<string | null>(null);
 
   // Search and filters for inventory tab
@@ -179,16 +180,28 @@ function AdminDashboardContent() {
     return matchSearch && matchStatus;
   });
 
-  const handleEditCar = (car: CarType) => {
-    setSelectedCarForEdit(car);
-    setIsEditModalOpen(true);
+  const handleOpenCreateCar = () => {
+    setSelectedCarForEdit(null);
+    setFormModalMode('create');
+    setIsFormModalOpen(true);
   };
 
-  const handleSaveCarEdit = (updatedCar: CarType) => {
-    setCarsList((prev) =>
-      prev.map((c) => (c.id === updatedCar.id ? updatedCar : c))
-    );
-    setToastNotice(`Data unit "${updatedCar.brand} ${updatedCar.model}" berhasil diperbarui.`);
+  const handleOpenEditCar = (car: CarType) => {
+    setSelectedCarForEdit(car);
+    setFormModalMode('edit');
+    setIsFormModalOpen(true);
+  };
+
+  const handleSaveCar = (savedCar: CarType) => {
+    if (formModalMode === 'create') {
+      setCarsList((prev) => [savedCar, ...prev]);
+      setToastNotice(`Unit baru "${savedCar.brand} ${savedCar.model}" berhasil ditambahkan ke inventaris.`);
+    } else {
+      setCarsList((prev) =>
+        prev.map((c) => (c.id === savedCar.id ? savedCar : c))
+      );
+      setToastNotice(`Data unit "${savedCar.brand} ${savedCar.model}" berhasil diperbarui.`);
+    }
     setTimeout(() => setToastNotice(null), 4000);
   };
 
@@ -571,13 +584,14 @@ function AdminDashboardContent() {
                   <option value="sold">Terjual (Sold)</option>
                 </select>
 
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all"
+                <button
+                  type="button"
+                  onClick={handleOpenCreateCar}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Unit Mobil</span>
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -678,7 +692,7 @@ function AdminDashboardContent() {
                             <div className="inline-flex items-center justify-end gap-2">
                               <button
                                 type="button"
-                                onClick={() => handleEditCar(car)}
+                                onClick={() => handleOpenEditCar(car)}
                                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
                                 title="Edit data unit mobil"
                               >
@@ -951,12 +965,13 @@ function AdminDashboardContent() {
         )}
       </main>
 
-      {/* Edit Car Modal Dialog */}
-      <AdminCarEditModal
-        car={selectedCarForEdit}
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleSaveCarEdit}
+      {/* Car Create & Edit Form Modal Dialog */}
+      <AdminCarFormModal
+        isOpen={isFormModalOpen}
+        mode={formModalMode}
+        initialCar={selectedCarForEdit}
+        onClose={() => setIsFormModalOpen(false)}
+        onSave={handleSaveCar}
       />
 
       {/* Confirmation Modal for Logout */}
