@@ -61,14 +61,12 @@ export function Navbar() {
           <Link href="#katalog" className="text-amber-400 hover:text-amber-300 transition-colors">
             Katalog Mobil
           </Link>
-          <Link href="#keunggulan" className="hover:text-white transition-colors">
-            Keunggulan
+          <Link href="#promo" className="hover:text-amber-400 transition-colors flex items-center gap-1">
+            <span>Promo Spesial</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </Link>
-          <Link href="#lokasi" className="hover:text-white transition-colors">
-            Lokasi Showroom
-          </Link>
-          <Link href="#kontak" className="hover:text-white transition-colors">
-            Hubungi Kami
+          <Link href="#kontak-showroom" className="hover:text-white transition-colors">
+            Hubungi Showroom
           </Link>
         </nav>
 

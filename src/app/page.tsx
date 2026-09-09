@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { CatalogSection } from '@/components/CatalogSection';
+import { PromoSection } from '@/components/PromoSection';
 import { ContactShowroomSection } from '@/components/ContactShowroomSection';
 import { Footer } from '@/components/Footer';
 
@@ -10,6 +11,7 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <CatalogSection />
+      <PromoSection />
       <ContactShowroomSection />
       <Footer />
     </main>
