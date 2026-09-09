@@ -6,10 +6,12 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import AdminRouteGuard from '@/components/AdminRouteGuard';
 import AdminCarFormModal from '@/components/admin/AdminCarFormModal';
+import AdminPromoFormModal from '@/components/admin/AdminPromoFormModal';
 import QuickStatusChanger from '@/components/admin/QuickStatusChanger';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { MOCK_PROMOS } from '@/data/mock-promos';
 import { Car as CarType, CarStatus } from '@/types/car';
+import { PromoItem } from '@/types/promo';
 import {
   Car,
   Users,
@@ -39,6 +41,7 @@ import {
   BadgeCheck,
   Pencil,
   Check,
+  Trash2,
 } from 'lucide-react';
 
 type AdminTab = 'overview' | 'inventory' | 'promos' | 'inquiries' | 'branches';
@@ -211,6 +214,43 @@ function AdminDashboardContent() {
       prev.map((c) => (c.id === carId ? { ...c, status: newStatus } : c))
     );
     setToastNotice(`Status unit berhasil diubah menjadi ${newStatus.toUpperCase()}`);
+    setTimeout(() => setToastNotice(null), 3000);
+  };
+
+  // Promos management state
+  const [promosList, setPromosList] = useState<PromoItem[]>(MOCK_PROMOS);
+  const [selectedPromoForEdit, setSelectedPromoForEdit] = useState<PromoItem | null>(null);
+  const [promoModalMode, setPromoModalMode] = useState<'create' | 'edit'>('create');
+  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+
+  const handleOpenCreatePromo = () => {
+    setSelectedPromoForEdit(null);
+    setPromoModalMode('create');
+    setIsPromoModalOpen(true);
+  };
+
+  const handleOpenEditPromo = (promo: PromoItem) => {
+    setSelectedPromoForEdit(promo);
+    setPromoModalMode('edit');
+    setIsPromoModalOpen(true);
+  };
+
+  const handleSavePromo = (savedPromo: PromoItem) => {
+    if (promoModalMode === 'create') {
+      setPromosList((prev) => [savedPromo, ...prev]);
+      setToastNotice(`Program promo "${savedPromo.title}" berhasil ditambahkan.`);
+    } else {
+      setPromosList((prev) =>
+        prev.map((p) => (p.id === savedPromo.id ? savedPromo : p))
+      );
+      setToastNotice(`Program promo "${savedPromo.title}" berhasil diperbarui.`);
+    }
+    setTimeout(() => setToastNotice(null), 4000);
+  };
+
+  const handleDeletePromo = (promoId: string) => {
+    setPromosList((prev) => prev.filter((p) => p.id !== promoId));
+    setToastNotice('Program promo berhasil dihapus dari sistem.');
     setTimeout(() => setToastNotice(null), 3000);
   };
 
@@ -729,24 +769,35 @@ function AdminDashboardContent() {
                   Kelola banner promosi aktif yang tampil di beranda dan syarat & ketentuan pembeli.
                 </p>
               </div>
-              <Link
-                href="/#promo-section"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all w-fit"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Pratinjau Promo di Beranda</span>
-              </Link>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleOpenCreatePromo}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Buat Promo Baru</span>
+                </button>
+                <Link
+                  href="/#promo-section"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition-all"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Lihat di Beranda</span>
+                </Link>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {MOCK_PROMOS.map((promo) => (
+              {promosList.map((promo) => (
                 <div
                   key={promo.id}
-                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors"
+                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors shadow-lg"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase font-mono">
                         {promo.badge}
                       </span>
                       <span className="text-[11px] text-slate-400 font-mono">
@@ -772,20 +823,37 @@ function AdminDashboardContent() {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      Status: Aktif
-                    </span>
-                    <a
-                      href={`https://wa.me/6581234567?text=${encodeURIComponent(promo.cta_whatsapp_text)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-amber-400 hover:text-amber-300 font-bold underline flex items-center gap-1"
-                    >
-                      <span>Cek CTA</span>
-                      <ArrowUpRight className="w-3 h-3" />
-                    </a>
+                  <div className="pt-4 border-t border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        Status: Aktif
+                      </span>
+                      {promo.discount_sgd && promo.discount_sgd > 0 && (
+                        <span className="text-amber-400 font-bold font-mono">
+                          Hemat S${promo.discount_sgd.toLocaleString('en-US')}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditPromo(promo)}
+                        className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-3 h-3" />
+                        <span>Ubah</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeletePromo(promo.id)}
+                        className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold flex items-center gap-1 border border-rose-500/30 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Hapus</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -964,6 +1032,15 @@ function AdminDashboardContent() {
         initialCar={selectedCarForEdit}
         onClose={() => setIsFormModalOpen(false)}
         onSave={handleSaveCar}
+      />
+
+      {/* Promo Create & Edit Form Modal Dialog */}
+      <AdminPromoFormModal
+        isOpen={isPromoModalOpen}
+        mode={promoModalMode}
+        initialPromo={selectedPromoForEdit}
+        onClose={() => setIsPromoModalOpen(false)}
+        onSave={handleSavePromo}
       />
 
       {/* Confirmation Modal for Logout */}
