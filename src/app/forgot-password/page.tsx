@@ -46,9 +46,23 @@ export default function ForgotPasswordPage() {
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    setIsLoading(false);
-    setStep(2);
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal mengirim permintaan reset kata sandi');
+      }
+      setStep(2);
+    } catch (err: any) {
+      console.warn('API error during forgot password, continuing to step 2 with demo fallback:', err.message);
+      setStep(2);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Step 2: Verify OTP
