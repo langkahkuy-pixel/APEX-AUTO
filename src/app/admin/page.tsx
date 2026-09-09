@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import AdminRouteGuard from '@/components/AdminRouteGuard';
+import AdminCarEditModal from '@/components/admin/AdminCarEditModal';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { MOCK_PROMOS } from '@/data/mock-promos';
+import { Car as CarType, CarStatus } from '@/types/car';
 import {
   Car,
   Users,
@@ -34,6 +36,8 @@ import {
   AlertCircle,
   FileText,
   BadgeCheck,
+  Pencil,
+  Check,
 } from 'lucide-react';
 
 type AdminTab = 'overview' | 'inventory' | 'promos' | 'inquiries' | 'branches';
@@ -138,6 +142,12 @@ function AdminDashboardContent() {
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // Cars inventory state
+  const [carsList, setCarsList] = useState<CarType[]>(MOCK_CARS);
+  const [selectedCarForEdit, setSelectedCarForEdit] = useState<CarType | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [toastNotice, setToastNotice] = useState<string | null>(null);
+
   // Search and filters for inventory tab
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'reserved' | 'sold'>('all');
@@ -154,13 +164,13 @@ function AdminDashboardContent() {
   };
 
   // Stats calculation
-  const totalCars = MOCK_CARS.length;
-  const availableCars = MOCK_CARS.filter((c) => c.status === 'available').length;
-  const totalValuationSGD = MOCK_CARS.reduce((acc, c) => acc + c.price, 0);
+  const totalCars = carsList.length;
+  const availableCars = carsList.filter((c) => c.status === 'available').length;
+  const totalValuationSGD = carsList.reduce((acc, c) => acc + c.price, 0);
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'new').length;
 
   // Filtered inventory
-  const filteredCars = MOCK_CARS.filter((car) => {
+  const filteredCars = carsList.filter((car) => {
     const matchSearch =
       car.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
       car.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -168,6 +178,27 @@ function AdminDashboardContent() {
     const matchStatus = statusFilter === 'all' || car.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  const handleEditCar = (car: CarType) => {
+    setSelectedCarForEdit(car);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveCarEdit = (updatedCar: CarType) => {
+    setCarsList((prev) =>
+      prev.map((c) => (c.id === updatedCar.id ? updatedCar : c))
+    );
+    setToastNotice(`Data unit "${updatedCar.brand} ${updatedCar.model}" berhasil diperbarui.`);
+    setTimeout(() => setToastNotice(null), 4000);
+  };
+
+  const handleQuickStatusChange = (carId: string, newStatus: CarStatus) => {
+    setCarsList((prev) =>
+      prev.map((c) => (c.id === carId ? { ...c, status: newStatus } : c))
+    );
+    setToastNotice(`Status unit berhasil diubah menjadi ${newStatus.toUpperCase()}`);
+    setTimeout(() => setToastNotice(null), 3000);
+  };
 
   const markInquiryContacted = (id: string) => {
     setInquiriesList((prev) =>
@@ -550,6 +581,23 @@ function AdminDashboardContent() {
               </div>
             </div>
 
+            {/* Toast notice banner */}
+            {toastNotice && (
+              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3 text-emerald-400 text-xs animate-in fade-in">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-semibold">{toastNotice}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setToastNotice(null)}
+                  className="text-emerald-400/80 hover:text-emerald-300 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             {/* Inventory Table */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
@@ -561,8 +609,8 @@ function AdminDashboardContent() {
                       <th className="py-3.5 px-4 font-semibold">Harga (SGD)</th>
                       <th className="py-3.5 px-4 font-semibold">Masa Berlaku COE</th>
                       <th className="py-3.5 px-4 font-semibold">Hub Lokasi</th>
-                      <th className="py-3.5 px-4 font-semibold">Status</th>
-                      <th className="py-3.5 px-4 font-semibold text-right">Pratinjau</th>
+                      <th className="py-3.5 px-4 font-semibold">Status Ketersediaan</th>
+                      <th className="py-3.5 px-4 font-semibold text-right">Aksi Kelola</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-medium">
@@ -610,27 +658,42 @@ function AdminDashboardContent() {
                           </td>
                           <td className="py-3.5 px-4 text-slate-400">{car.location}</td>
                           <td className="py-3.5 px-4">
-                            <span
-                              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            <select
+                              value={car.status}
+                              onChange={(e) => handleQuickStatusChange(car.id, e.target.value as CarStatus)}
+                              className={`py-1 px-2 rounded-lg text-[10px] font-bold uppercase tracking-wider border cursor-pointer ${
                                 car.status === 'available'
-                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                                   : car.status === 'reserved'
-                                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                  : 'bg-slate-800 text-slate-400'
+                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                  : 'bg-slate-800 text-slate-400 border-slate-700'
                               }`}
                             >
-                              {car.status}
-                            </span>
+                              <option value="available" className="bg-slate-900 text-emerald-400">Tersedia</option>
+                              <option value="reserved" className="bg-slate-900 text-amber-400">Dipesan</option>
+                              <option value="sold" className="bg-slate-900 text-slate-400">Terjual</option>
+                            </select>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <Link
-                              href={`/mobil/${car.id}`}
-                              target="_blank"
-                              className="inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 font-medium underline"
-                            >
-                              <span>Detail</span>
-                              <ArrowUpRight className="w-3 h-3" />
-                            </Link>
+                            <div className="inline-flex items-center justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleEditCar(car)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
+                                title="Edit data unit mobil"
+                              >
+                                <Pencil className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href={`/mobil/${car.id}`}
+                                target="_blank"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+                              >
+                                <span>Detail</span>
+                                <ArrowUpRight className="w-3 h-3" />
+                              </Link>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -887,6 +950,14 @@ function AdminDashboardContent() {
           </div>
         )}
       </main>
+
+      {/* Edit Car Modal Dialog */}
+      <AdminCarEditModal
+        car={selectedCarForEdit}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveCarEdit}
+      />
 
       {/* Confirmation Modal for Logout */}
       {showLogoutConfirm && (
