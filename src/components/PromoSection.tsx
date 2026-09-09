@@ -19,8 +19,24 @@ import {
 } from 'lucide-react';
 
 export function PromoSection() {
+  const [promos, setPromos] = useState<PromoItem[]>(MOCK_PROMOS);
   const [selectedPromo, setSelectedPromo] = useState<PromoItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
+
+  React.useEffect(() => {
+    async function loadPromos() {
+      try {
+        const res = await fetch('/api/promos');
+        const json = await res.json();
+        if (json.success && json.data && json.data.length > 0) {
+          setPromos(json.data);
+        }
+      } catch (err) {
+        // use fallback MOCK_PROMOS
+      }
+    }
+    loadPromos();
+  }, []);
 
   const categories = [
     { id: 'Semua', label: 'Semua Promo Aktif' },
@@ -30,7 +46,7 @@ export function PromoSection() {
     { id: 'EV', label: 'Green Mobility EV' },
   ];
 
-  const filteredPromos = MOCK_PROMOS.filter((promo) => {
+  const filteredPromos = promos.filter((promo) => {
     if (activeCategory === 'Semua') return true;
     if (activeCategory === 'COE') return promo.badge.includes('COE') || promo.id.includes('coe');
     if (activeCategory === 'Financing') return promo.badge.includes('FINANCING') || promo.id.includes('interest');
@@ -69,7 +85,7 @@ export function PromoSection() {
 
         {/* Spot Promo Unggulan Utama (Featured Spotlight) */}
         {(() => {
-          const featured = MOCK_PROMOS.find((p) => p.is_featured) || MOCK_PROMOS[0];
+          const featured = promos.find((p) => p.is_featured) || promos[0] || MOCK_PROMOS[0];
           const waUrl = `https://wa.me/6581234567?text=${encodeURIComponent(featured.cta_whatsapp_text)}`;
 
           return (
