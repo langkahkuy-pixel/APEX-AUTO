@@ -1,9 +1,10 @@
 import { db } from './index';
-import { cars, car_images, users } from './schema';
+import { cars, car_images, users, promos } from './schema';
 import { MOCK_CARS } from '../data/mock-cars';
+import { MOCK_PROMOS } from '../data/mock-promos';
 
 async function seed() {
-  console.log('Seeding initial showroom cars to PostgreSQL...');
+  console.log('Seeding initial showroom cars & promos to PostgreSQL...');
 
   try {
     // 1. Create a default owner user
@@ -58,7 +59,31 @@ async function seed() {
       }
     }
 
-    console.log('✓ Successfully seeded cars and images into PostgreSQL!');
+    // 3. Insert promos
+    for (const mockPromo of MOCK_PROMOS) {
+      await db
+        .insert(promos)
+        .values({
+          slug: mockPromo.slug,
+          title: mockPromo.title,
+          tagline: mockPromo.tagline,
+          badge: mockPromo.badge,
+          discount_sgd: mockPromo.discount_sgd ? mockPromo.discount_sgd.toString() : null,
+          description: mockPromo.description,
+          benefits: JSON.stringify(mockPromo.benefits),
+          terms_conditions: JSON.stringify(mockPromo.terms_conditions),
+          valid_until: mockPromo.valid_until,
+          image_url: mockPromo.image_url,
+          highlight_color: mockPromo.highlight_color || 'amber',
+          cta_text: mockPromo.cta_text,
+          cta_whatsapp_text: mockPromo.cta_whatsapp_text,
+          is_featured: mockPromo.is_featured,
+          is_active: true,
+        })
+        .onConflictDoNothing();
+    }
+
+    console.log('✓ Successfully seeded cars, images, and promos into PostgreSQL!');
   } catch (err) {
     console.error('Error during seeding:', err);
   } finally {

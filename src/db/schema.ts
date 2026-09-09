@@ -74,6 +74,28 @@ export const inquiries = pgTable('inquiries', {
   updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
+// Tabel promos (Program Promo & Subsidi Showroom Singapura)
+export const promos = pgTable('promos', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  title: varchar('title', { length: 255 }).notNull(),
+  tagline: text('tagline').notNull(),
+  badge: varchar('badge', { length: 100 }).notNull(),
+  discount_sgd: numeric('discount_sgd', { precision: 12, scale: 2 }),
+  description: text('description').notNull(),
+  benefits: text('benefits'), // JSON array string
+  terms_conditions: text('terms_conditions'), // JSON array string
+  valid_until: varchar('valid_until', { length: 100 }).notNull(),
+  image_url: text('image_url').notNull(),
+  highlight_color: varchar('highlight_color', { length: 50 }).default('amber'),
+  cta_text: varchar('cta_text', { length: 255 }).notNull(),
+  cta_whatsapp_text: text('cta_whatsapp_text').notNull(),
+  is_featured: boolean('is_featured').notNull().default(false),
+  is_active: boolean('is_active').notNull().default(true),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 // Relasi antar tabel Drizzle ORM
 export const usersRelations = relations(users, ({ many }) => ({
   cars: many(cars),
@@ -118,3 +140,6 @@ export type NewCarImageRecord = typeof car_images.$inferInsert;
 
 export type InquiryRecord = typeof inquiries.$inferSelect;
 export type NewInquiryRecord = typeof inquiries.$inferInsert;
+
+export type PromoRecord = typeof promos.$inferSelect;
+export type NewPromoRecord = typeof promos.$inferInsert;

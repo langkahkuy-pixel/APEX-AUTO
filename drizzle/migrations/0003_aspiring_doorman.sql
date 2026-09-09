@@ -1,0 +1,21 @@
+CREATE TABLE "promos" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" varchar(255) NOT NULL,
+	"title" varchar(255) NOT NULL,
+	"tagline" text NOT NULL,
+	"badge" varchar(100) NOT NULL,
+	"discount_sgd" numeric(12, 2),
+	"description" text NOT NULL,
+	"benefits" text,
+	"terms_conditions" text,
+	"valid_until" varchar(100) NOT NULL,
+	"image_url" text NOT NULL,
+	"highlight_color" varchar(50) DEFAULT 'amber',
+	"cta_text" varchar(255) NOT NULL,
+	"cta_whatsapp_text" text NOT NULL,
+	"is_featured" boolean DEFAULT false NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "promos_slug_unique" UNIQUE("slug")
+);
