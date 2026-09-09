@@ -53,20 +53,27 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
     setStatus('submitting');
 
     try {
-      // Simulate API call to submit inquiry
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // If user inputs "error" or test simulated error
-          if (fullName.toLowerCase().includes('simulate-error')) {
-            reject(new Error('Koneksi server gagal merespon. Silakan coba sesaat lagi.'));
-          } else {
-            resolve(true);
-          }
-        }, 700);
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: fullName.trim(),
+          contact: contact.trim(),
+          message: message.trim(),
+          car_id: car.id,
+          interest: `${car.brand} ${car.model} (${car.year})`,
+        }),
       });
 
-      const randomRef = `INQ-${Math.floor(100000 + Math.random() * 900000)}`;
-      setInquiryRef(randomRef);
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal mengirim formulir');
+      }
+
+      const generatedId = data.data?.id
+        ? String(data.data.id).slice(0, 8).toUpperCase()
+        : `INQ-${Math.floor(100000 + Math.random() * 900000)}`;
+      setInquiryRef(generatedId);
       setStatus('success');
     } catch (err: any) {
       setStatus('error');

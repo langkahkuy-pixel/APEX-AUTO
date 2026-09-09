@@ -50,17 +50,26 @@ export function ContactShowroomSection() {
 
     setStatus('submitting');
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (name.toLowerCase().includes('simulate-error')) {
-            reject(new Error('Koneksi sistem showroom sedang sibuk. Silakan coba sesaat lagi atau hubungi via WhatsApp langsung.'));
-          } else {
-            resolve(true);
-          }
-        }, 700);
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          contact: contact.trim(),
+          interest: interest,
+          message: message.trim() || `Konsultasi showroom untuk kategori ${interest}`,
+        }),
       });
 
-      setReferenceCode(`APX-${Math.floor(100000 + Math.random() * 900000)}`);
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal mengirim formulir pertanyaan');
+      }
+
+      const refCode = data.data?.id
+        ? String(data.data.id).slice(0, 8).toUpperCase()
+        : `APX-${Math.floor(100000 + Math.random() * 900000)}`;
+      setReferenceCode(refCode);
       setStatus('success');
     } catch (err: any) {
       setStatus('error');
