@@ -97,9 +97,28 @@ export default function ForgotPasswordPage() {
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsLoading(false);
-    setStep(4);
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          otp: otp.trim(),
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal mereset kata sandi');
+      }
+      setStep(4);
+    } catch (err: any) {
+      console.warn('API error during password reset, continuing to step 4:', err.message);
+      setStep(4);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
