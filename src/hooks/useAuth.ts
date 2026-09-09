@@ -37,7 +37,12 @@ export function useAuth() {
     }
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.warn('Logout API notification error:', e);
+    }
     localStorage.removeItem('apex_auth_session');
     setSession(null);
     router.push('/login?logout=success');
