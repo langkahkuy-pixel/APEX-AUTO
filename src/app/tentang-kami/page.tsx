@@ -25,124 +25,109 @@ import {
   Check,
 } from 'lucide-react';
 
-/* ───── 100-Point Inspection Data ───── */
+/* ───── 100-Point Inspection Data (Concise & Clear) ───── */
 const INSPECTION_PHASES = [
   {
     num: '01',
     id: 'exterior',
-    title: 'Exterior & Frame Integrity',
-    short: 'Exterior & Frame',
+    title: 'Exterior & Frame',
     icon: Search,
-    desc: 'Precision paint depth measurement, structural chassis alignment verification, acoustic glass inspection, and computerized check for prior collision repairs.',
+    desc: 'Laser chassis scan, panel alignment, and digital paint depth gauge check for 100% accident-free integrity.',
     points: [
-      'Digital paint gauge depth testing on all panels',
-      'Structural unibody & chassis seam laser scan',
-      'OEM windshield & acoustic glass validation',
-      'Active aerodynamic & panoramic sunroof seal check',
+      'Digital paint depth gauge check',
+      'Laser chassis & unibody alignment scan',
     ],
   },
   {
     num: '02',
     id: 'drivetrain',
-    title: 'Engine & Computer Diagnostics',
-    short: 'Engine & Diagnostics',
+    title: 'Engine & Gearbox',
     icon: Gauge,
-    desc: 'Complete computerized OBD-II multi-system analysis, cylinder compression pressure testing, turbocharger boost tolerance, and transmission shift calibration.',
+    desc: 'Full OBD-II ECU computerized diagnosis, cylinder compression testing, and transmission calibration.',
     points: [
-      'Full-system ECU OBD-II diagnostic fault scan',
-      'Engine compression & timing chain analysis',
-      'Dual-clutch & automatic gearbox calibration',
-      'Exhaust emission compliance & catalytic test',
+      'Full-system OBD-II ECU diagnostic scan',
+      'Transmission calibration & compression test',
     ],
   },
   {
     num: '03',
     id: 'cabin',
-    title: 'Cabin & Advanced Electronics',
-    short: 'Cabin & Electronics',
+    title: 'Cabin & Electronics',
     icon: Sparkles,
-    desc: 'Thorough inspection of bespoke leather trim, digital instrument clusters, multi-zone climate systems, radar-guided ADAS, and 360-degree camera arrays.',
+    desc: 'Complete audit of interior upholstery, digital displays, climate control, and radar ADAS safety systems.',
     points: [
-      'Radar cruise control & ADAS lane assist test',
-      '360° camera array & parking sensor validation',
-      'Multi-zone climate & compressor cycle audit',
-      'Premium audio & infotainment interface check',
+      'Radar cruise & lane assist calibration',
+      '360° camera array & climate control test',
     ],
   },
   {
     num: '04',
     id: 'undercarriage',
-    title: 'Undercarriage & Safety Systems',
-    short: 'Undercarriage & Safety',
+    title: 'Undercarriage & Safety',
     icon: ShieldCheck,
-    desc: 'Hydraulic lift inspection of adaptive air suspension, active dampers, control arm bushings, multi-piston braking rotors, and flood-free underbody verification.',
+    desc: 'Hydraulic lift inspection of air suspension, control arm bushings, brake rotors, and certified flood-free check.',
     points: [
-      'Adaptive air suspension & damper integrity check',
-      'Brake disc rotor thickness & pad life inspection',
-      'Chassis subframe & steering rack bushing review',
-      'Water ingress & flood-free undercarriage signoff',
+      'Air suspension & damper inspection',
+      'Brake rotor thickness & pad life check',
     ],
   },
   {
     num: '05',
     id: 'documentation',
-    title: 'Documentation & Handover Protocol',
-    short: 'Legal & Certification',
+    title: 'Legal & Documentation',
     icon: FileCheck2,
-    desc: 'Comprehensive title verification with LTA, guaranteed COE tenure validation, authentic agent service records, and issuance of the Apex Auto Quality Certificate.',
+    desc: 'Official LTA ownership verification, remaining COE tenure check, and authentic agent service logbooks.',
     points: [
-      'Official LTA ownership & title verification',
-      'COE expiry tenure & residual value calculation',
-      'Agent service logbook & mileage authenticity check',
-      'Apex Auto Official 100-Point Certificate issuance',
+      'Official LTA title & ownership check',
+      'Official Apex Auto Certificate issuance',
     ],
   },
 ];
 
-/* ───── Core Values Data ───── */
+/* ───── Core Values Data (Concise & Clear) ───── */
 const CORE_VALUES = [
   {
     icon: Scale,
-    title: 'Transparent SGD Nett Pricing',
-    desc: 'Every vehicle is quoted in clear SGD Nett with zero surprise administrative fees, full GST inclusion, and clear residual COE calculations.',
+    title: 'Transparent SGD Nett',
+    desc: 'All prices quoted in clear SGD Nett with GST included, clear COE depreciation, and zero surprise fees.',
     tag: 'Zero Surcharges',
   },
   {
     icon: FileCheck2,
-    title: 'Verified Vehicle Provenance',
-    desc: 'Each unit is authenticated through official LTA title records, verified mileage logs, and documented authorised agent maintenance histories.',
-    tag: 'Accredited History',
+    title: 'Verified History',
+    desc: 'Fully authenticated with official LTA title records, verified mileage, and authorized agent service logs.',
+    tag: 'LTA Verified',
   },
   {
     icon: HeartHandshake,
     title: 'Consultative Advisory',
-    desc: 'Non-commissioned luxury automotive specialists evaluate your driving patterns and annual mileage to advise the optimal model and financing fit.',
-    tag: 'Client-First',
+    desc: 'Dedicated non-commissioned luxury specialists focused on finding the right model and optimal financing.',
+    tag: 'Client-Centric',
   },
   {
     icon: Award,
-    title: 'Master Quality Benchmarks',
-    desc: 'Only motorcars passing our rigorous 100-point mechanical, structural, and cosmetic inspection qualify for presentation in our showrooms.',
-    tag: 'Top 5% Selection',
+    title: 'Certified Standards',
+    desc: 'Only motorcars passing our exhaustive 100-point inspection qualify for our showroom floor.',
+    tag: 'Top Selection',
   },
 ];
 
-/* ───── Banking Partners ───── */
+/* ───── Banking Partners (Concise & Clear) ───── */
 const BANK_PARTNERS = [
   {
     name: 'DBS Bank',
     rate: 'From 1.88% p.a.',
-    desc: 'Preferential auto financing with flexible tenure and rapid 24-hour in-principle approval.',
+    desc: 'Preferential rates with rapid 24-hour in-principle financing approval.',
   },
   {
     name: 'OCBC Bank',
     rate: 'Up to 7-Year Tenure',
-    desc: 'Customised structured financing with competitive balloon schemes tailored for luxury marques.',
+    desc: 'Tailored balloon schemes with flexible financing terms for prestige marques.',
   },
   {
     name: 'UOB Bank',
     rate: 'Green Financing',
-    desc: 'Special interest incentives for electric and hybrid luxury vehicles with seamless digital processing.',
+    desc: 'Special interest incentives for electric and hybrid luxury vehicles.',
   },
 ];
 
@@ -177,7 +162,7 @@ export default function AboutPage() {
               Singapore&apos;s Premier Luxury Automobile Showroom
             </h1>
             <p className="text-sm sm:text-base text-zinc-500 mt-4 leading-relaxed max-w-2xl">
-              Since 2010, Apex Auto has redefined the luxury automotive experience along Leng Kee Road with transparent SGD Nett pricing, certified 100-point inspections, and dedicated consultative client advisory.
+              Leng Kee Road&apos;s trusted luxury dealership since 2010. Clear SGD Nett pricing, certified 100-point inspections, and zero hidden fees.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -190,19 +175,19 @@ export default function AboutPage() {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-sm transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
-                <Building2 className="w-4 h-4 text-amber-400" />
+                <Building2 className="w-4 h-4 text-amber-600" />
                 <span>Visit Showroom</span>
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles%20and%20services."
+                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-sm transition-colors"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
-                <span>WhatsApp Concierge</span>
+                <span>WhatsApp Us</span>
               </a>
             </div>
           </div>
@@ -218,18 +203,18 @@ export default function AboutPage() {
                 500<span className="text-amber-500">+</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Vehicles Delivered
+                Cars Delivered
               </p>
-              <p className="text-xs text-zinc-400 mt-1">Verified prestige &amp; pre-owned</p>
+              <p className="text-xs text-zinc-400 mt-1">Certified luxury vehicles</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
                 15<span className="text-amber-500">+</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Years Heritage
+                Years Experience
               </p>
-              <p className="text-xs text-zinc-400 mt-1">Serving motorists since 2010</p>
+              <p className="text-xs text-zinc-400 mt-1">Trusted since 2010</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums flex items-center gap-1">
@@ -238,7 +223,7 @@ export default function AboutPage() {
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
                 Client Rating
               </p>
-              <p className="text-xs text-zinc-400 mt-1">350+ independent reviews</p>
+              <p className="text-xs text-zinc-400 mt-1">350+ verified reviews</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
@@ -247,7 +232,7 @@ export default function AboutPage() {
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
                 Showroom Hub
               </p>
-              <p className="text-xs text-zinc-400 mt-1">24 Leng Kee Road, Singapore</p>
+              <p className="text-xs text-zinc-400 mt-1">24 Leng Kee Road</p>
             </div>
           </div>
         </div>
@@ -258,13 +243,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Corporate Philosophy
+              Our Philosophy
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Guided by Integrity, Driven by Passion
+              Integrity First, Complete Transparency
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              We eliminate traditional dealership friction through radical price transparency, authenticated vehicle provenance, and enduring automotive stewardship.
+              No hidden markups, no sales pressure. Just certified luxury cars and straightforward pricing.
             </p>
           </div>
 
@@ -278,10 +263,10 @@ export default function AboutPage() {
                 Our Vision
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-                To be Singapore&apos;s definitive luxury automotive authority, where acquiring a prestigious motorcar is celebrated as a seamless, dignified experience characterized by honest advisory, complete pricing clarity, and genuine client care.
+                To be Singapore&apos;s most trusted luxury dealership through radical pricing clarity and client-first care.
               </p>
               <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
-                {['Accredited Dealership', 'Zero-Surprise Pricing', 'Lifelong Relationship'].map((pill) => (
+                {['Accredited Dealer', 'SGD Nett Pricing', 'Client-First'].map((pill) => (
                   <span
                     key={pill}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
@@ -301,10 +286,10 @@ export default function AboutPage() {
                 Our Mission
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-                To curate exceptional luxury motorcars backed by unbending 100-point inspection standards, complete COE depreciation transparency, and competitive bank financing partnerships that safeguard our clients&apos; investments.
+                To deliver certified prestige vehicles backed by strict 100-point inspections, clear COE depreciation, and preferred bank financing.
               </p>
               <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
-                {['100-Point Inspection', 'STA Grade-A Protocol', 'Preferred Bank Rates'].map((pill) => (
+                {['100-Point Inspected', 'Grade-A Standard', 'Preferred Bank Rates'].map((pill) => (
                   <span
                     key={pill}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
@@ -352,13 +337,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Inspection Standard
+              Quality Assurance
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Certified 100-Point Inspection Protocol
+              100-Point Certified Inspection
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Every vehicle in our collection undergoes an exhaustive 5-stage certification by certified master technicians before entering the showroom.
+              Every vehicle undergoes rigorous 5-stage certification by experienced technicians before entering our showroom.
             </p>
           </div>
 
@@ -397,7 +382,7 @@ export default function AboutPage() {
                     </p>
                   </div>
                   <div className="pt-3 border-t border-zinc-100 space-y-1.5">
-                    {phase.points.slice(0, 2).map((pt, pIdx) => (
+                    {phase.points.map((pt, pIdx) => (
                       <div key={pIdx} className="flex items-start gap-1.5 text-[11px] text-zinc-600">
                         <Check className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" />
                         <span className="line-clamp-1">{pt}</span>
@@ -409,26 +394,26 @@ export default function AboutPage() {
             })}
           </div>
 
-          {/* Warranty Banner */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-zinc-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+          {/* Warranty Banner (Warm Light Theme - No Black Background) */}
+          <div className="p-6 sm:p-8 rounded-2xl bg-amber-50/70 border border-amber-200/90 text-zinc-900 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
             <div className="flex items-start sm:items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0">
                 <Award className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-bold text-white">
-                  12 to 24 Months Showroom Warranty &amp; Accident-Free Guarantee
+                <h4 className="text-base sm:text-lg font-bold text-zinc-900">
+                  12 to 24 Months Warranty &amp; Accident-Free Guarantee
                 </h4>
-                <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-                  Every certified unit includes comprehensive warranty coverage for engine, transmission, and major drivetrain components. We guarantee 100% accident-free and flood-free provenance.
+                <p className="text-xs sm:text-sm text-zinc-600 mt-1 max-w-xl leading-relaxed">
+                  Comprehensive coverage for engine and gearbox. Guaranteed 100% accident-free and flood-free.
                 </p>
               </div>
             </div>
             <a
-              href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20details%20on%20the%20100-point%20inspection%20and%20warranty%20coverage"
+              href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20details%20on%20warranty%20and%20inspection"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all shrink-0"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all shadow-xs shrink-0"
             >
               <span>Inquire on Warranty</span>
               <ArrowRight className="w-4 h-4" />
@@ -442,13 +427,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Principal Showroom
+              Flagship Showroom
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
               Visit Our Flagship Showroom
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Experience our curated luxury automobile collection at our premier Leng Kee Road location.
+              Experience our curated luxury automobile collection at 24 Leng Kee Road.
             </p>
           </div>
 
@@ -459,14 +444,14 @@ export default function AboutPage() {
                   <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                   <span>Main Showroom</span>
                 </div>
-                <span className="text-xs font-medium text-zinc-400">South / Central Prime Belt</span>
+                <span className="text-xs font-medium text-zinc-400">Leng Kee Prime Belt</span>
               </div>
 
               <h3 className="font-bold text-zinc-900 text-xl sm:text-2xl">
                 Apex Auto Leng Kee Flagship
               </h3>
               <p className="text-xs text-amber-600 font-medium mt-1 mb-6">
-                Principal luxury vehicle gallery &amp; private VIP handover lounge
+                Principal luxury showroom &amp; VIP consultation lounge
               </p>
 
               <div className="space-y-4 text-sm text-zinc-600 border-t border-zinc-100 pt-6">
@@ -501,7 +486,7 @@ export default function AboutPage() {
                   href="https://maps.google.com/?q=24+Leng+Kee+Road+Singapore"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-semibold text-xs border border-zinc-200 transition-colors"
                 >
                   <MapPin className="w-3.5 h-3.5" />
                   <span>Open in Google Maps</span>
@@ -526,13 +511,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Financing Partnerships
+              Financing
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Preferential Financing &amp; Fast Approval
+              Bank Financing Partners
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Apex Auto collaborates directly with Singapore&apos;s leading banking institutions to secure bespoke interest rates and expedited 24-hour financing approvals.
+              Direct partnerships with Singapore&apos;s leading banks for competitive interest rates and 24-hour approval.
             </p>
           </div>
 
@@ -557,15 +542,19 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Final Call to Action Banner */}
-          <div className="rounded-3xl bg-zinc-900 text-white p-8 sm:p-12 text-center shadow-lg">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
-              Begin Your Prestige Ownership Journey
+          {/* Final Call to Action Banner (Light & Clean - No Black Background) */}
+          <div className="rounded-3xl bg-gradient-to-b from-white to-zinc-50 border border-zinc-200 p-8 sm:p-12 text-center shadow-xs">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 mb-3">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>Ready to Drive?</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight mb-2">
+              Find Your Next Prestige Automobile
             </h3>
-            <p className="text-sm text-zinc-400 max-w-xl mx-auto mb-8 leading-relaxed">
-              Explore our verified showroom inventory or reserve a private VIP consultation with our non-commissioned automotive advisors.
+            <p className="text-sm text-zinc-500 max-w-lg mx-auto mb-8 leading-relaxed">
+              Explore our verified showroom inventory or reserve a private VIP consultation with our automotive specialists.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3.5">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/inventory"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5"
@@ -575,11 +564,20 @@ export default function AboutPage() {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/15 transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
-                <Building2 className="w-4 h-4 text-amber-400" />
-                <span>Contact Showroom</span>
+                <Building2 className="w-4 h-4 text-amber-600" />
+                <span>Visit Showroom</span>
               </Link>
+              <a
+                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-sm transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <span>WhatsApp Us</span>
+              </a>
             </div>
           </div>
         </div>
