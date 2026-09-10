@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Car } from '@/types/car';
-import { MessageCircle, Send, CheckCircle2, Phone, Mail, User, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, Phone, User, AlertCircle } from 'lucide-react';
 
 interface CarInquiryFormProps {
   car: Car;
@@ -23,17 +23,17 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
     const newErrors: { fullName?: string; contact?: string; message?: string } = {};
 
     if (!fullName.trim() || fullName.trim().length < 2) {
-      newErrors.fullName = 'Nama lengkap wajib diisi (minimal 2 karakter)';
+      newErrors.fullName = 'Full name is required (min 2 characters)';
     }
 
     const contactClean = contact.trim();
     const phoneOrEmailRegex = /^(\+?[0-9\s\-()]{7,16}|[^\s@]+@[^\s@]+\.[^\s@]+)$/;
     if (!contactClean || !phoneOrEmailRegex.test(contactClean)) {
-      newErrors.contact = 'Nomor WhatsApp (+65...) atau format email tidak valid';
+      newErrors.contact = 'Enter a valid WhatsApp number (+65...) or email';
     }
 
     if (!message.trim() || message.trim().length < 5) {
-      newErrors.message = 'Pesan pertanyaan wajib diisi (minimal 5 karakter)';
+      newErrors.message = 'Message is required (min 5 characters)';
     }
 
     setErrors(newErrors);
@@ -46,7 +46,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
     if (!validate()) {
       setStatus('error');
-      setSubmissionError('Mohon perbaiki data formulir yang belum sesuai sebelum mengirim.');
+      setSubmissionError('Please correct the form fields before submitting.');
       return;
     }
 
@@ -67,7 +67,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Gagal mengirim formulir');
+        throw new Error(data.error || 'Failed to submit inquiry');
       }
 
       const generatedId = data.data?.id
@@ -77,53 +77,26 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
       setStatus('success');
     } catch (err: any) {
       setStatus('error');
-      setSubmissionError(err.message || 'Terjadi gangguan saat mengirim formulir. Silakan coba kembali.');
+      setSubmissionError(err.message || 'Something went wrong. Please try again.');
     }
   };
 
-  const waText = encodeURIComponent(
-    `Halo Apex Auto Singapore, saya tertarik dengan mobil ${car.brand} ${car.model} (${car.year}) seharga SGD $${car.price.toLocaleString('en-US')} (Ref: ${car.id}). Bisakah informasi ketersediaan unit dan jadwal test drive?`
-  );
-  const waUrl = `https://wa.me/6581234567?text=${waText}`;
-
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-      {/* WhatsApp Fast Channel */}
-      <div>
-        <div className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">
-          Respon Instan Showroom
-        </div>
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-sm shadow-lg shadow-emerald-900/30 transition-all hover:scale-[1.02]"
-        >
-          <MessageCircle className="w-5 h-5 fill-white/20" />
-          <span>Chat Sales via WhatsApp</span>
-        </a>
-      </div>
-
-      <div className="relative flex py-1 items-center">
-        <div className="flex-grow border-t border-slate-800"></div>
-        <span className="flex-shrink mx-3 text-xs text-slate-500 font-medium">atau kirim formulir</span>
-        <div className="flex-grow border-t border-slate-800"></div>
-      </div>
-
-      {/* Form Submission Notifications */}
+    <div className="space-y-5">
+      {/* Success State */}
       {status === 'success' ? (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3.5 animate-in fade-in">
-          <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-950">
-            <CheckCircle2 className="w-6 h-6" />
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center space-y-3">
+          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600">
+            <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 mb-2">
               Ref: {inquiryRef}
             </span>
-            <h3 className="font-bold text-white text-base">Pertanyaan Berhasil Dikirim!</h3>
+            <h3 className="font-semibold text-zinc-900 text-sm">Inquiry Submitted</h3>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Terima kasih, <strong className="text-white">{fullName}</strong>. Tim sales kami di Singapura akan segera menghubungi kontak <strong className="text-white">{contact}</strong> mengenai {car.brand} {car.model}.
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Thank you, <strong className="text-zinc-700">{fullName}</strong>. Our sales team will contact <strong className="text-zinc-700">{contact}</strong> regarding the {car.brand} {car.model}.
           </p>
           <button
             onClick={() => {
@@ -133,33 +106,32 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
               setErrors({});
               setSubmissionError(null);
             }}
-            className="text-xs text-amber-400 hover:text-amber-300 underline font-semibold pt-2"
+            className="text-xs text-zinc-500 hover:text-zinc-700 underline font-medium pt-1"
           >
-            Kirim Pertanyaan Lain
+            Submit another inquiry
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white">Formulir Kontak Showroom</h3>
+            <h3 className="text-sm font-semibold text-zinc-800">Send an Inquiry</h3>
             {status === 'submitting' && (
-              <span className="text-[11px] text-amber-400 animate-pulse font-medium">Mengirimkan data...</span>
+              <span className="text-[11px] text-zinc-400 animate-pulse font-medium">Submitting...</span>
             )}
           </div>
 
-          {/* Error Banner Notification */}
+          {/* Error Banner */}
           {status === 'error' && submissionError && (
-            <div className="bg-rose-500/15 border border-rose-500/40 rounded-xl p-3.5 flex items-start gap-3 text-rose-300 animate-in fade-in">
-              <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 flex items-start gap-2.5 text-rose-600">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <div className="flex-1 text-xs">
-                <p className="font-semibold text-rose-200">Gagal Mengirim Formulir</p>
-                <p className="text-[11px] text-rose-300/90 mt-0.5">{submissionError}</p>
+                <p className="font-medium">{submissionError}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setSubmissionError(null)}
-                className="text-slate-400 hover:text-white text-xs font-bold px-1"
-                aria-label="Tutup notifikasi error"
+                className="text-zinc-400 hover:text-zinc-600 text-xs font-bold px-1"
+                aria-label="Dismiss error"
               >
                 ✕
               </button>
@@ -168,11 +140,11 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Full Name */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
-              Nama Lengkap *
+            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+              Full Name
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <User className="w-4 h-4 text-zinc-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 id="inquiry-fullname"
                 type="text"
@@ -181,16 +153,16 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
                   setFullName(e.target.value);
                   if (errors.fullName) setErrors({ ...errors, fullName: undefined });
                 }}
-                placeholder="Contoh: Budi Santoso"
-                className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border text-xs text-white placeholder-slate-500 focus:outline-none transition-colors ${
+                placeholder="e.g. John Tan"
+                className={`w-full pl-9 pr-4 py-2.5 rounded-lg bg-white border text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 transition-all ${
                   errors.fullName
-                    ? 'border-rose-500 focus:border-rose-500'
-                    : 'border-slate-800 focus:border-amber-500'
+                    ? 'border-rose-300 focus:ring-rose-200'
+                    : 'border-zinc-200 focus:ring-zinc-200 focus:border-zinc-400'
                 }`}
               />
             </div>
             {errors.fullName && (
-              <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-rose-500 mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" /> {errors.fullName}
               </p>
             )}
@@ -198,11 +170,11 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Contact */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
-              Nomor WhatsApp / Email *
+            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+              WhatsApp / Email
             </label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Phone className="w-4 h-4 text-zinc-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 id="inquiry-contact"
                 type="text"
@@ -211,16 +183,16 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
                   setContact(e.target.value);
                   if (errors.contact) setErrors({ ...errors, contact: undefined });
                 }}
-                placeholder="+65 8123 4567 atau email@domain.com"
-                className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border text-xs text-white placeholder-slate-500 focus:outline-none transition-colors ${
+                placeholder="+65 8123 4567 or email@domain.com"
+                className={`w-full pl-9 pr-4 py-2.5 rounded-lg bg-white border text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 transition-all ${
                   errors.contact
-                    ? 'border-rose-500 focus:border-rose-500'
-                    : 'border-slate-800 focus:border-amber-500'
+                    ? 'border-rose-300 focus:ring-rose-200'
+                    : 'border-zinc-200 focus:ring-zinc-200 focus:border-zinc-400'
                 }`}
               />
             </div>
             {errors.contact && (
-              <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-rose-500 mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" /> {errors.contact}
               </p>
             )}
@@ -228,8 +200,8 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Message */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
-              Pesan atau Pertanyaan Anda *
+            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+              Your Message
             </label>
             <textarea
               id="inquiry-message"
@@ -239,14 +211,14 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
                 setMessage(e.target.value);
                 if (errors.message) setErrors({ ...errors, message: undefined });
               }}
-              className={`w-full p-3 rounded-xl bg-slate-950 border text-xs text-white placeholder-slate-500 focus:outline-none leading-relaxed transition-colors ${
+              className={`w-full p-3 rounded-lg bg-white border text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 leading-relaxed transition-all ${
                 errors.message
-                  ? 'border-rose-500 focus:border-rose-500'
-                  : 'border-slate-800 focus:border-amber-500'
+                  ? 'border-rose-300 focus:ring-rose-200'
+                  : 'border-zinc-200 focus:ring-zinc-200 focus:border-zinc-400'
               }`}
             />
             {errors.message && (
-              <p className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-rose-500 mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" /> {errors.message}
               </p>
             )}
@@ -256,10 +228,10 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
             id="inquiry-submit-btn"
             type="submit"
             disabled={status === 'submitting'}
-            className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>{status === 'submitting' ? 'Mengirimkan...' : 'Kirim Pertanyaan ke Sales'}</span>
+            <span>{status === 'submitting' ? 'Submitting...' : 'Send Inquiry'}</span>
           </button>
         </form>
       )}
