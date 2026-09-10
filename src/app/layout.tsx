@@ -9,19 +9,19 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Apex Auto Singapore — Premier Luxury & Pre-Owned Car Showroom',
+  title: 'Apex Auto — Premier Luxury & Pre-Owned Car Showroom',
   description:
-    'Explore Singapore’s finest luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details across Leng Kee, Ubi, and Sin Ming showrooms.',
+    'Explore our curated luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details across Leng Kee, Ubi, and Sin Ming showrooms.',
   keywords: [
-    'Singapore car showroom',
-    'used cars Singapore',
-    'luxury cars Singapore',
+    'luxury car showroom',
+    'certified pre-owned cars',
     'COE car dealer',
-    'Leng Kee cars',
-    'Apex Auto SG',
+    'Leng Kee showroom',
+    'Apex Auto',
+    'SGD Nett pricing',
   ],
   openGraph: {
-    title: 'Apex Auto Singapore — Premier Luxury & Pre-Owned Car Showroom',
+    title: 'Apex Auto — Premier Luxury & Pre-Owned Car Showroom',
     description:
       'Curated pre-owned prestige cars with transparent SGD Nett pricing and official showroom warranty.',
     type: 'website',

@@ -33,7 +33,7 @@ export function verifySessionToken(token: string | null | undefined): AuthValida
     return {
       isAuthenticated: false,
       user: null,
-      error: 'Token autentikasi tidak ditemukan',
+      error: 'Authentication token not found',
     };
   }
 
@@ -55,7 +55,7 @@ export function verifySessionToken(token: string | null | undefined): AuthValida
   return {
     isAuthenticated: false,
     user: null,
-    error: 'Token autentikasi tidak valid atau kedaluwarsa',
+    error: 'Authentication token is invalid or has expired',
   };
 }
 
@@ -80,7 +80,7 @@ export function getAuthSession(request: NextRequest): AuthValidationResult {
   return {
     isAuthenticated: false,
     user: null,
-    error: 'Sesi autentikasi diperlukan untuk mengakses rute panel kelola',
+    error: 'Authentication session required to access management portal routes',
   };
 }
 
@@ -99,7 +99,7 @@ export function requireAdminAuth(request: NextRequest): {
       response: NextResponse.json(
         {
           success: false,
-          error: session.error || 'Akses ditolak: Autentikasi sesi pemilik showroom diperlukan',
+          error: session.error || 'Access denied: Showroom principal authentication required',
           code: 'UNAUTHORIZED',
         },
         {

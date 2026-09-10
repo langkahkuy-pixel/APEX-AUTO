@@ -32,7 +32,7 @@ function PromoCard({
       <div className="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
         <a
           href={`https://wa.me/6581234567?text=${encodeURIComponent(
-            `Hello Apex Auto Singapore, I would like to claim: ${promo.title}`
+            `Hello Apex Auto, I would like to claim: ${promo.title}`
           )}`}
           target="_blank"
           rel="noopener noreferrer"

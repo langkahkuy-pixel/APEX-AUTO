@@ -17,10 +17,10 @@ import {
 
 const INITIAL_FILTER: FilterState = {
   search: '',
-  bodyType: 'Semua',
+  bodyType: 'All',
   priceRange: 'all',
   minYear: 0,
-  location: 'Semua Lokasi',
+  location: 'All Locations',
   sortBy: 'newest',
 };
 
@@ -44,7 +44,8 @@ export function CatalogSection() {
       }
 
       // Filter by body type
-      if (filters.bodyType !== 'Semua' && car.body_type !== filters.bodyType) {
+      const isAllBody = filters.bodyType === 'All' || filters.bodyType === 'Semua';
+      if (!isAllBody && car.body_type !== filters.bodyType) {
         return false;
       }
 
@@ -68,8 +69,9 @@ export function CatalogSection() {
       }
 
       // Filter by location
+      const isAllLoc = filters.location === 'All Locations' || filters.location === 'Semua Lokasi';
       if (
-        filters.location !== 'Semua Lokasi' &&
+        !isAllLoc &&
         car.location !== filters.location
       ) {
         return false;
@@ -91,12 +93,15 @@ export function CatalogSection() {
     });
   }, [filters]);
 
+  const isAllBodySelected = filters.bodyType === 'All' || filters.bodyType === 'Semua';
+  const isAllLocSelected = filters.location === 'All Locations' || filters.location === 'Semua Lokasi';
+
   const activeFilterCount =
     (filters.search.trim() ? 1 : 0) +
-    (filters.bodyType !== 'Semua' ? 1 : 0) +
+    (!isAllBodySelected ? 1 : 0) +
     (filters.priceRange !== 'all' ? 1 : 0) +
     (filters.minYear > 0 ? 1 : 0) +
-    (filters.location !== 'Semua Lokasi' ? 1 : 0);
+    (!isAllLocSelected ? 1 : 0);
 
   const hasActiveFilters = activeFilterCount > 0 || filters.sortBy !== 'newest';
 
@@ -112,7 +117,7 @@ export function CatalogSection() {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-amber-700 uppercase tracking-widest mb-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Singapore Showroom Inventory</span>
+              <span>Showroom Inventory</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Curated Car Catalog
@@ -210,12 +215,12 @@ export function CatalogSection() {
             </div>
             <div className="flex flex-wrap gap-2">
               {BODY_TYPES.map((type) => {
-                const isActive = filters.bodyType === type;
-                const count =
-                  type === 'Semua'
-                    ? MOCK_CARS.length
-                    : MOCK_CARS.filter((c) => c.body_type === type).length;
-                const displayLabel = type === 'Semua' ? 'All Models' : type;
+                const isAll = type === 'All' || type === 'Semua';
+                const isActive = isAll ? isAllBodySelected : filters.bodyType === type;
+                const count = isAll
+                  ? MOCK_CARS.length
+                  : MOCK_CARS.filter((c) => c.body_type === type).length;
+                const displayLabel = isAll ? 'All Models' : type;
 
                 return (
                   <button
@@ -302,7 +307,7 @@ export function CatalogSection() {
                 >
                   {SINGAPORE_LOCATIONS.map((loc) => (
                     <option key={loc} value={loc}>
-                      {loc === 'Semua Lokasi' ? 'All Showroom Hubs' : loc}
+                      {loc === 'All Locations' || loc === 'Semua Lokasi' ? 'All Showroom Hubs' : loc}
                     </option>
                   ))}
                 </select>
@@ -328,13 +333,13 @@ export function CatalogSection() {
                   </button>
                 </span>
               )}
-              {filters.bodyType !== 'Semua' && (
+              {!isAllBodySelected && (
                 <span id="chip-filter-body" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-sm">
                   <span>Body: {filters.bodyType}</span>
                   <button
                     id="remove-filter-body"
                     aria-label="Remove body filter"
-                    onClick={() => setFilters({ ...filters, bodyType: 'Semua' })}
+                    onClick={() => setFilters({ ...filters, bodyType: 'All' })}
                     className="hover:text-rose-600 hover:bg-slate-200 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
                     ×
@@ -363,10 +368,10 @@ export function CatalogSection() {
               )}
               {filters.minYear > 0 && (
                 <span id="chip-filter-year" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200 shadow-sm">
-                  <span>Tahun: {filters.minYear}+</span>
+                  <span>Year: {filters.minYear}+</span>
                   <button
                     id="remove-filter-year"
-                    aria-label="Hapus filter tahun"
+                    aria-label="Remove year filter"
                     onClick={() => setFilters({ ...filters, minYear: 0 })}
                     className="hover:text-rose-400 hover:bg-slate-700/80 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
@@ -374,13 +379,13 @@ export function CatalogSection() {
                   </button>
                 </span>
               )}
-              {filters.location !== 'Semua Lokasi' && (
+              {!isAllLocSelected && (
                 <span id="chip-filter-location" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200 shadow-sm">
-                  <span>Lokasi: {filters.location.split(',')[0]}</span>
+                  <span>Location: {filters.location.split(',')[0]}</span>
                   <button
                     id="remove-filter-location"
-                    aria-label="Hapus filter lokasi"
-                    onClick={() => setFilters({ ...filters, location: 'Semua Lokasi' })}
+                    aria-label="Remove location filter"
+                    onClick={() => setFilters({ ...filters, location: 'All Locations' })}
                     className="hover:text-rose-400 hover:bg-slate-700/80 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
                     ×
@@ -489,7 +494,7 @@ export function CatalogSection() {
                   No Vehicles Found for "{filters.search}"
                 </h3>
                 <p className="text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
-                  We could not find any vehicle matching this keyword in our active Singapore inventory.
+                  We could not find any vehicle matching this keyword in our active inventory.
                 </p>
 
                 {/* Helpful tips */}
@@ -498,7 +503,7 @@ export function CatalogSection() {
                   <ul className="list-disc list-inside space-y-1 text-slate-600">
                     <li>Double check the spelling of the brand or model (e.g. Mercedes, Porsche, BMW).</li>
                     <li>Try broader terms like <span className="font-semibold text-slate-900">SUV</span> or <span className="font-semibold text-slate-900">Sedan</span>.</li>
-                    <li>Specific dream car not in stock? Our Singapore sourcing team can acquire units from our dealer network.</li>
+                    <li>Specific dream car not in stock? Our specialized sourcing team can acquire units from our dealer network.</li>
                   </ul>
                 </div>
 
@@ -518,7 +523,7 @@ export function CatalogSection() {
                   </button>
                   <a
                     href={`https://wa.me/6581234567?text=${encodeURIComponent(
-                      `Hello Apex Auto Singapore, I am searching for "${filters.search}" in Singapore. Can your team help source this vehicle?`
+                      `Hello Apex Auto, I am searching for "${filters.search}". Can your team help source this vehicle?`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

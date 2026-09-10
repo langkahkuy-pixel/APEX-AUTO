@@ -120,32 +120,32 @@ function RevealSection({
 const INSPECTION_STEPS = [
   {
     num: '01',
-    title: 'Pemeriksaan Eksterior & Bodi',
-    desc: 'Inspeksi menyeluruh panel bodi, pengecatan, kaca, lampu, dan periksa riwayat tabrakan atau perbaikan bodi dengan alat pengukur ketebalan cat profesional.',
+    title: 'Exterior & Bodywork Inspection',
+    desc: 'Comprehensive panel inspection, paint thickness measurement, glass, lighting, and detailed structural check for prior collision or repair history.',
     icon: Search,
   },
   {
     num: '02',
-    title: 'Mesin & Drivetrain',
-    desc: 'Diagnosa komputer OBD-II lengkap, uji kompresi silinder, periksa kebocoran oli dan cairan, serta tes performa transmisi otomatis/manual.',
+    title: 'Engine & Drivetrain Diagnostics',
+    desc: 'Complete OBD-II computerized system diagnostic, cylinder compression test, fluid leak inspection, and transmission shift calibration analysis.',
     icon: Gauge,
   },
   {
     num: '03',
-    title: 'Interior & Elektronik',
-    desc: 'Inspeksi kondisi jok, dashboard, sistem infotainment, AC, sensor parkir, kamera 360°, dan seluruh fungsi elektronik kabin.',
+    title: 'Cabin & Electronics',
+    desc: 'Condition review of premium upholstery, dashboard electronics, infotainment display, climate control, parking sensors, and 360° camera array.',
     icon: Sparkles,
   },
   {
     num: '04',
-    title: 'Undercarriage & Safety',
-    desc: 'Pemeriksaan kaki-kaki, rem, suspensi, ban, riwayat banjir, serta verifikasi kelengkapan fitur keselamatan aktif dan pasif.',
+    title: 'Undercarriage & Safety Systems',
+    desc: 'Underbody evaluation of suspension arms, bushings, braking assemblies, tyre condition, flood check, and active safety sensor calibration.',
     icon: ShieldCheck,
   },
   {
     num: '05',
-    title: 'Dokumentasi & Sertifikasi',
-    desc: 'Verifikasi riwayat kepemilikan LTA, status COE, catatan servis resmi dealer, dan penerbitan Sertifikat Inspeksi Apex Auto.',
+    title: 'Documentation & Certification',
+    desc: 'Verification of LTA ownership records, COE validity and tenure, dealer service logs, and issuance of the official Apex Auto Certificate of Inspection.',
     icon: FileCheck2,
   },
 ];
@@ -154,7 +154,7 @@ const INSPECTION_STEPS = [
 const SHOWROOMS = [
   {
     name: 'Leng Kee Flagship Showroom',
-    role: 'Pusat pameran dan penjualan kendaraan mewah utama',
+    role: 'Principal luxury vehicle gallery & private delivery suite',
     address: '24 Leng Kee Road, Singapore 159096',
     hours: 'Mon–Sat: 09:00–19:00 • Sun: 10:00–18:00',
     phone: '+65 8123 4567',
@@ -165,7 +165,7 @@ const SHOWROOMS = [
   },
   {
     name: 'Ubi Car Hub',
-    role: 'Pusat inventaris kendaraan pre-owned pilihan',
+    role: 'Curated certified pre-owned showroom inventory',
     address: '10 Ubi Crescent, Ubi Techpark, Singapore 408564',
     hours: 'Mon–Sat: 09:30–18:30 • Sun: By Appointment',
     phone: '+65 8234 5678',
@@ -176,7 +176,7 @@ const SHOWROOMS = [
   },
   {
     name: 'Sin Ming Service & Delivery Hub',
-    role: 'Pusat servis berkala dan serah terima kendaraan',
+    role: 'Scheduled maintenance, technical inspection & handover centre',
     address: '20 Sin Ming Lane, Midview City, Singapore 573968',
     hours: 'Mon–Sat: 08:30–18:00 • Sun: Closed',
     phone: '+65 8345 6789',
@@ -189,9 +189,9 @@ const SHOWROOMS = [
 
 /* ───── Banking Partners ───── */
 const BANK_PARTNERS = [
-  { name: 'DBS Bank', desc: 'Car Financing mulai 1.88% p.a.' },
-  { name: 'OCBC Bank', desc: 'Flexi-Loan hingga 7 tahun tenor' },
-  { name: 'UOB Bank', desc: 'Green Vehicle Financing EV/Hybrid' },
+  { name: 'DBS Bank', desc: 'Auto Financing starting from 1.88% p.a.' },
+  { name: 'OCBC Bank', desc: 'Flexi-Loan schemes up to 7-year tenure' },
+  { name: 'UOB Bank', desc: 'Green Vehicle Financing for EV & Hybrid' },
 ];
 
 export default function AboutPage() {
@@ -213,7 +213,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 z-0">
           <Image
             src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2400&q=80"
-            alt="About Apex Auto Singapore"
+            alt="About Apex Auto"
             fill
             priority
             className="object-cover object-center"
@@ -230,31 +230,31 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             {/* Breadcrumb */}
             <nav className="animate-fade-up flex items-center gap-2 text-[11px] text-slate-500 mb-6">
-              <Link href="/" className="hover:text-amber-400 transition-colors">Beranda</Link>
+              <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-slate-300">Tentang Kami</span>
+              <span className="text-slate-300">About Us</span>
             </nav>
 
             {/* Badge */}
             <div className="animate-fade-up delay-100 mb-5">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] text-amber-400/90 font-medium tracking-wide">
                 <BadgeCheck className="w-3.5 h-3.5" />
-                Singapore Automotive Dealer Registry &bull; UEN: 202012345A
+                Licensed Motor Dealer &bull; UEN: 202012345A
               </div>
             </div>
 
             {/* Headline */}
             <h1 className="animate-fade-up delay-200 text-3xl sm:text-4xl lg:text-5xl xl:text-[3.4rem] font-black tracking-tight text-white leading-[1.12]">
-              Sejak 2010, Menjadi{' '}
-              <span className="text-gradient-gold">Standar Baru</span>{' '}
-              Showroom Otomotif Singapura
+              Since 2010, Setting the{' '}
+              <span className="text-gradient-gold">Benchmark</span>{' '}
+              for Luxury Automotive Showrooms
             </h1>
 
             {/* Description */}
             <p className="animate-fade-up delay-300 mt-5 text-base sm:text-lg text-slate-300/90 leading-relaxed max-w-2xl">
-              Apex Auto Singapore adalah showroom mobil mewah dan pre-owned terdaftar resmi yang berkomitmen pada{' '}
-              <strong className="text-white font-semibold">transparansi harga SGD Nett</strong>,{' '}
-              <strong className="text-white font-semibold">inspeksi 100 titik bersertifikasi</strong>, dan pelayanan premium sejak lebih dari satu dekade.
+              Apex Auto is a premier licensed luxury and certified pre-owned showroom committed to{' '}
+              <strong className="text-white font-semibold">transparent SGD Nett pricing</strong>,{' '}
+              <strong className="text-white font-semibold">certified 100-point inspections</strong>, and distinguished automotive advisory for over a decade.
             </p>
 
             {/* CTA */}
@@ -263,17 +263,17 @@ export default function AboutPage() {
                 href="/#katalog"
                 className="group inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-0.5 text-sm"
               >
-                Jelajahi Katalog
+                Explore Inventory
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Halo%20Apex%20Auto,%20saya%20ingin%20informasi%20tentang%20showroom"
+                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20more%20information%20about%20your%20showroom"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 glass hover:bg-slate-800/80 text-slate-200 font-semibold px-5 py-3 rounded-xl transition-all text-sm"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
-                Hubungi Kami
+                Contact Advisors
               </a>
             </div>
           </div>
@@ -287,10 +287,10 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-gold rounded-2xl px-6 py-7 sm:px-10 sm:py-8">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
-              <AnimatedStat value="500+" label="Unit Terjual Sejak 2020" delay={0} />
-              <AnimatedStat value="15" suffix=" th" label="Tahun Pengalaman" delay={100} />
-              <AnimatedStat value="4.9" suffix="★" label="Rating Google Reviews" delay={200} />
-              <AnimatedStat value="3" label="Lokasi di Singapura" delay={300} />
+              <AnimatedStat value="500+" label="Vehicles Delivered Since 2020" delay={0} />
+              <AnimatedStat value="15" suffix=" yrs" label="Showroom Heritage" delay={100} />
+              <AnimatedStat value="4.9" suffix="★" label="Google Reviews Rating" delay={200} />
+              <AnimatedStat value="3" label="Showroom Hubs" delay={300} />
             </div>
           </div>
         </div>
@@ -308,14 +308,14 @@ export default function AboutPage() {
             <div className="text-center mb-14 sm:mb-18">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] text-amber-400 font-medium tracking-wide mb-4">
                 <Target className="w-3.5 h-3.5" />
-                Filosofi Perusahaan
+                Corporate Philosophy
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-                Visi, Misi &amp;{' '}
+                Vision, Mission &amp;{' '}
                 <span className="text-gradient-gold">Core Values</span>
               </h2>
               <p className="text-sm text-slate-400 mt-3 max-w-2xl mx-auto leading-relaxed">
-                Setiap keputusan bisnis kami dibangun di atas tiga pilar utama yang menjadikan Apex Auto Singapore sebagai pilihan utama konsumen otomotif di kawasan Asia Tenggara.
+                Every business decision is grounded in our fundamental commitments that position Apex Auto as a premier destination for discerning motorists.
               </p>
             </div>
           </RevealSection>
@@ -328,9 +328,9 @@ export default function AboutPage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5">
                   <Eye className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Visi Kami</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Our Vision</h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  Menjadi <strong className="text-white">showroom otomotif paling terpercaya</strong> di Singapura — di mana setiap pembeli memperoleh kendaraan impian dengan harga yang transparan, kualitas yang terjamin, dan pengalaman membeli yang melampaui ekspektasi.
+                  To be the <strong className="text-white">most trusted luxury automotive showroom</strong> — where every client acquires their ideal prestige vehicle through honest transparency, verified provenance, and unparalleled hospitality.
                 </p>
               </div>
 
@@ -339,10 +339,10 @@ export default function AboutPage() {
                 <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-5">
                   <Target className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Misi Kami</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Our Mission</h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  Menyediakan kendaraan mewah dan pre-owned berkualitas tinggi dengan{' '}
-                  <strong className="text-white">standar inspeksi 100 titik</strong>, transparansi penuh atas estimasi depresiasi tahunan dan riwayat COE, serta kemitraan pembiayaan yang menguntungkan bersama bank-bank utama Singapura.
+                  Curate exceptional luxury and pre-owned motorcars with{' '}
+                  <strong className="text-white">stringent 100-point inspection standards</strong>, full transparency over annual depreciation and COE tenure, and competitive financing in partnership with premier banks.
                 </p>
               </div>
             </div>
@@ -354,26 +354,26 @@ export default function AboutPage() {
               {[
                 {
                   icon: Scale,
-                  title: 'Transparansi Harga Nett',
-                  desc: 'Seluruh harga tercantum dalam SGD Nett — tanpa biaya tersembunyi. Sudah mencakup COE residual dan GST 9% sesuai regulasi IRAS Singapura.',
+                  title: 'Transparent SGD Nett Pricing',
+                  desc: 'All vehicles quoted in SGD Nett — no hidden administrative surcharges. Comprehensive of residual COE and prevailing GST in full compliance with IRAS regulations.',
                   color: 'amber',
                 },
                 {
                   icon: FileCheck2,
-                  title: 'Integritas Riwayat Kendaraan',
-                  desc: 'Setiap unit disertai laporan riwayat kepemilikan LTA yang terverifikasi, estimasi depresiasi tahunan, dan catatan servis resmi dealer.',
+                  title: 'Verified Vehicle Provenance',
+                  desc: 'Every vehicle is accompanied by official LTA ownership verification, annual depreciation calculations, and authenticated agent service logs.',
                   color: 'emerald',
                 },
                 {
                   icon: HeartHandshake,
-                  title: 'Pelayanan Premium',
-                  desc: 'Tim sales konsultatif yang tidak memaksa — kami mendengarkan kebutuhan Anda dan memberikan rekomendasi berdasarkan anggaran serta gaya hidup.',
+                  title: 'Consultative Advisory',
+                  desc: 'Non-commissioned advisory approach — our specialists listen to your driving profile and recommend optimal models matched to your lifestyle and budget.',
                   color: 'blue',
                 },
                 {
                   icon: Gem,
-                  title: 'Standar Kualitas Unggul',
-                  desc: 'Hanya unit yang lolos inspeksi 100 titik oleh teknisi bersertifikat yang layak dipasarkan di showroom Apex Auto Singapore.',
+                  title: 'Uncompromised Standards',
+                  desc: 'Only motorcars passing our rigorous 100-point mechanical, structural, and cosmetic inspection qualify for presentation in our showrooms.',
                   color: 'purple',
                 },
               ].map((value) => {
@@ -416,12 +416,12 @@ export default function AboutPage() {
                 Pre-Owned Certification
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-                Inspeksi{' '}
-                <span className="text-gradient-gold">100 Titik</span>{' '}
-                Bersertifikasi
+                Certified{' '}
+                <span className="text-gradient-gold">100-Point</span>{' '}
+                Inspection
               </h2>
               <p className="text-sm text-slate-400 mt-3 max-w-2xl mx-auto leading-relaxed">
-                Setiap unit kendaraan yang memasuki inventaris Apex Auto wajib melewati proses sertifikasi ketat oleh teknisi ahli Singapura berpengalaman — menjamin kualitas yang tidak pernah dikompromikan.
+                Every vehicle entering the Apex Auto inventory undergoes an exhaustive certification process conducted by seasoned master technicians — ensuring uncompromised safety and performance.
               </p>
             </div>
           </RevealSection>
@@ -451,12 +451,12 @@ export default function AboutPage() {
                 <Award className="w-7 h-7" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-white text-base mb-1">Garansi Showroom 12–24 Bulan</h4>
+                <h4 className="font-bold text-white text-base mb-1">12–24 Month Showroom Warranty</h4>
                 <p className="text-sm text-slate-400 leading-relaxed">
-                  Setiap unit pre-owned yang lolos sertifikasi dilindungi oleh{' '}
-                  <strong className="text-white">garansi mesin dan transmisi selama 12 hingga 24 bulan</strong>{' '}
-                  — menjamin ketenangan pikiran Anda setelah pembelian. Kami jamin bahwa setiap unit{' '}
-                  <strong className="text-emerald-400">bebas dari kecelakaan berat dan bebas banjir</strong>.
+                  Every certified pre-owned vehicle is safeguarded with{' '}
+                  <strong className="text-white">12 to 24 months of warranty coverage for engine and transmission</strong>{' '}
+                  — guaranteeing total peace of mind post-delivery. We certify that every unit is{' '}
+                  <strong className="text-emerald-400">guaranteed accident-free and flood-free</strong>.
                 </p>
               </div>
             </div>
@@ -476,14 +476,14 @@ export default function AboutPage() {
             <div className="text-center mb-14">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] text-blue-400 font-medium tracking-wide mb-4">
                 <Building2 className="w-3.5 h-3.5" />
-                3 Lokasi Strategis
+                3 Strategic Hubs
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-                Jaringan Showroom &amp;{' '}
-                <span className="text-gradient-gold">Hub Layanan</span>
+                Showroom Network &amp;{' '}
+                <span className="text-gradient-gold">Service Hubs</span>
               </h2>
               <p className="text-sm text-slate-400 mt-3 max-w-2xl mx-auto leading-relaxed">
-                Berlokasi strategis di tiga titik utama Singapura, setiap hub kami dirancang untuk memberikan pengalaman otomotif premium yang komprehensif.
+                Conveniently located across major automotive belts, our facilities are equipped to deliver comprehensive sales and aftercare experiences.
               </p>
             </div>
           </RevealSection>
@@ -532,7 +532,7 @@ export default function AboutPage() {
                     {/* Actions */}
                     <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-800/50">
                       <a
-                        href={`https://wa.me/${showroom.phone.replace(/[^0-9]/g, '')}?text=Halo%20Apex%20Auto%20${encodeURIComponent(showroom.name)}`}
+                        href={`https://wa.me/${showroom.phone.replace(/[^0-9]/g, '')}?text=Hello%20Apex%20Auto%20${encodeURIComponent(showroom.name)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 font-semibold text-[11px] px-3 py-2 rounded-lg transition-all"
@@ -570,14 +570,14 @@ export default function AboutPage() {
             <div className="text-center mb-14">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] text-purple-400 font-medium tracking-wide mb-4">
                 <Landmark className="w-3.5 h-3.5" />
-                Kemitraan Strategis
+                Strategic Partnerships
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-                Pembiayaan &amp;{' '}
-                <span className="text-gradient-gold">Kepercayaan</span>
+                Financing &amp;{' '}
+                <span className="text-gradient-gold">Client Trust</span>
               </h2>
               <p className="text-sm text-slate-400 mt-3 max-w-2xl mx-auto leading-relaxed">
-                Apex Auto Singapore bermitra resmi dengan institusi perbankan terkemuka untuk menawarkan fasilitas kredit kendaraan dengan bunga kompetitif dan proses persetujuan yang cepat.
+                Apex Auto partners with prominent banking institutions to offer customized vehicle financing with preferential interest rates and expedited 24-hour loan approval.
               </p>
             </div>
           </RevealSection>
@@ -604,15 +604,15 @@ export default function AboutPage() {
           <RevealSection>
             <div className="glass-gold rounded-2xl p-6 sm:p-8">
               <div className="text-center mb-6">
-                <h3 className="text-lg font-bold text-white mb-1">Mengapa Pelanggan Mempercayai Kami</h3>
-                <p className="text-xs text-slate-400">Divalidasi oleh ratusan pembeli sejak 2010</p>
+                <h3 className="text-lg font-bold text-white mb-1">Why Discerning Clients Choose Apex Auto</h3>
+                <p className="text-xs text-slate-400">Validated by hundreds of prestige motorcar owners since 2010</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
                 {[
-                  { icon: ThumbsUp, value: '98%', label: 'Tingkat Kepuasan', color: 'text-emerald-400' },
-                  { icon: CalendarCheck, value: '48 Jam', label: 'Rata-Rata Serah Terima', color: 'text-blue-400' },
-                  { icon: CircleDollarSign, value: '1.88%', label: 'Bunga Kredit Terendah', color: 'text-amber-400' },
-                  { icon: Users, value: '12', label: 'Konsultan Berpengalaman', color: 'text-purple-400' },
+                  { icon: ThumbsUp, value: '98%', label: 'Client Satisfaction', color: 'text-emerald-400' },
+                  { icon: CalendarCheck, value: '48 Hrs', label: 'Average Handover Time', color: 'text-blue-400' },
+                  { icon: CircleDollarSign, value: '1.88%', label: 'Lowest Financing Rate', color: 'text-amber-400' },
+                  { icon: Users, value: '12', label: 'Senior Advisors', color: 'text-purple-400' },
                 ].map((item) => (
                   <div key={item.label} className="text-center">
                     <item.icon className={`w-6 h-6 ${item.color} mx-auto mb-2 opacity-80`} />
@@ -627,27 +627,27 @@ export default function AboutPage() {
           {/* Final CTA */}
           <RevealSection className="mt-12 text-center">
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-              Siap menemukan kendaraan impian Anda?
+              Ready to Discover Your Next Motorcar?
             </h3>
             <p className="text-sm text-slate-400 mb-6 max-w-lg mx-auto">
-              Jelajahi katalog kami atau hubungi tim konsultan untuk penjadwalan test drive dan konsultasi gratis.
+              Explore our current showroom inventory or speak directly with an advisor for viewing appointments and trade-in valuations.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/#katalog"
                 className="group inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-7 py-3.5 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-0.5 text-sm"
               >
-                Jelajahi Katalog Mobil
+                Explore Inventory
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Halo%20Apex%20Auto,%20saya%20ingin%20jadwalkan%20kunjungan%20showroom"
+                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20to%20schedule%20a%20showroom%20visit"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/20 text-emerald-400 font-semibold text-sm px-6 py-3.5 rounded-xl transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
-                Jadwalkan Kunjungan
+                Schedule Private Viewing
               </a>
             </div>
           </RevealSection>

@@ -66,8 +66,8 @@ const INITIAL_INQUIRIES: InquiryItem[] = [
     phone: '+65 9123 4567',
     email: 'kenjiro@sgmail.com',
     carName: 'Porsche 911 Carrera S (2022)',
-    message: 'Saya berminat test drive di cabang Leng Kee akhir pekan ini. Apakah COE ready?',
-    timeAgo: '15 menit lalu',
+    message: 'I would like to arrange a test drive at your Leng Kee showroom this weekend. Are the COE papers ready for viewing?',
+    timeAgo: '15 mins ago',
     status: 'new',
   },
   {
@@ -76,8 +76,8 @@ const INITIAL_INQUIRIES: InquiryItem[] = [
     phone: '+65 8234 5678',
     email: 'amanda.w@bizsg.com',
     carName: 'Mercedes-Benz E200 Avantgarde (2023)',
-    message: 'Apakah ada program DP promo 0% atau subsidi bunga loan untuk unit ini?',
-    timeAgo: '1 jam lalu',
+    message: 'Are there promotional financing schemes or preferential interest subsidies available for this unit?',
+    timeAgo: '1 hour ago',
     status: 'new',
   },
   {
@@ -86,8 +86,8 @@ const INITIAL_INQUIRIES: InquiryItem[] = [
     phone: '+65 9876 5432',
     email: 'davidlim@techgroup.sg',
     carName: 'BMW M4 Competition Coupe (2022)',
-    message: 'Bisa minta copy logbook inspeksi STA / Vicom grade?',
-    timeAgo: '3 jam lalu',
+    message: 'Could you share a copy of the STA Grade A 160-point inspection logbook?',
+    timeAgo: '3 hours ago',
     status: 'contacted',
   },
   {
@@ -96,8 +96,8 @@ const INITIAL_INQUIRIES: InquiryItem[] = [
     phone: '+65 8765 4321',
     email: 'siti.rahma@exportcar.id',
     carName: 'Toyota Vellfire 2.5 ZG Hybrid (2023)',
-    message: 'Apakah bisa dibantu ekspor dan pengurusan dokumen pengiriman ke Batam/Jakarta?',
-    timeAgo: '1 hari lalu',
+    message: 'Can you assist with regional handover and cross-border transport documentation?',
+    timeAgo: '1 day ago',
     status: 'scheduled',
   },
 ];
@@ -110,9 +110,9 @@ const SHOWROOM_BRANCHES = [
     zone: 'South / Central Prime Hub',
     phone: '+65 6789 0123',
     whatsapp: '+65 8123 4567',
-    hours: 'Senin - Minggu: 09:00 - 19:00 SGT',
+    hours: 'Mon - Sun: 09:00 - 19:00 SGT',
     unitsCount: 14,
-    status: 'Operasional Penuh',
+    status: 'Fully Operational',
   },
   {
     id: 'branch-2',
@@ -121,9 +121,9 @@ const SHOWROOM_BRANCHES = [
     zone: 'East Automotive Hub',
     phone: '+65 6890 1234',
     whatsapp: '+65 8234 5678',
-    hours: 'Senin - Sabtu: 09:30 - 18:30 SGT',
+    hours: 'Mon - Sat: 09:30 - 18:30 SGT',
     unitsCount: 9,
-    status: 'Operasional Penuh',
+    status: 'Fully Operational',
   },
   {
     id: 'branch-3',
@@ -132,9 +132,9 @@ const SHOWROOM_BRANCHES = [
     zone: 'North-Central Prestige Hub',
     phone: '+65 6901 2345',
     whatsapp: '+65 8345 6789',
-    hours: 'Senin - Minggu: 10:00 - 18:00 SGT',
+    hours: 'Mon - Sun: 10:00 - 18:00 SGT',
     unitsCount: 6,
-    status: 'Operasional Penuh',
+    status: 'Fully Operational',
   },
 ];
 
@@ -201,12 +201,12 @@ function AdminDashboardContent() {
   const handleSaveCar = (savedCar: CarType) => {
     if (formModalMode === 'create') {
       setCarsList((prev) => [savedCar, ...prev]);
-      setToastNotice(`Unit baru "${savedCar.brand} ${savedCar.model}" berhasil ditambahkan ke inventaris.`);
+      setToastNotice(`New vehicle "${savedCar.brand} ${savedCar.model}" added to inventory.`);
     } else {
       setCarsList((prev) =>
         prev.map((c) => (c.id === savedCar.id ? savedCar : c))
       );
-      setToastNotice(`Data unit "${savedCar.brand} ${savedCar.model}" berhasil diperbarui.`);
+      setToastNotice(`Vehicle details for "${savedCar.brand} ${savedCar.model}" updated.`);
     }
     setTimeout(() => setToastNotice(null), 4000);
   };
@@ -215,7 +215,7 @@ function AdminDashboardContent() {
     setCarsList((prev) =>
       prev.map((c) => (c.id === carId ? { ...c, status: newStatus } : c))
     );
-    setToastNotice(`Status unit berhasil diubah menjadi ${newStatus.toUpperCase()}`);
+    setToastNotice(`Vehicle status updated to ${newStatus.toUpperCase()}`);
     setTimeout(() => setToastNotice(null), 3000);
   };
 
@@ -240,19 +240,19 @@ function AdminDashboardContent() {
   const handleSavePromo = (savedPromo: PromoItem) => {
     if (promoModalMode === 'create') {
       setPromosList((prev) => [savedPromo, ...prev]);
-      setToastNotice(`Program promo "${savedPromo.title}" berhasil ditambahkan.`);
+      setToastNotice(`Promotional campaign "${savedPromo.title}" added.`);
     } else {
       setPromosList((prev) =>
         prev.map((p) => (p.id === savedPromo.id ? savedPromo : p))
       );
-      setToastNotice(`Program promo "${savedPromo.title}" berhasil diperbarui.`);
+      setToastNotice(`Promotional campaign "${savedPromo.title}" updated.`);
     }
     setTimeout(() => setToastNotice(null), 4000);
   };
 
   const handleDeletePromo = (promoId: string) => {
     setPromosList((prev) => prev.filter((p) => p.id !== promoId));
-    setToastNotice('Program promo berhasil dihapus dari sistem.');
+    setToastNotice('Promotional campaign removed from the system.');
     setTimeout(() => setToastNotice(null), 3000);
   };
 
@@ -260,7 +260,7 @@ function AdminDashboardContent() {
     setInquiriesList((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
     );
-    setToastNotice(`Status inquiry berhasil diperbarui menjadi ${newStatus.toUpperCase()}`);
+    setToastNotice(`Inquiry status updated to ${newStatus.toUpperCase()}`);
     setTimeout(() => setToastNotice(null), 3000);
   };
 
@@ -281,7 +281,7 @@ function AdminDashboardContent() {
                     MANAGEMENT
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400">Portal Kelola Showroom Singapura</div>
+                <div className="text-[10px] text-slate-400">Luxury Showroom Management Portal</div>
               </div>
             </Link>
           </div>
@@ -300,7 +300,7 @@ function AdminDashboardContent() {
               target="_blank"
               className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 transition-colors"
             >
-              <span>Lihat Showroom</span>
+              <span>View Showroom</span>
               <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
             </Link>
 
@@ -310,7 +310,7 @@ function AdminDashboardContent() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-semibold border border-rose-500/30 transition-all cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Keluar</span>
+              <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
         </div>
@@ -329,7 +329,7 @@ function AdminDashboardContent() {
             }`}
           >
             <TrendingUp className="w-4 h-4" />
-            <span>Ringkasan Dashboard</span>
+            <span>Dashboard Overview</span>
           </button>
 
           <button
@@ -342,7 +342,7 @@ function AdminDashboardContent() {
             }`}
           >
             <Car className="w-4 h-4" />
-            <span>Kelola Mobil & COE</span>
+            <span>Vehicles & COE</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 activeTab === 'inventory' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
@@ -362,7 +362,7 @@ function AdminDashboardContent() {
             }`}
           >
             <Tag className="w-4 h-4" />
-            <span>Promo & Diskon</span>
+            <span>Privileges & Promos</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 activeTab === 'promos' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
@@ -382,7 +382,7 @@ function AdminDashboardContent() {
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Pesan & Inquiry</span>
+            <span>Client Inquiries</span>
             {newInquiriesCount > 0 && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
@@ -391,7 +391,7 @@ function AdminDashboardContent() {
                     : 'bg-rose-500 text-white animate-pulse'
                 }`}
               >
-                {newInquiriesCount} baru
+                {newInquiriesCount} new
               </span>
             )}
           </button>
@@ -406,13 +406,13 @@ function AdminDashboardContent() {
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>Cabang Showroom</span>
+            <span>Showroom Hubs</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 activeTab === 'branches' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
               }`}
             >
-              3 Hub
+              3 Hubs
             </span>
           </button>
         </div>
@@ -430,13 +430,13 @@ function AdminDashboardContent() {
               <div className="max-w-2xl space-y-2 relative z-10">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Ikhtisar Bisnis & Operasional Showroom</span>
+                  <span>Business & Operations Overview</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                  Panel Kelola Showroom Apex Auto SG
+                  Apex Auto Showroom Command Centre
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Selamat datang, <strong className="text-white">{user?.name || 'Owner'}</strong>. Seluruh data unit Singapura, masa berlaku COE, status lelang, dan inquiry calon pembeli disinkronkan secara aman.
+                  Welcome back, <strong className="text-white">{user?.name || 'Owner'}</strong>. Showroom inventory, COE validity periods, vehicle inspection records, and client inquiries are synchronized securely.
                 </p>
               </div>
             </div>
@@ -445,53 +445,53 @@ function AdminDashboardContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Total Unit Inventaris</span>
+                  <span className="text-xs font-medium">Total Inventory Units</span>
                   <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                     <Car className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">{totalCars} Unit</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">{totalCars} Units</div>
                 <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3 h-3" /> {availableCars} unit siap inspeksi & serah terima
+                  <CheckCircle2 className="w-3 h-3" /> {availableCars} units ready for viewing & delivery
                 </div>
               </div>
 
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Total Valuasi Showroom</span>
+                  <span className="text-xs font-medium">Total Showroom Valuation</span>
                   <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                 </div>
                 <div className="text-2xl sm:text-3xl font-extrabold text-white">
-                  S${(totalValuationSGD / 1000000).toFixed(2)} Juta
+                  S${(totalValuationSGD / 1000000).toFixed(2)}M
                 </div>
                 <div className="text-[11px] text-slate-400 font-medium">
-                  SGD Nett di 3 Hub Singapura
+                  SGD Nett across 3 Showroom Hubs
                 </div>
               </div>
 
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Inquiry Calon Pembeli</span>
+                  <span className="text-xs font-medium">Client Inquiries</span>
                   <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">{inquiriesList.length} Pesan</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">{inquiriesList.length} Inquiries</div>
                 <div className="text-[11px] text-amber-400 flex items-center gap-1 font-medium">
-                  <Clock className="w-3 h-3" /> {newInquiriesCount} pesan perlu dihubungi
+                  <Clock className="w-3 h-3" /> {newInquiriesCount} leads pending follow-up
                 </div>
               </div>
 
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Cabang Showroom Aktif</span>
+                  <span className="text-xs font-medium">Active Showroom Hubs</span>
                   <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
                     <Building2 className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">3 Hub</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">3 Hubs</div>
                 <div className="text-[11px] text-slate-400">Leng Kee, Ubi, Sin Ming</div>
               </div>
             </div>
@@ -502,14 +502,14 @@ function AdminDashboardContent() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
                     <Clock className="w-4 h-4 text-amber-400" />
-                    Inquiry Masuk Terbaru
+                    Recent Inquiries
                   </h3>
                   <button
                     type="button"
                     onClick={() => handleTabChange('inquiries')}
-                    className="text-xs text-amber-400 hover:text-amber-300 font-semibold"
+                    className="text-xs text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
                   >
-                    Lihat Semua ({inquiriesList.length}) →
+                    View All ({inquiriesList.length}) →
                   </button>
                 </div>
                 <div className="space-y-3">
@@ -538,14 +538,14 @@ function AdminDashboardContent() {
                         <p className="text-[11px] text-slate-400 line-clamp-1">{inq.message}</p>
                       </div>
                       <a
-                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Halo%20${encodeURIComponent(inq.customerName)},%20kami%20dari%20Apex%20Auto%20Singapore%20menindaklanjuti%20inquiry%20unit%20${encodeURIComponent(inq.carName)}`}
+                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(inq.customerName)},%20this%20is%20Apex%20Auto%20following%20up%20on%20your%20inquiry%20regarding%20the%20${encodeURIComponent(inq.carName)}.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => handleInquiryStatusChange(inq.id, 'contacted')}
-                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap"
+                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap cursor-pointer"
                       >
                         <Send className="w-3 h-3" />
-                        <span>Balas WhatsApp</span>
+                        <span>Reply via WhatsApp</span>
                       </a>
                     </div>
                   ))}
@@ -557,37 +557,37 @@ function AdminDashboardContent() {
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    Status Keamanan & Sistem
+                    System & Operational Integrity
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Seluruh koneksi database dan sinkronisasi katalog berjalan stabil.
+                    All database services and inventory synchronization channels are running normally.
                   </p>
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Database PostgreSQL:</span>
-                    <span className="text-emerald-400 font-bold">Terhubung & Siap</span>
+                    <span className="text-slate-400">PostgreSQL Database:</span>
+                    <span className="text-emerald-400 font-bold">Connected & Ready</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Sertifikasi Inspeksi STA:</span>
-                    <span className="text-white font-medium">100% Lolos Grade A</span>
+                    <span className="text-slate-400">STA Inspection Status:</span>
+                    <span className="text-white font-medium">100% Grade A Pass</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Masa Garansi Transmisi:</span>
-                    <span className="text-amber-400 font-medium">12 Bulan Apex Care</span>
+                    <span className="text-slate-400">Powertrain Warranty:</span>
+                    <span className="text-amber-400 font-medium">12 Months Apex Care</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400">Mata Uang Transaksi:</span>
-                    <span className="text-white font-mono font-bold">Singapore Dollar (SGD)</span>
+                    <span className="text-slate-400">Settlement Currency:</span>
+                    <span className="text-white font-mono font-bold">Singapore Dollar (SGD Nett)</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleTabChange('inventory')}
-                  className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition-all"
+                  className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Car className="w-4 h-4" />
-                  <span>Kelola Inventaris Mobil</span>
+                  <span>Manage Showroom Inventory</span>
                 </button>
               </div>
             </div>
@@ -602,9 +602,9 @@ function AdminDashboardContent() {
             {/* Action Bar */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Inventaris Unit Showroom Singapura</h2>
+                <h2 className="text-xl font-bold text-white">Showroom Vehicle Inventory</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Kelola {totalCars} unit mobil aktif, sertifikasi COE, dan penyesuaian harga.
+                  Manage {totalCars} active vehicles, COE certifications, and pricing.
                 </p>
               </div>
 
@@ -615,7 +615,7 @@ function AdminDashboardContent() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari merk, model, lokasi..."
+                    placeholder="Search make, model, hub..."
                     className="pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors w-56 sm:w-64"
                   />
                 </div>
@@ -625,10 +625,10 @@ function AdminDashboardContent() {
                   onChange={(e) => setStatusFilter(e.target.value as any)}
                   className="py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
                 >
-                  <option value="all">Semua Status</option>
-                  <option value="available">Tersedia (Ready)</option>
-                  <option value="reserved">Dipesan (Reserved)</option>
-                  <option value="sold">Terjual (Sold)</option>
+                  <option value="all">All Statuses</option>
+                  <option value="available">Available (Ready)</option>
+                  <option value="reserved">Reserved</option>
+                  <option value="sold">Sold (Closed)</option>
                 </select>
 
                 <button
@@ -637,7 +637,7 @@ function AdminDashboardContent() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Tambah Unit Mobil</span>
+                  <span>Add New Vehicle</span>
                 </button>
               </div>
             </div>
@@ -665,19 +665,19 @@ function AdminDashboardContent() {
                 <table className="w-full text-left text-xs text-slate-300">
                   <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
                     <tr>
-                      <th className="py-3.5 px-4 font-semibold">Unit Mobil</th>
-                      <th className="py-3.5 px-4 font-semibold">Tahun / CC</th>
-                      <th className="py-3.5 px-4 font-semibold">Harga (SGD)</th>
-                      <th className="py-3.5 px-4 font-semibold">Masa Berlaku COE</th>
-                      <th className="py-3.5 px-4 font-semibold">Hub Lokasi</th>
-                      <th className="py-3.5 px-4 font-semibold">Status Ketersediaan</th>
-                      <th className="py-3.5 px-4 font-semibold text-right">Aksi Kelola</th>
+                      <th className="py-3.5 px-4 font-semibold">Vehicle</th>
+                      <th className="py-3.5 px-4 font-semibold">Year / Capacity</th>
+                      <th className="py-3.5 px-4 font-semibold">Price (SGD Nett)</th>
+                      <th className="py-3.5 px-4 font-semibold">COE Expiry</th>
+                      <th className="py-3.5 px-4 font-semibold">Showroom Hub</th>
+                      <th className="py-3.5 px-4 font-semibold">Availability</th>
+                      <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-medium">
                     {filteredCars.length > 0 ? (
                       filteredCars.map((car) => (
-                        <tr key={car.id} className="hover:bg-slate-850/50 transition-colors">
+                        <tr key={car.id} className="hover:bg-slate-855/50 transition-colors">
                           <td className="py-3.5 px-4 text-white font-bold">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-8 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-slate-800">
@@ -707,14 +707,14 @@ function AdminDashboardContent() {
                             <div>S${car.price.toLocaleString('en-US')}</div>
                             {car.depreciation_sgd && (
                               <div className="text-[10px] text-slate-400 font-normal">
-                                Depr: S${car.depreciation_sgd.toLocaleString('en-US')}/thn
+                                Depr: S${car.depreciation_sgd.toLocaleString('en-US')}/yr
                               </div>
                             )}
                           </td>
                           <td className="py-3.5 px-4 text-slate-300">
                             <div className="inline-flex items-center gap-1 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-[11px]">
                               <BadgeCheck className="w-3 h-3 text-amber-400" />
-                              <span>{car.coe_expiry || '10 Tahun COE'}</span>
+                              <span>{car.coe_expiry || '10-Year COE'}</span>
                             </div>
                           </td>
                           <td className="py-3.5 px-4 text-slate-400">{car.location}</td>
@@ -732,7 +732,7 @@ function AdminDashboardContent() {
                                 type="button"
                                 onClick={() => handleOpenEditCar(car)}
                                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
-                                title="Edit data unit mobil"
+                                title="Edit vehicle details"
                               >
                                 <Pencil className="w-3 h-3" />
                                 <span>Edit</span>
@@ -742,7 +742,7 @@ function AdminDashboardContent() {
                                 target="_blank"
                                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
                               >
-                                <span>Detail</span>
+                                <span>View</span>
                                 <ArrowUpRight className="w-3 h-3" />
                               </Link>
                             </div>
@@ -752,7 +752,7 @@ function AdminDashboardContent() {
                     ) : (
                       <tr>
                         <td colSpan={7} className="text-center py-8 text-slate-500 text-xs">
-                          Tidak ada unit mobil yang sesuai dengan kata kunci pencarian.
+                          No vehicles matching your search criteria were found.
                         </td>
                       </tr>
                     )}
@@ -770,9 +770,9 @@ function AdminDashboardContent() {
           <div className="space-y-6 animate-in fade-in">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Program Promo & Voucher Showroom</h2>
+                <h2 className="text-xl font-bold text-white">Showroom Privileges & Promotional Campaigns</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Kelola banner promosi aktif yang tampil di beranda dan syarat & ketentuan pembeli.
+                  Manage active promotional campaigns displayed on the homepage, including terms & conditions.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -782,7 +782,7 @@ function AdminDashboardContent() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Buat Promo Baru</span>
+                  <span>Create Campaign</span>
                 </button>
                 <Link
                   href="/#promo-section"
@@ -790,7 +790,7 @@ function AdminDashboardContent() {
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition-all"
                 >
                   <Eye className="w-3.5 h-3.5" />
-                  <span>Lihat di Beranda</span>
+                  <span>View on Homepage</span>
                 </Link>
               </div>
             </div>
@@ -807,7 +807,7 @@ function AdminDashboardContent() {
                         {promo.badge}
                       </span>
                       <span className="text-[11px] text-slate-400 font-mono">
-                        s/d {promo.valid_until}
+                        Valid till {promo.valid_until}
                       </span>
                     </div>
 
@@ -816,7 +816,7 @@ function AdminDashboardContent() {
 
                     <div className="space-y-1.5 pt-2">
                       <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        Benefit Termasuk:
+                        Included Privileges:
                       </div>
                       <ul className="text-xs text-slate-300 space-y-1">
                         {promo.benefits.map((b, i) => (
@@ -833,11 +833,11 @@ function AdminDashboardContent() {
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Status: Aktif
+                        Status: Active
                       </span>
                       {promo.discount_sgd && promo.discount_sgd > 0 && (
                         <span className="text-amber-400 font-bold font-mono">
-                          Hemat S${promo.discount_sgd.toLocaleString('en-US')}
+                          Save S${promo.discount_sgd.toLocaleString('en-US')}
                         </span>
                       )}
                     </div>
@@ -849,7 +849,7 @@ function AdminDashboardContent() {
                         className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
                       >
                         <Pencil className="w-3 h-3" />
-                        <span>Ubah</span>
+                        <span>Edit</span>
                       </button>
                       <button
                         type="button"
@@ -857,7 +857,7 @@ function AdminDashboardContent() {
                         className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold flex items-center gap-1 border border-rose-500/30 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3 h-3" />
-                        <span>Hapus</span>
+                        <span>Delete</span>
                       </button>
                     </div>
                   </div>
@@ -886,14 +886,14 @@ function AdminDashboardContent() {
           <div className="space-y-6 animate-in fade-in">
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Hub Showroom Singapura & PIC Sales</h2>
+                <h2 className="text-xl font-bold text-white">Showroom Hubs & Client Concierge</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Daftar cabang operasional resmi Apex Auto Singapore untuk inspeksi dan serah terima kendaraan.
+                  Official Apex Auto showroom branches for private viewings, technical inspection, and delivery handovers.
                 </p>
               </div>
               <div className="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Semua Cabang Aktif</span>
+                <span>All Hubs Operational</span>
               </div>
             </div>
 
@@ -932,17 +932,17 @@ function AdminDashboardContent() {
 
                   <div className="pt-4 border-t border-slate-800 space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-slate-400">Unit Terpajang:</span>
-                      <span className="text-white font-bold">{branch.unitsCount} Mobil</span>
+                      <span className="text-slate-400">Showroom Display Units:</span>
+                      <span className="text-white font-bold">{branch.unitsCount} Vehicles</span>
                     </div>
                     <a
-                      href={`https://wa.me/${branch.whatsapp.replace(/[^0-9]/g, '')}?text=Halo%20PIC%20Sales%20${encodeURIComponent(branch.name)}`}
+                      href={`https://wa.me/${branch.whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20Client%20Concierge%20at%20${encodeURIComponent(branch.name)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                      className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Hubungi PIC Cabang</span>
+                      <span>Contact Hub Concierge</span>
                     </a>
                   </div>
                 </div>
@@ -987,9 +987,9 @@ function AdminDashboardContent() {
             </div>
 
             <div className="text-center space-y-1.5">
-              <h3 className="text-lg font-bold text-white">Keluar dari Portal?</h3>
+              <h3 className="text-lg font-bold text-white">Sign out of Portal?</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Sesi autentikasi Anda saat ini akan diakhiri dan Anda akan dikembalikan ke halaman login.
+                Your current session will end and you will be returned to the login portal.
               </p>
             </div>
 
@@ -999,7 +999,7 @@ function AdminDashboardContent() {
                 onClick={() => setShowLogoutConfirm(false)}
                 className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -1009,7 +1009,7 @@ function AdminDashboardContent() {
                 }}
                 className="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-900/30 transition-all cursor-pointer"
               >
-                Ya, Keluar
+                Yes, Sign Out
               </button>
             </div>
           </div>
@@ -1025,7 +1025,7 @@ export default function AdminDashboardPage() {
       <Suspense
         fallback={
           <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center text-xs">
-            Memuat Panel Manajemen Showroom...
+            Loading Showroom Management Portal...
           </div>
         }
       >

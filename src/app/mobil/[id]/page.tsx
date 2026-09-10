@@ -42,13 +42,13 @@ export async function generateMetadata({
 
   if (!car) {
     return {
-      title: 'Mobil Tidak Ditemukan — Apex Auto Singapore',
+      title: 'Vehicle Not Found — Apex Auto',
     };
   }
 
   return {
-    title: `${car.brand} ${car.model} (${car.year}) — SGD $${car.price.toLocaleString('en-US')} | Apex Auto SG`,
-    description: `Spesifikasi lengkap, foto galeri, dan harga SGD Nett untuk ${car.brand} ${car.model} (${car.year}). Kondisi showroom terawat dengan sertifikasi inspeksi LTA resmi.`,
+    title: `${car.brand} ${car.model} (${car.year}) — SGD $${car.price.toLocaleString('en-US')} | Apex Auto`,
+    description: `Comprehensive technical specifications, photo gallery, and transparent SGD Nett pricing for the ${car.brand} ${car.model} (${car.year}). Certified showroom condition with verified COE details.`,
   };
 }
 
@@ -61,7 +61,7 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
   }
 
   const waText = encodeURIComponent(
-    `Halo Apex Auto Singapore, saya tertarik dengan mobil ${car.brand} ${car.model} (${car.year}) seharga SGD $${car.price.toLocaleString('en-US')} (Ref: ${car.id}). Bisakah informasi ketersediaan unit dan jadwal test drive?`
+    `Hello Apex Auto, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} (Ref: ${car.id}). Could you provide unit availability details and arrange a test drive?`
   );
   const waUrl = `https://wa.me/6581234567?text=${waText}`;
 

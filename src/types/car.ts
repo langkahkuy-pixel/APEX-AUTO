@@ -1,6 +1,7 @@
 export type CarStatus = 'available' | 'reserved' | 'sold';
 
 export type BodyType =
+  | 'All'
   | 'Semua'
   | 'Sedan'
   | 'SUV'

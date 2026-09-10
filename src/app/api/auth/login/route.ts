@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email wajib diisi',
+          error: 'Email is required',
         },
         { status: 400 }
       );
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Kata sandi wajib diisi',
+          error: 'Password is required',
         },
         { status: 400 }
       );
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email atau kata sandi tidak cocok. Gunakan akun demo showroom.',
+          error: 'Invalid email or password. Please use the showroom demo credentials.',
         },
         { status: 401 }
       );
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         success: true,
-        message: 'Login berhasil, sesi autentikasi dibuat',
+        message: 'Login successful, authentication session established',
         user: authUser,
         token: sessionToken,
         expiresAt,
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Terjadi kesalahan sistem saat memproses login',
+        error: 'An internal system error occurred while processing login',
       },
       { status: 500 }
     );

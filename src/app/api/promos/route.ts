@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by category if requested
-    if (categoryParam && categoryParam !== 'Semua') {
+    if (categoryParam && categoryParam !== 'Semua' && categoryParam !== 'All') {
       promoList = promoList.filter((p) => {
         if (categoryParam === 'COE') return p.badge.includes('COE') || p.id.includes('coe');
         if (categoryParam === 'Financing') return p.badge.includes('FINANCING') || p.id.includes('interest');
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Gagal memuat daftar promo aktif',
+        error: 'Failed to load active promotional campaigns',
       },
       { status: 500 }
     );
@@ -114,8 +114,8 @@ export async function POST(request: NextRequest) {
       valid_until,
       image_url,
       highlight_color = 'amber',
-      cta_text = 'Klaim Penawaran Ini',
-      cta_whatsapp_text = 'Halo Apex Auto, saya ingin klaim promo ini',
+      cta_text = 'Claim Exclusive Privilege',
+      cta_whatsapp_text = 'Hello Apex Auto, I would like to inquire about this promotion',
       is_featured = false,
       is_active = true,
     } = body;
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Field wajib belum lengkap: title, badge, description, valid_until, image_url harus diisi.',
+          error: 'Required fields missing: title, badge, description, valid_until, and image_url are required.',
         },
         { status: 400 }
       );
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Program promo berhasil dibuat.',
+        message: 'Promotional campaign created successfully.',
         data: createdPromo,
       },
       { status: 201 }
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in POST /api/promos:', error);
     return NextResponse.json(
-      { success: false, error: 'Gagal membuat program promo baru.' },
+      { success: false, error: 'Failed to create new promotional campaign.' },
       { status: 500 }
     );
   }

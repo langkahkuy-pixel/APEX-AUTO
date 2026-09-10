@@ -12,7 +12,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
   const [fullName, setFullName] = useState('');
   const [contact, setContact] = useState('');
   const [message, setMessage] = useState(
-    `Halo Apex Auto, saya ingin menanyakan ketersediaan unit ${car.brand} ${car.model} (${car.year}) dan opsi simulasi kredit / trade-in.`
+    `Hello Apex Auto, I would like to inquire about the availability of the ${car.brand} ${car.model} (${car.year}) and explore financing/trade-in options.`
   );
   const [errors, setErrors] = useState<{ fullName?: string; contact?: string; message?: string }>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');

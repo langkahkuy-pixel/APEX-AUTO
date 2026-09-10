@@ -22,25 +22,25 @@ const STATUS_OPTIONS: {
 }[] = [
   {
     value: 'available',
-    label: 'Tersedia (Ready Stock)',
-    shortLabel: 'Tersedia',
-    description: 'Unit siap dipamerkan di hub showroom, test drive & transaksi langsung.',
+    label: 'Available (Ready Stock)',
+    shortLabel: 'Available',
+    description: 'Unit ready for showroom display, test drive & direct transaction.',
     badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
     activeBorder: 'border-emerald-500',
   },
   {
     value: 'reserved',
-    label: 'Dipesan (Reserved / Booking DP)',
-    shortLabel: 'Dipesan',
-    description: 'Unit telah menerima booking fee / DP dari calon pembeli.',
+    label: 'Reserved (Booking Deposit)',
+    shortLabel: 'Reserved',
+    description: 'Unit has received a holding deposit / reservation fee.',
     badgeClass: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
     activeBorder: 'border-amber-500',
   },
   {
     value: 'sold',
-    label: 'Terjual (Sold Out / Serah Terima)',
-    shortLabel: 'Terjual',
-    description: 'Unit telah lunas dan diserahterimakan (COE ditransfer).',
+    label: 'Sold (Delivered / COE Transferred)',
+    shortLabel: 'Sold',
+    description: 'Unit has been fully transacted and delivered (COE transferred).',
     badgeClass: 'bg-slate-800 text-slate-400 border-slate-700',
     activeBorder: 'border-slate-600',
   },
@@ -95,7 +95,7 @@ export default function QuickStatusChanger({
               : 'bg-slate-400'
           }`}
         />
-        <span>{isUpdating ? 'Mengubah...' : currentOption.shortLabel}</span>
+        <span>{isUpdating ? 'Updating...' : currentOption.shortLabel}</span>
         <ChevronDown className={`w-3 h-3 opacity-70 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -105,7 +105,7 @@ export default function QuickStatusChanger({
           <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
           <div className="absolute right-0 mt-2 w-64 z-40 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl p-2 space-y-1.5 animate-in fade-in zoom-in-95">
             <div className="px-2 py-1 border-b border-slate-800 text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-              Ubah Cepat Status Unit
+              Quick Status Update
             </div>
 
             {STATUS_OPTIONS.map((opt) => {

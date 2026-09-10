@@ -38,24 +38,24 @@ interface QuickTemplate {
 const TEMPLATES: QuickTemplate[] = [
   {
     id: 'general_followup',
-    title: 'Konfirmasi Ketersediaan & COE Ready',
-    description: 'Menyapa ramah, konfirmasi unit ready stock di showroom, dan kesiapan dokumen COE.',
+    title: 'Availability & COE Documentation Confirmation',
+    description: 'Polite greeting, confirming vehicle showroom availability, and COE document readiness.',
     generateText: (inq) =>
-      `Halo ${inq.customerName},\n\nTerima kasih telah menghubungi Apex Auto Singapore.\n\nUnit ${inq.carName} (S$${inq.carPriceSGD.toLocaleString('en-US')}) saat ini berstatus READY STOCK di showroom kami (${inq.branch || 'Leng Kee Flagship'}). Dokumen COE & sertifikasi inspeksi 160-titik STA Grade A lengkap siap dicek.\n\nApakah Anda berencana test drive akhir pekan ini?`,
+      `Hello ${inq.customerName},\n\nThank you for contacting Apex Auto.\n\nThe ${inq.carName} (S$${inq.carPriceSGD.toLocaleString('en-US')}) is currently READY IN SHOWROOM at our ${inq.branch || 'Leng Kee Flagship'} branch. Complete COE documentation and 160-point STA Grade A inspection reports are available for your review.\n\nWould you like to schedule a private viewing or test drive this week?`,
   },
   {
     id: 'test_drive_booking',
-    title: 'Jadwal Test Drive Resmi Showroom',
-    description: 'Mengajak calon pembeli menentukan waktu dan cabang untuk test drive unit.',
+    title: 'Official Showroom VIP Test Drive',
+    description: 'Assist prospective client in scheduling a VIP test drive appointment at their preferred hub.',
     generateText: (inq) =>
-      `Halo ${inq.customerName},\n\nKami siap mengatur sesi VIP Test Drive untuk unit ${inq.carName}.\n\nLokasi Hub: ${inq.branch || 'Apex Auto Flagship @ Leng Kee Road'}\nJam Operasional: 09:00 - 19:00 SGT\n\nKira-kira hari dan jam berapa yang paling nyaman untuk jadwal kunjungan Anda?`,
+      `Hello ${inq.customerName},\n\nWe would be delighted to arrange a VIP Test Drive for the ${inq.carName}.\n\nShowroom Hub: ${inq.branch || 'Apex Auto Flagship @ Leng Kee Road'}\nOperating Hours: 09:00 - 19:00 SGT\n\nWhat day and time works best for your schedule?`,
   },
   {
     id: 'loan_simulation',
-    title: 'Simulasi Pembiayaan & Trade-In',
-    description: 'Memberikan informasi skema DP promo, bunga kredit 1.88%, dan taksiran trade-in.',
+    title: 'Financing Simulation & Trade-In Valuation',
+    description: 'Provide competitive loan options starting from 1.88% p.a. and complimentary trade-in appraisal.',
     generateText: (inq) =>
-      `Halo ${inq.customerName},\n\nMenindaklanjuti rencana pembelian unit ${inq.carName}${inq.tradeInCar && inq.tradeInCar !== 'None' ? ` dan rencana Trade-In (${inq.tradeInCar})` : ''}:\n\nKami memiliki program bunga loan preferensial mulai 1.88% flat/tahun dengan persetujuan cepat (DBS/OCBC/In-house).\n\nBoleh kami bantu buatkan simulasi angsuran bulanan sesuai budget DP Anda?`,
+      `Hello ${inq.customerName},\n\nFollowing up on your inquiry regarding the ${inq.carName}${inq.tradeInCar && inq.tradeInCar !== 'None' ? ` and your trade-in appraisal (${inq.tradeInCar})` : ''}:\n\nWe offer preferential financing rates from 1.88% flat p.a. with fast turnaround (DBS, OCBC, and in-house facilities).\n\nWould you like us to prepare an itemized monthly instalment simulation based on your preferred downpayment?`,
   },
 ];
 
@@ -88,34 +88,34 @@ export default function AdminInquiryList({
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-            <span>Pesan Baru</span>
+            <span>New Lead</span>
           </span>
         );
       case 'contacted':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
             <Clock className="w-3 h-3" />
-            <span>Sudah Dihubungi</span>
+            <span>Contacted</span>
           </span>
         );
       case 'scheduled_test_drive':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
             <Calendar className="w-3 h-3" />
-            <span>Jadwal Test Drive</span>
+            <span>Test Drive Scheduled</span>
           </span>
         );
       case 'deal_closed':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
             <CheckCircle2 className="w-3 h-3" />
-            <span>Deal Selesai (Sold)</span>
+            <span>Deal Closed (Sold)</span>
           </span>
         );
       case 'cancelled':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-400 border border-slate-700">
-            <span>Batal / Arsip</span>
+            <span>Archived / Cancelled</span>
           </span>
         );
     }
@@ -148,7 +148,7 @@ export default function AdminInquiryList({
 
     // Update status
     onStatusChange(selectedInquiryForModal.id, newStatus);
-    setToastNotice(`WhatsApp dibuka & status inquiry "${selectedInquiryForModal.customerName}" otomatis diperbarui.`);
+    setToastNotice(`WhatsApp opened & inquiry status for "${selectedInquiryForModal.customerName}" automatically updated.`);
     setSelectedInquiryForModal(null);
 
     setTimeout(() => setToastNotice(null), 4000);
@@ -156,13 +156,13 @@ export default function AdminInquiryList({
 
   const handleDirectWhatsAppClick = (inq: AdminInquiry) => {
     const cleanPhone = inq.phone.replace(/[^0-9]/g, '');
-    const defaultMsg = `Halo ${inq.customerName}, kami dari Apex Auto Singapore menindaklanjuti pesan Anda terkait unit ${inq.carName}. Apakah masih ada informasi spesifikasi atau jadwal test drive yang ingin dikoordinasikan?`;
+    const defaultMsg = `Hello ${inq.customerName}, this is Apex Auto following up on your inquiry regarding the ${inq.carName}. Would you like more specification details or to schedule a private viewing?`;
     const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(defaultMsg)}`;
 
     window.open(waUrl, '_blank');
     if (inq.status === 'new') {
       onStatusChange(inq.id, 'contacted');
-      setToastNotice(`WhatsApp dibuka & status diperbarui menjadi "Sudah Dihubungi".`);
+      setToastNotice(`WhatsApp opened & status updated to "Contacted".`);
       setTimeout(() => setToastNotice(null), 3000);
     }
   };
@@ -195,10 +195,10 @@ export default function AdminInquiryList({
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-amber-400" />
-            <span>Pusat Pertanyaan & Inquiry Calon Pembeli</span>
+            <span>Client Inquiries & Lead Management</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Total {inquiries.length} pesan masuk • {countNew} baru • {countContacted} dalam proses • {countScheduled} jadwal test drive
+            Total {inquiries.length} inquiries • {countNew} new leads • {countContacted} in progress • {countScheduled} test drives scheduled
           </p>
         </div>
 
@@ -209,7 +209,7 @@ export default function AdminInquiryList({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama, mobil, telp..."
+              placeholder="Search client, car, phone..."
               className="pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors w-52 sm:w-60"
             />
           </div>
@@ -219,11 +219,11 @@ export default function AdminInquiryList({
             onChange={(e) => setStatusFilter(e.target.value)}
             className="py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors font-semibold"
           >
-            <option value="all">Semua Status ({inquiries.length})</option>
-            <option value="new">Pesan Baru ({countNew})</option>
-            <option value="contacted">Sudah Dihubungi ({countContacted})</option>
-            <option value="scheduled_test_drive">Jadwal Test Drive ({countScheduled})</option>
-            <option value="deal_closed">Deal Selesai</option>
+            <option value="all">All Statuses ({inquiries.length})</option>
+            <option value="new">New Leads ({countNew})</option>
+            <option value="contacted">Contacted ({countContacted})</option>
+            <option value="scheduled_test_drive">Test Drive Scheduled ({countScheduled})</option>
+            <option value="deal_closed">Deal Closed</option>
           </select>
         </div>
       </div>
@@ -274,11 +274,11 @@ export default function AdminInquiryList({
                       onChange={(e) => onStatusChange(inq.id, e.target.value as AdminInquiry['status'])}
                       className="py-1.5 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-semibold focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
                     >
-                      <option value="new">Tandai: Baru</option>
-                      <option value="contacted">Tandai: Dihubungi</option>
-                      <option value="scheduled_test_drive">Tandai: Jadwal Test Drive</option>
-                      <option value="deal_closed">Tandai: Deal Selesai</option>
-                      <option value="cancelled">Tandai: Batal</option>
+                      <option value="new">Mark: New</option>
+                      <option value="contacted">Mark: Contacted</option>
+                      <option value="scheduled_test_drive">Mark: Test Drive</option>
+                      <option value="deal_closed">Mark: Deal Closed</option>
+                      <option value="cancelled">Mark: Cancelled</option>
                     </select>
 
                     <button
@@ -287,7 +287,7 @@ export default function AdminInquiryList({
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-semibold border border-amber-500/20 transition-colors cursor-pointer"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Template Pesan</span>
+                      <span>Quick Template</span>
                     </button>
 
                     <button
@@ -296,7 +296,7 @@ export default function AdminInquiryList({
                       className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Buka WhatsApp & Perbarui Status</span>
+                      <span>Open WhatsApp & Update</span>
                     </button>
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export default function AdminInquiryList({
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div className="text-amber-400 font-bold flex items-center gap-1.5">
                       <Car className="w-4 h-4" />
-                      <span>Unit Diminati: {inq.carName} (S${inq.carPriceSGD?.toLocaleString('en-US') || 'Nett'})</span>
+                      <span>Inquired Vehicle: {inq.carName} (S${inq.carPriceSGD?.toLocaleString('en-US') || 'Nett'})</span>
                     </div>
                     {inq.branch && (
                       <div className="text-slate-400 flex items-center gap-1 text-[11px]">
@@ -338,7 +338,7 @@ export default function AdminInquiryList({
                   {inq.salesAssigned && (
                     <div className="flex items-center gap-1 text-slate-400">
                       <UserCheck className="w-3 h-3 text-emerald-400" />
-                      <span>PIC Sales: <strong className="text-slate-200">{inq.salesAssigned}</strong></span>
+                      <span>Sales Executive: <strong className="text-slate-200">{inq.salesAssigned}</strong></span>
                     </div>
                   )}
                 </div>
@@ -348,8 +348,8 @@ export default function AdminInquiryList({
         ) : (
           <div className="p-12 text-center bg-slate-900/40 rounded-3xl border border-slate-800 space-y-2">
             <MessageSquare className="w-8 h-8 text-slate-600 mx-auto" />
-            <div className="text-sm font-semibold text-white">Tidak ada pesan inquiry ditemukan</div>
-            <p className="text-xs text-slate-400">Coba ubah kata kunci pencarian atau filter status inquiry.</p>
+            <div className="text-sm font-semibold text-white">No client inquiries found</div>
+            <p className="text-xs text-slate-400">Try adjusting your search keywords or filter criteria.</p>
           </div>
         )}
       </div>
@@ -374,10 +374,10 @@ export default function AdminInquiryList({
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">
-                    Balas Pesan WhatsApp Resmi Showroom
+                    Showroom WhatsApp Quick Reply
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Kirim ke: <strong className="text-white">{selectedInquiryForModal.customerName}</strong> ({selectedInquiryForModal.phone})
+                    Recipient: <strong className="text-white">{selectedInquiryForModal.customerName}</strong> ({selectedInquiryForModal.phone})
                   </p>
                 </div>
               </div>
@@ -393,7 +393,7 @@ export default function AdminInquiryList({
             {/* Template Selector */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold text-slate-300">
-                Pilih Format Balasan Template Otomatis:
+                Select Quick Response Template:
               </label>
               <div className="grid grid-cols-1 gap-2">
                 {TEMPLATES.map((tpl) => {
@@ -420,7 +420,7 @@ export default function AdminInquiryList({
             {/* Message Preview / Edit */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Isi Pesan WhatsApp yang Akan Terkirim:
+                WhatsApp Message Preview / Edit:
               </label>
               <textarea
                 rows={5}
@@ -433,32 +433,32 @@ export default function AdminInquiryList({
             {/* Submit Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-800">
               <div className="text-[11px] text-slate-400">
-                Status akan otomatis diperbarui setelah WhatsApp terbuka.
+                Status will automatically update when WhatsApp opens.
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setSelectedInquiryForModal(null)}
-                  className="w-1/3 sm:w-auto py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold"
+                  className="w-1/3 sm:w-auto py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold cursor-pointer"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSendWhatsAppAndMark('scheduled_test_drive')}
-                  className="flex-1 sm:flex-initial py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+                  className="flex-1 sm:flex-initial py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>Kirim & Set Jadwal</span>
+                  <span>Send & Schedule</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSendWhatsAppAndMark('contacted')}
-                  className="flex-1 sm:flex-initial py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20"
+                  className="flex-1 sm:flex-initial py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Kirim via WhatsApp</span>
+                  <span>Send via WhatsApp</span>
                 </button>
               </div>
             </div>

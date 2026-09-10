@@ -118,19 +118,19 @@ export default function AdminCarPhotoManager({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-300">
-            Pengelola Galeri Foto ({images.length} Foto Aktif)
+            Photo Gallery Manager ({images.length} Active Photos)
           </label>
           <p className="text-[11px] text-slate-400">
-            Tentukan foto utama (thumbnail katalog) dan urutan pratinjau galeri unit mobil.
+            Set the primary photo (catalog thumbnail) and sequence vehicle gallery previews.
           </p>
         </div>
         <button
           type="button"
           onClick={() => setShowPresets(!showPresets)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-bold border border-amber-500/20 transition-colors w-fit"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-bold border border-amber-500/20 transition-colors w-fit cursor-pointer"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>{showPresets ? 'Tutup Pilihan Foto HD' : 'Pilih dari Bank Foto Showroom HD'}</span>
+          <span>{showPresets ? 'Close HD Presets' : 'Select from Showroom HD Presets'}</span>
         </button>
       </div>
 
@@ -139,7 +139,7 @@ export default function AdminCarPhotoManager({
         <div className="p-4 rounded-2xl bg-slate-950 border border-amber-500/30 space-y-3 animate-in fade-in">
           <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
             <ImageIcon className="w-3.5 h-3.5" />
-            <span>Koleksi Foto Resolusi Tinggi Showroom (Klik untuk menambahkan):</span>
+            <span>Showroom High-Resolution Photo Library (Click to add):</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
             {PRESET_GALLERY_PHOTOS.map((preset, idx) => {
@@ -159,11 +159,11 @@ export default function AdminCarPhotoManager({
                   {isSelected ? (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-emerald-400 text-[10px] font-bold gap-1">
                       <Check className="w-3 h-3" />
-                      <span>Terpilih</span>
+                      <span>Selected</span>
                     </div>
                   ) : (
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold">
-                      + Tambah
+                      + Add
                     </div>
                   )}
                 </div>
@@ -179,7 +179,7 @@ export default function AdminCarPhotoManager({
           type="url"
           value={urlInput}
           onChange={(e) => setUrlInput(e.target.value)}
-          placeholder="Tempel URL gambar (https://...)"
+          placeholder="Paste image URL (https://...)"
           className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
         />
         <button
@@ -188,7 +188,7 @@ export default function AdminCarPhotoManager({
           className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Tambah Foto</span>
+          <span>Add Photo</span>
         </button>
       </div>
 
@@ -210,7 +210,7 @@ export default function AdminCarPhotoManager({
               {img.is_main ? (
                 <div className="absolute top-2 left-2 bg-amber-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
                   <Star className="w-3 h-3 fill-slate-950" />
-                  <span>Foto Utama</span>
+                  <span>Primary Photo</span>
                 </div>
               ) : (
                 <button
@@ -218,7 +218,7 @@ export default function AdminCarPhotoManager({
                   onClick={() => handleSetMain(img.id)}
                   className="absolute top-2 left-2 bg-slate-900/80 hover:bg-amber-500 text-slate-300 hover:text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm border border-slate-700 hover:border-amber-400 transition-all cursor-pointer"
                 >
-                  Set Utama
+                  Set as Primary
                 </button>
               )}
 
@@ -229,8 +229,8 @@ export default function AdminCarPhotoManager({
                     type="button"
                     disabled={index === 0}
                     onClick={() => handleMove(index, 'left')}
-                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 disabled:opacity-30 transition-colors"
-                    title="Geser ke kiri"
+                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 disabled:opacity-30 transition-colors cursor-pointer"
+                    title="Move left"
                   >
                     <ArrowLeft className="w-3 h-3" />
                   </button>
@@ -238,8 +238,8 @@ export default function AdminCarPhotoManager({
                     type="button"
                     disabled={index === images.length - 1}
                     onClick={() => handleMove(index, 'right')}
-                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 disabled:opacity-30 transition-colors"
-                    title="Geser ke kanan"
+                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 disabled:opacity-30 transition-colors cursor-pointer"
+                    title="Move right"
                   >
                     <ArrowRight className="w-3 h-3" />
                   </button>
@@ -249,16 +249,16 @@ export default function AdminCarPhotoManager({
                   <button
                     type="button"
                     onClick={() => setPreviewZoomUrl(img.url)}
-                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-                    title="Pratinjau Foto"
+                    className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                    title="Preview photo"
                   >
                     <Eye className="w-3 h-3" />
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(img.id)}
-                    className="p-1 rounded bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white transition-colors"
-                    title="Hapus Foto"
+                    className="p-1 rounded bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white transition-colors cursor-pointer"
+                    title="Remove photo"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -270,13 +270,13 @@ export default function AdminCarPhotoManager({
       ) : (
         <div className="p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center space-y-2">
           <ImageIcon className="w-8 h-8 text-slate-600 mx-auto" />
-          <div className="text-xs text-slate-400">Belum ada foto yang ditambahkan ke galeri unit ini.</div>
+          <div className="text-xs text-slate-400">No photos added to this vehicle gallery yet.</div>
           <button
             type="button"
             onClick={() => setShowPresets(true)}
-            className="text-xs text-amber-400 hover:text-amber-300 font-bold underline"
+            className="text-xs text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
           >
-            Pilih dari bank foto showroom resolusi tinggi →
+            Select from high-resolution showroom photo library →
           </button>
         </div>
       )}
@@ -294,7 +294,7 @@ export default function AdminCarPhotoManager({
             <button
               type="button"
               onClick={() => setPreviewZoomUrl(null)}
-              className="absolute top-4 right-4 bg-slate-900/80 text-white p-2 rounded-full hover:bg-slate-800"
+              className="absolute top-4 right-4 bg-slate-900/80 text-white p-2 rounded-full hover:bg-slate-800 cursor-pointer"
             >
               ✕
             </button>

@@ -29,7 +29,7 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-white">
         <div className="w-10 h-10 border-3 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-xs text-slate-400 font-medium tracking-wide">
-          Memeriksa izin akses portal pemilik showroom...
+          Verifying showroom portal access permissions...
         </p>
       </div>
     );
@@ -43,9 +43,9 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
             <Lock className="w-8 h-8" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">Akses Terproteksi</h2>
+            <h2 className="text-xl font-bold text-white">Protected Access</h2>
             <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Halaman panel kelola showroom ini hanya dapat diakses oleh Pemilik & Staff resmi. Anda akan dialihkan ke formulir login.
+              This showroom management portal is restricted to authorized principals and staff. Redirecting to login...
             </p>
           </div>
           <div className="pt-2 flex flex-col gap-2.5">
@@ -54,13 +54,13 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
               className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all"
             >
               <KeyRound className="w-4 h-4" />
-              <span>Masuk Sekarang</span>
+              <span>Sign In Now</span>
             </Link>
             <Link
               href="/"
               className="text-xs text-slate-400 hover:text-white underline pt-1"
             >
-              Kembali ke Beranda Showroom
+              Return to Showroom Home
             </Link>
           </div>
         </div>

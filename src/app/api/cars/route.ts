@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       }
 
       // 2. Filter tipe bodi (Sedan, SUV, Coupe, MPV, Hatchback)
-      if (bodyType && bodyType !== 'Semua') {
+      if (bodyType && bodyType !== 'Semua' && bodyType !== 'All') {
         conditions.push(eq(cars.body_type, bodyType));
       }
 
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       }
 
       // 5. Filter lokasi showroom di Singapura
-      if (location && location !== 'Semua Lokasi') {
+      if (location && location !== 'Semua Lokasi' && location !== 'All Locations') {
         conditions.push(eq(cars.location, location));
       }
 
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Gagal memproses pencarian dan filter katalog mobil',
+        error: 'Failed to process vehicle catalog search and filters',
       },
       { status: 500 }
     );
@@ -163,9 +163,9 @@ export async function POST(request: NextRequest) {
       description = '',
       features = [],
       status = 'available',
-      location = 'Leng Kee Road Showroom',
+      location = 'Leng Kee Showroom (South/Central)',
       depreciation_sgd,
-      coe_expiry = '10 Tahun COE',
+      coe_expiry = '10-Year COE',
       engine_capacity_cc,
       monthly_est_sgd,
       images = [],
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Field wajib belum lengkap: brand, model, year, price, body_type, color harus diisi.',
+          error: 'Required fields missing: brand, model, year, price, body_type, and color are required.',
         },
         { status: 400 }
       );
@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Unit mobil berhasil ditambahkan ke inventaris showroom.',
+        message: 'Vehicle successfully added to showroom inventory.',
         data: createdCar,
       },
       { status: 201 }
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Terjadi kesalahan internal saat menambahkan unit mobil.',
+        error: 'Internal server error occurred while adding vehicle.',
       },
       { status: 500 }
     );
@@ -307,7 +307,7 @@ function filterAndSortMockCars(opts: FilterOptions) {
       if (!match) return false;
     }
 
-    if (opts.bodyType && opts.bodyType !== 'Semua' && car.body_type !== opts.bodyType) {
+    if (opts.bodyType && opts.bodyType !== 'Semua' && opts.bodyType !== 'All' && car.body_type !== opts.bodyType) {
       return false;
     }
 
@@ -323,7 +323,7 @@ function filterAndSortMockCars(opts: FilterOptions) {
       return false;
     }
 
-    if (opts.location && opts.location !== 'Semua Lokasi' && car.location !== opts.location) {
+    if (opts.location && opts.location !== 'Semua Lokasi' && opts.location !== 'All Locations' && car.location !== opts.location) {
       return false;
     }
 

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email wajib diisi untuk permintaan reset kata sandi.',
+          error: 'Email is required for password recovery.',
         },
         { status: 400 }
       );
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Format email tidak valid. Masukkan alamat email yang benar.',
+          error: 'Invalid email format. Please enter a valid email address.',
         },
         { status: 400 }
       );
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: `Instruksi pemulihan dan 6-digit kode OTP telah dikirim ke ${cleanEmail}.`,
+        message: `Recovery instructions and a 6-digit OTP code have been sent to ${cleanEmail}.`,
         data: {
           email: cleanEmail,
           otp_simulasi: generatedOtp,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Terjadi kesalahan sistem saat memproses permintaan reset kata sandi.',
+        error: 'An internal system error occurred while processing password recovery.',
       },
       { status: 500 }
     );

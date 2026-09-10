@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Kata sandi baru minimal harus memiliki panjang 6 karakter.',
+          error: 'New password must be at least 6 characters long.',
         },
         { status: 400 }
       );
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Konfirmasi kata sandi tidak cocok dengan kata sandi baru.',
+          error: 'Password confirmation does not match the new password.',
         },
         { status: 400 }
       );
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Token atau kode verifikasi reset tidak valid atau telah kedaluwarsa.',
+          error: 'Reset token or verification code is invalid or has expired.',
         },
         { status: 400 }
       );
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Kata sandi berhasil diperbarui dengan aman. Silakan masuk menggunakan kata sandi baru Anda.',
+        message: 'Password updated securely. Please sign in using your new credentials.',
         email: cleanEmail,
         updated_at: new Date().toISOString(),
       },
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Terjadi kesalahan sistem saat memperbarui kata sandi.',
+        error: 'An internal system error occurred while updating password.',
       },
       { status: 500 }
     );

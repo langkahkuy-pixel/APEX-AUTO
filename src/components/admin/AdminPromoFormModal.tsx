@@ -41,14 +41,14 @@ export default function AdminPromoFormModal({
   const [formData, setFormData] = useState<Partial<PromoItem>>({
     title: '',
     tagline: '',
-    badge: 'PROMO KHUSUS',
+    badge: 'SPECIAL PRIVILEGE',
     discount_sgd: 10000,
     valid_until: '30 September 2026',
     description: '',
-    benefits: ['Gratis Servis Rutin 3 Tahun', 'Garansi Transmisi 12 Bulan'],
-    terms_conditions: ['Hanya berlaku untuk unit berstatus ready stock Singapura.'],
-    cta_text: 'Klaim Promo WhatsApp',
-    cta_whatsapp_text: 'Halo Apex Auto, saya ingin klaim program promo showroom.',
+    benefits: ['Complimentary 3-Year Routine Servicing', '12-Month Comprehensive Powertrain Warranty'],
+    terms_conditions: ['Applicable exclusively to ready-stock showroom inventory.'],
+    cta_text: 'Claim via WhatsApp',
+    cta_whatsapp_text: 'Hello Apex Auto, I would like to inquire about the showroom promotional campaign.',
     image_url: PRESET_PROMO_IMAGES[0],
     highlight_color: 'amber',
     is_featured: true,
@@ -65,24 +65,24 @@ export default function AdminPromoFormModal({
     } else if (mode === 'create') {
       setFormData({
         id: `promo-sg-${Date.now().toString().slice(-4)}`,
-        slug: `promo-spesial-${Date.now().toString().slice(-4)}`,
-        title: 'Subsidi Bunga Loan 1.88% Singapura',
-        tagline: 'Fasilitas Pembiayaan Bank DBS / OCBC Showroom',
-        badge: 'BUNGA SPESIAL 1.88%',
+        slug: `promo-special-${Date.now().toString().slice(-4)}`,
+        title: '1.88% Preferred Financing Privilege',
+        tagline: 'Premier Banking Facility via DBS & OCBC',
+        badge: 'PREFERENTIAL 1.88% P.A.',
         discount_sgd: 8000,
-        valid_until: '31 Oktober 2026',
-        description: 'Dapatkan suku bunga preferensial terendah di Singapura untuk unit sedan & SUV Eropa.',
+        valid_until: '31 October 2026',
+        description: 'Enjoy attractive financing rates on our curated selection of executive sedans and luxury SUVs.',
         benefits: [
-          'Suku bunga flat 1.88% per tahun',
-          'Proses persetujuan cepat 24 jam kerja',
-          'Tenor fleksibel hingga 7 tahun',
+          '1.88% flat p.a. attractive loan rates',
+          'Expedited 24-hour credit approval',
+          'Flexible financing tenures up to 7 years',
         ],
         terms_conditions: [
-          'Berlaku untuk pembeli warga negara Singapura, PR, maupun pemegang Employment Pass.',
-          'Uang muka (DP) minimal 30% sesuai regulasi MAS Singapura.',
+          'Available for Singapore citizens, PRs, and Employment Pass holders.',
+          'Minimum downpayment of 30% applies in accordance with MAS guidelines.',
         ],
-        cta_text: 'Simulasi Loan WhatsApp',
-        cta_whatsapp_text: 'Halo Apex Auto, saya ingin simulasi kredit bunga promo 1.88%.',
+        cta_text: 'Financing Simulation via WhatsApp',
+        cta_whatsapp_text: 'Hello Apex Auto, I would like to request an instalment simulation for the 1.88% financing promotion.',
         image_url: PRESET_PROMO_IMAGES[1],
         highlight_color: 'emerald',
         is_featured: false,
@@ -130,19 +130,19 @@ export default function AdminPromoFormModal({
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-|-$/g, ''),
-      title: formData.title || 'Promo Showroom Baru',
-      tagline: formData.tagline || 'Program Penawaran Spesial Apex Auto Singapore',
-      badge: formData.badge || 'PROMO',
+      title: formData.title || 'Showroom Privilege Campaign',
+      tagline: formData.tagline || 'Exclusive Ownership Privileges by Apex Auto',
+      badge: formData.badge || 'PRIVILEGE',
       discount_sgd: Number(formData.discount_sgd) || 0,
       valid_until: formData.valid_until || '30 September 2026',
-      description: formData.description || 'Penawaran eksklusif showroom mobil Singapura.',
-      benefits: formData.benefits && formData.benefits.length > 0 ? formData.benefits : ['Voucher Servis', 'Garansi Resmi'],
+      description: formData.description || 'Exclusive luxury showroom promotional privileges.',
+      benefits: formData.benefits && formData.benefits.length > 0 ? formData.benefits : ['Servicing Credits', 'Official Warranty'],
       terms_conditions:
         formData.terms_conditions && formData.terms_conditions.length > 0
           ? formData.terms_conditions
-          : ['Syarat dan ketentuan showroom berlaku.'],
-      cta_text: formData.cta_text || 'Konsultasi WhatsApp',
-      cta_whatsapp_text: formData.cta_whatsapp_text || 'Halo Apex Auto, saya ingin menanyakan promo ini.',
+          : ['Showroom terms and conditions apply.'],
+      cta_text: formData.cta_text || 'Inquire via WhatsApp',
+      cta_whatsapp_text: formData.cta_whatsapp_text || 'Hello Apex Auto, I would like to inquire about this promotion.',
       image_url: formData.image_url || PRESET_PROMO_IMAGES[0],
       highlight_color: formData.highlight_color || 'amber',
       is_featured: Boolean(formData.is_featured),
@@ -177,10 +177,10 @@ export default function AdminPromoFormModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">
-                {mode === 'create' ? 'Buat Program Promo Baru' : 'Ubah Program Promo'}
+                {mode === 'create' ? 'Create New Promotional Campaign' : 'Edit Promotional Campaign'}
               </h2>
               <p className="text-xs text-slate-400">
-                Kelola penawaran subsidi, diskon SGD, dan syarat & ketentuan pembeli
+                Manage subsidies, SGD discounts, and client terms & conditions
               </p>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function AdminPromoFormModal({
         {successNotice && (
           <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-emerald-400 text-xs animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-            <span>Program promo berhasil disimpan ke sistem showroom!</span>
+            <span>Promotional campaign saved successfully to the showroom system!</span>
           </div>
         )}
 
@@ -206,13 +206,13 @@ export default function AdminPromoFormModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Judul Program Promo *
+                Campaign Title *
               </label>
               <input
                 type="text"
                 value={formData.title || ''}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Contoh: Subsidi COE S$10,000"
+                placeholder="e.g. S$10,000 COE Subsidy Package"
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
               />
@@ -220,13 +220,13 @@ export default function AdminPromoFormModal({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Label Badge Singkat *
+                Short Badge Label *
               </label>
               <input
                 type="text"
                 value={formData.badge || ''}
                 onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                placeholder="Contoh: CASHBACK S$10,000"
+                placeholder="e.g. S$10,000 SUBSIDY"
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white uppercase font-bold focus:outline-none focus:border-amber-500 transition-colors"
               />
@@ -237,20 +237,20 @@ export default function AdminPromoFormModal({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Tagline / Sub-judul
+                Tagline / Subtitle
               </label>
               <input
                 type="text"
                 value={formData.tagline || ''}
                 onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                placeholder="Khusus Unit Mercedes-Benz & BMW Ready Stock"
+                placeholder="Exclusive to Ready-Stock Inventory"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Nilai Diskon / Subsidi (SGD)
+                Subsidy / Discount Value (SGD)
               </label>
               <input
                 type="number"
@@ -266,7 +266,7 @@ export default function AdminPromoFormModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Periode Berlaku
+                Validity Period
               </label>
               <div className="relative">
                 <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -282,7 +282,7 @@ export default function AdminPromoFormModal({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Tema Warna Sorotan
+                Highlight Theme Accent
               </label>
               <select
                 value={formData.highlight_color || 'amber'}
@@ -300,13 +300,13 @@ export default function AdminPromoFormModal({
           {/* Deskripsi */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Deskripsi Lengkap Promo
+              Full Campaign Description
             </label>
             <textarea
               rows={2}
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Jelaskan detail program promosi dan keunggulan untuk calon pembeli..."
+              placeholder="Describe promotional details, eligibility, and client benefits..."
               className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
@@ -314,7 +314,7 @@ export default function AdminPromoFormModal({
           {/* Benefits list */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Daftar Keuntungan / Benefit Program
+              Key Client Privileges & Benefits
             </label>
             <div className="flex gap-2 mb-2">
               <input
@@ -327,15 +327,15 @@ export default function AdminPromoFormModal({
                     handleAddBenefit();
                   }
                 }}
-                placeholder="Contoh: Gratis Servis Rutin 3 Tahun"
+                placeholder="e.g. Complimentary 3-Year Servicing Package"
                 className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500"
               />
               <button
                 type="button"
                 onClick={handleAddBenefit}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold cursor-pointer"
               >
-                Tambah
+                Add
               </button>
             </div>
             <div className="space-y-1">
@@ -351,7 +351,7 @@ export default function AdminPromoFormModal({
                   <button
                     type="button"
                     onClick={() => handleRemoveBenefit(i)}
-                    className="text-slate-500 hover:text-rose-400 font-bold px-1"
+                    className="text-slate-500 hover:text-rose-400 font-bold px-1 cursor-pointer"
                   >
                     ×
                   </button>
@@ -363,7 +363,7 @@ export default function AdminPromoFormModal({
           {/* Terms & Conditions */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Syarat & Ketentuan (T&C)
+              Terms & Conditions (T&C)
             </label>
             <div className="flex gap-2 mb-2">
               <input
@@ -376,15 +376,15 @@ export default function AdminPromoFormModal({
                     handleAddTerm();
                   }
                 }}
-                placeholder="Contoh: Berlaku selama kuota unit masih tersedia."
+                placeholder="e.g. Applicable while showroom stock allocation lasts."
                 className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500"
               />
               <button
                 type="button"
                 onClick={handleAddTerm}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold cursor-pointer"
               >
-                Tambah
+                Add
               </button>
             </div>
             <div className="space-y-1">
@@ -397,7 +397,7 @@ export default function AdminPromoFormModal({
                   <button
                     type="button"
                     onClick={() => handleRemoveTerm(i)}
-                    className="text-slate-500 hover:text-rose-400 font-bold px-1"
+                    className="text-slate-500 hover:text-rose-400 font-bold px-1 cursor-pointer"
                   >
                     ×
                   </button>
@@ -409,7 +409,7 @@ export default function AdminPromoFormModal({
           {/* WhatsApp CTA Message */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Pesan Otomatis WhatsApp Saat Tombol Ditekan
+              Automated WhatsApp Message on Button Click
             </label>
             <div className="relative">
               <MessageSquare className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
@@ -429,7 +429,7 @@ export default function AdminPromoFormModal({
               onClick={onClose}
               className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
@@ -437,7 +437,7 @@ export default function AdminPromoFormModal({
               className="py-2.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>{isSubmitting ? 'Menyimpan...' : mode === 'create' ? 'Buat Program Promo' : 'Simpan Promo'}</span>
+              <span>{isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Campaign' : 'Save Campaign'}</span>
             </button>
           </div>
         </form>

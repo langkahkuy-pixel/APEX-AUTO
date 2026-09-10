@@ -16,7 +16,7 @@ export function CarCard({ car }: CarCardProps) {
 
   // WhatsApp prefilled message
   const waText = encodeURIComponent(
-    `Hello Apex Auto Singapore, I would like to inquire about the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} listed on your website.`
+    `Hello Apex Auto, I would like to inquire about the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} listed on your website.`
   );
   const waUrl = `https://wa.me/6581234567?text=${waText}`;
 

@@ -73,10 +73,10 @@ export default function AdminCarEditModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">
-                Edit Unit: {car.brand} {car.model}
+                Edit Vehicle: {car.brand} {car.model}
               </h2>
               <div className="text-xs text-slate-400 font-mono">
-                ID Unit: {car.id} • Tahun {car.year}
+                Vehicle ID: {car.id} • Year {car.year}
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function AdminCarEditModal({
         {successNotice && (
           <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-emerald-400 text-xs animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-            <span>Perubahan data unit mobil berhasil disimpan ke sistem showroom!</span>
+            <span>Vehicle details updated successfully in the showroom system!</span>
           </div>
         )}
 
@@ -103,7 +103,7 @@ export default function AdminCarEditModal({
             {/* Price (SGD) */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Harga Jual (SGD) *
+                SGD Nett Price *
               </label>
               <div className="relative">
                 <DollarSign className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -121,23 +121,23 @@ export default function AdminCarEditModal({
             {/* Status Unit */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Status Ketersediaan *
+                Availability Status *
               </label>
               <select
                 value={formData.status || 'available'}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as CarStatus })}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-semibold focus:outline-none focus:border-amber-500 transition-colors"
               >
-                <option value="available">Tersedia (Ready Stock)</option>
-                <option value="reserved">Dipesan / Booking (Reserved)</option>
-                <option value="sold">Terjual (Sold Out)</option>
+                <option value="available">Available (Ready Stock)</option>
+                <option value="reserved">Reserved / Booking</option>
+                <option value="sold">Sold (Closed)</option>
               </select>
             </div>
 
             {/* COE Expiry */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Masa Berlaku COE (Singapore)
+                COE Expiry (LTA)
               </label>
               <div className="relative">
                 <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -145,7 +145,7 @@ export default function AdminCarEditModal({
                   type="text"
                   value={formData.coe_expiry || ''}
                   onChange={(e) => setFormData({ ...formData, coe_expiry: e.target.value })}
-                  placeholder="Contoh: 10 Tahun COE (s/d 2032)"
+                  placeholder="e.g. 10-Year COE (till 2032)"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
@@ -154,7 +154,7 @@ export default function AdminCarEditModal({
             {/* Depreciation (SGD/year) */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Depresiasi Tahunan (SGD/thn)
+                Annual Depreciation (SGD/year)
               </label>
               <input
                 type="number"
@@ -168,18 +168,18 @@ export default function AdminCarEditModal({
             {/* Location / Hub */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Lokasi Hub Cabang Showroom
+                Showroom Hub Location
               </label>
               <div className="relative">
                 <MapPin className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <select
-                  value={formData.location || 'Leng Kee Showroom'}
+                  value={formData.location || 'Leng Kee Showroom (South/Central)'}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
                 >
-                  <option value="Leng Kee Showroom">Leng Kee Showroom (South/Central)</option>
-                  <option value="Ubi Experience Centre">Ubi Experience Centre (East Hub)</option>
-                  <option value="Sin Ming Hub">Sin Ming Hub (North-Central)</option>
+                  <option value="Leng Kee Showroom (South/Central)">Leng Kee Showroom (South/Central)</option>
+                  <option value="Ubi Experience Centre (East Hub)">Ubi Experience Centre (East Hub)</option>
+                  <option value="Sin Ming Hub (North-Central)">Sin Ming Hub (North-Central)</option>
                 </select>
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function AdminCarEditModal({
             {/* Mileage (KM) */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Jarak Tempuh (Mileage KM)
+                Mileage (KM)
               </label>
               <input
                 type="number"
@@ -202,7 +202,7 @@ export default function AdminCarEditModal({
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Deskripsi Singkat & Kondisi Kendaraan
+              Vehicle Overview & Condition
             </label>
             <textarea
               rows={3}
@@ -219,7 +219,7 @@ export default function AdminCarEditModal({
               onClick={onClose}
               className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
@@ -227,7 +227,7 @@ export default function AdminCarEditModal({
               className="py-2.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan Unit'}</span>
+              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>
         </form>

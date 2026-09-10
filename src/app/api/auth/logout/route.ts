@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.json(
     {
       success: true,
-      message: 'Sesi autentikasi pemilik showroom berhasil diakhiri (logout)',
+      message: 'Showroom owner authentication session terminated successfully (logged out)',
       loggedOutAt: new Date().toISOString(),
     },
     {

@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Akses Ditolak: Rute API panel kelola memerlukan sesi autentikasi pemilik showroom yang sah.',
+          error: 'Access Denied: Admin API routes require a valid showroom principal authentication session.',
           code: 'UNAUTHORIZED',
           path: pathname,
           timestamp: new Date().toISOString(),

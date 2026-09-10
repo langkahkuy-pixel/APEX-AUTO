@@ -30,7 +30,7 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
   const currentImage = car.images[activeImageIndex] || car.images[0];
 
   const waText = encodeURIComponent(
-    `Hello Apex Auto Singapore, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')}. Could you arrange a private viewing or share financing simulation details?`
+    `Hello Apex Auto, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')}. Could you arrange a private viewing or share financing simulation details?`
   );
   const waUrl = `https://wa.me/6581234567?text=${waText}`;
 

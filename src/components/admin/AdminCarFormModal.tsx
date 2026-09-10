@@ -55,7 +55,7 @@ export default function AdminCarFormModal({
     year: new Date().getFullYear() - 1,
     price: 250000,
     depreciation_sgd: 22000,
-    coe_expiry: '10 Tahun COE (s/d 2033)',
+    coe_expiry: '10-Year COE (till 2033)',
     engine_capacity_cc: 2981,
     body_type: 'Coupe',
     transmission: 'Automatic',
@@ -65,7 +65,7 @@ export default function AdminCarFormModal({
     location: 'Leng Kee Showroom (South/Central)',
     status: 'available',
     is_featured: false,
-    description: 'Unit resmi Singapura kondisi prima terawat dengan sertifikasi inspeksi 160-titik STA Grade A.',
+    description: 'Official showroom unit in pristine condition with 160-point STA Grade A certification.',
     features: ['160-Point STA Certified', '12 Months Apex Warranty', 'Sunroof', 'Adaptive Cruise Control'],
     images: [
       {
@@ -94,7 +94,7 @@ export default function AdminCarFormModal({
         year: 2023,
         price: 268000,
         depreciation_sgd: 23500,
-        coe_expiry: '10 Tahun COE (s/d 2033)',
+        coe_expiry: '10-Year COE (till 2033)',
         engine_capacity_cc: 1991,
         body_type: 'Sedan',
         transmission: 'Automatic',
@@ -104,7 +104,7 @@ export default function AdminCarFormModal({
         location: 'Leng Kee Showroom (South/Central)',
         status: 'available',
         is_featured: true,
-        description: 'Unit Singapore 1-owner terawat dengan full service record PML / C&C.',
+        description: 'Pristine 1-owner unit with comprehensive agent service records (PML / C&C).',
         features: ['160-Point STA Certified', '12 Months Apex Warranty', 'Keyless GO', '360 Camera'],
         images: [
           {
@@ -167,7 +167,7 @@ export default function AdminCarFormModal({
       year: Number(formData.year) || 2023,
       price: Number(formData.price) || 250000,
       depreciation_sgd: Number(formData.depreciation_sgd) || 22000,
-      coe_expiry: formData.coe_expiry || '10 Tahun COE',
+      coe_expiry: formData.coe_expiry || '10-Year COE',
       engine_capacity_cc: Number(formData.engine_capacity_cc) || 1991,
       body_type: formData.body_type || 'Sedan',
       transmission: formData.transmission || 'Automatic',
@@ -177,7 +177,7 @@ export default function AdminCarFormModal({
       location: formData.location || 'Leng Kee Showroom (South/Central)',
       status: (formData.status as CarStatus) || 'available',
       is_featured: Boolean(formData.is_featured),
-      description: formData.description || 'Unit premium siap serah terima.',
+      description: formData.description || 'Premium luxury vehicle ready for immediate handover.',
       features: formData.features && formData.features.length > 0 ? formData.features : ['160-Point STA Certified', '12 Months Apex Care Warranty'],
       images: formData.images && formData.images.length > 0 ? formData.images : [{ id: 'img-1', car_id: generatedId, url: DEFAULT_PRESET_IMAGES[0], is_main: true, sort_order: 0 }],
       created_at: formData.created_at || new Date().toISOString(),
@@ -213,13 +213,13 @@ export default function AdminCarFormModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>{mode === 'create' ? 'Tambah Unit Mobil Baru' : 'Ubah Data Unit Mobil'}</span>
+                <span>{mode === 'create' ? 'Add New Vehicle' : 'Edit Vehicle Details'}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase font-mono">
                   {formData.brand}
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Lengkapi spesifikasi teknis, sertifikasi COE Singapura, dan harga jual SGD
+                Configure technical specifications, COE certification, and SGD Nett pricing
               </p>
             </div>
           </div>
@@ -238,8 +238,8 @@ export default function AdminCarFormModal({
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
             <span>
               {mode === 'create'
-                ? 'Unit mobil baru berhasil ditambahkan ke inventaris showroom!'
-                : 'Pembaruan data unit berhasil disimpan ke sistem!'}
+                ? 'New vehicle successfully added to showroom inventory!'
+                : 'Vehicle details successfully updated!'}
             </span>
           </div>
         )}
@@ -249,12 +249,12 @@ export default function AdminCarFormModal({
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
-              1. Identitas & Model Kendaraan
+              1. Vehicle Identity & Model
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Merek / Brand *
+                  Make / Brand *
                 </label>
                 <input
                   type="text"
@@ -268,7 +268,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Nama Model & Tipe *
+                  Model & Variant *
                 </label>
                 <input
                   type="text"
@@ -282,7 +282,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Tahun Pembuatan (Reg.) *
+                  Registration / Manufacture Year *
                 </label>
                 <input
                   type="number"
@@ -299,7 +299,7 @@ export default function AdminCarFormModal({
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Bentuk Bodi (Body Type)
+                  Body Type
                 </label>
                 <select
                   value={formData.body_type || 'Sedan'}
@@ -316,7 +316,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Transmisi
+                  Transmission
                 </label>
                 <select
                   value={formData.transmission || 'Automatic'}
@@ -333,7 +333,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Bahan Bakar (Fuel)
+                  Fuel Type
                 </label>
                 <select
                   value={formData.fuel_type || 'Petrol'}
@@ -350,7 +350,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Kapasitas Mesin (cc)
+                  Engine Capacity (cc)
                 </label>
                 <input
                   type="number"
@@ -363,16 +363,16 @@ export default function AdminCarFormModal({
             </div>
           </div>
 
-          {/* SECTION 2: HARGA & REGULASI SINGAPURA (COE & DEPRESIASI) */}
+          {/* SECTION 2: HARGA & REGULASI (COE & DEPRESIASI) */}
           <div className="space-y-4 pt-2 border-t border-slate-800">
             <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <DollarSign className="w-3.5 h-3.5" />
-              2. Harga SGD & Regulasi COE Singapura
+              2. SGD Pricing & COE Specifications
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Harga Jual Bersih (SGD) *
+                  SGD Nett Price *
                 </label>
                 <div className="relative">
                   <span className="text-slate-500 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
@@ -391,7 +391,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Estimasi Depresiasi (SGD/Tahun)
+                  Estimated Depreciation (SGD/Year)
                 </label>
                 <div className="relative">
                   <span className="text-slate-500 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
@@ -409,13 +409,13 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Masa Berlaku COE (LTA SG)
+                  COE Expiry (LTA)
                 </label>
                 <input
                   type="text"
                   value={formData.coe_expiry || ''}
                   onChange={(e) => setFormData({ ...formData, coe_expiry: e.target.value })}
-                  placeholder="10 Tahun COE (s/d 2033)"
+                  placeholder="10-Year COE (till 2033)"
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
@@ -424,7 +424,7 @@ export default function AdminCarFormModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Jarak Tempuh (KM)
+                  Mileage (KM)
                 </label>
                 <input
                   type="number"
@@ -437,7 +437,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Warna Eksterior
+                  Exterior Colour
                 </label>
                 <input
                   type="text"
@@ -450,7 +450,7 @@ export default function AdminCarFormModal({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Hub Cabang Lokasi Showroom
+                  Showroom Hub Location
                 </label>
                 <select
                   value={formData.location || LOCATIONS[0]}
@@ -469,16 +469,16 @@ export default function AdminCarFormModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Status Ketersediaan
+                  Availability Status
                 </label>
                 <select
                   value={formData.status || 'available'}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as CarStatus })}
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-bold focus:outline-none focus:border-amber-500 transition-colors"
                 >
-                  <option value="available">Tersedia (Ready Stock)</option>
-                  <option value="reserved">Dipesan / Booking (Reserved)</option>
-                  <option value="sold">Terjual (Sold Out)</option>
+                  <option value="available">Available (Ready Stock)</option>
+                  <option value="reserved">Reserved / Booking</option>
+                  <option value="sold">Sold (Closed)</option>
                 </select>
               </div>
 
@@ -490,7 +490,7 @@ export default function AdminCarFormModal({
                     onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
                     className="w-4 h-4 rounded bg-slate-950 border-slate-800 text-amber-500 focus:ring-amber-500"
                   />
-                  <span>Tampilkan sebagai Unit Unggulan (Spotlight Beranda)</span>
+                  <span>Feature as Spotlight Vehicle on Homepage</span>
                 </label>
               </div>
             </div>
@@ -500,13 +500,13 @@ export default function AdminCarFormModal({
           <div className="space-y-4 pt-2 border-t border-slate-800">
             <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5" />
-              3. Fitur Unggulan & Galeri Foto
+              3. Key Features & Image Gallery
             </h3>
 
             {/* Fitur Tag */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Daftar Fitur & Sertifikasi (Tekan Tambah atau Enter)
+                Features & Accreditations (Type and press Enter or Add)
               </label>
               <div className="flex gap-2 mb-2">
                 <input
@@ -519,15 +519,15 @@ export default function AdminCarFormModal({
                       handleAddFeature();
                     }
                   }}
-                  placeholder="Contoh: Burmester 3D Surround, LTA Certified, Panoramic Sunroof"
+                  placeholder="e.g. Burmester 3D Surround, LTA Certified, Panoramic Sunroof"
                   className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddFeature}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold cursor-pointer"
                 >
-                  Tambah
+                  Add
                 </button>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -540,7 +540,7 @@ export default function AdminCarFormModal({
                     <button
                       type="button"
                       onClick={() => handleRemoveFeature(f)}
-                      className="text-slate-500 hover:text-rose-400 font-bold ml-1"
+                      className="text-slate-500 hover:text-rose-400 font-bold ml-1 cursor-pointer"
                     >
                       ×
                     </button>
@@ -558,13 +558,13 @@ export default function AdminCarFormModal({
             {/* Deskripsi */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Deskripsi & Catatan Inspeksi Showroom
+                Description & Showroom Inspection Notes
               </label>
               <textarea
                 rows={3}
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Catatan servis resmi, kepemilikan 1-owner, status inspeksi..."
+                placeholder="Service history, single owner verification, inspection status..."
                 className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
@@ -577,7 +577,7 @@ export default function AdminCarFormModal({
               onClick={onClose}
               className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
@@ -587,10 +587,10 @@ export default function AdminCarFormModal({
               <Save className="w-4 h-4" />
               <span>
                 {isSubmitting
-                  ? 'Menyimpan Unit...'
+                  ? 'Saving Vehicle...'
                   : mode === 'create'
-                  ? 'Tambah Unit ke Showroom'
-                  : 'Simpan Perubahan Unit'}
+                  ? 'Add Vehicle to Showroom'
+                  : 'Save Changes'}
               </span>
             </button>
           </div>

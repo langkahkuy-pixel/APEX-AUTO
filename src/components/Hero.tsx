@@ -24,7 +24,7 @@ export function Hero() {
         {/* Fallback Poster Image */}
         <Image
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2400&q=80"
-          alt="Luxury car showroom Singapore"
+          alt="Premier luxury car showroom"
           fill
           priority
           className="object-cover object-center"
@@ -56,9 +56,9 @@ export function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pb-20 lg:pb-24">
         <div className="max-w-3xl">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tighter text-white leading-[0.95]">
-            Singapore's
+            Premier Luxury
             <br />
-            Premier Motors
+            Motors
           </h1>
 
           <a
