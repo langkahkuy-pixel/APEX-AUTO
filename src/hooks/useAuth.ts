@@ -43,9 +43,12 @@ export function useAuth() {
     } catch (e) {
       console.warn('Logout API notification error:', e);
     }
-    localStorage.removeItem('apex_auth_session');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('apex_auth_session');
+      document.cookie = 'apex_session_token=; path=/; max-age=0; SameSite=Lax';
+    }
     setSession(null);
-    router.push('/login?logout=success');
+    router.push('/admin/login?logout=success');
   };
 
   return {

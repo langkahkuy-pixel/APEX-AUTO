@@ -44,9 +44,27 @@ function FeaturedCard({ car }: { car: Car }) {
 }
 
 export function FeaturedCarsSection() {
-  const featuredCars = MOCK_CARS.filter(
-    (c) => c.is_featured || c.status === 'available'
-  ).slice(0, 4);
+  const [cars, setCars] = React.useState<Car[]>(MOCK_CARS);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch('/api/cars')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && Array.isArray(data.data)) {
+          setCars(data.data);
+        }
+      })
+      .catch((err) => console.warn('Failed to load featured cars:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const featuredCars = cars
+    .filter((c) => c.is_featured || c.status === 'available')
+    .slice(0, 4);
 
   return (
     <section id="unggulan" className="py-20 sm:py-28">

@@ -1,61 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { inquiries } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { MOCK_INQUIRIES } from '@/data/mock-inquiries';
+import { getSqliteInquiries, updateSqliteInquiryStatus, deleteSqliteInquiry } from '@/db/sqlite';
 
-const ALLOWED_STATUSES = ['pending', 'contacted', 'scheduled', 'closed'];
-
-/**
- * GET /api/inquiries/[id]: Ambil detail pertanyaan calon pembeli
- */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+    const inquiries = await getSqliteInquiries();
+    const found = inquiries.find((i) => i.id === id);
 
-    let inquiry;
-    try {
-      inquiry = await db.query.inquiries.findFirst({
-        where: eq(inquiries.id, id),
-        with: {
-          car: true,
-          assignedUser: true,
-        },
-      });
-    } catch (dbError) {
-      console.warn('DB query error for inquiry:', (dbError as Error).message);
-    }
-
-    if (!inquiry) {
-      inquiry = MOCK_INQUIRIES.find((item) => item.id === id);
-    }
-
-    if (!inquiry) {
+    if (!found) {
       return NextResponse.json(
-        { success: false, error: 'Inquiry tidak ditemukan' },
+        { success: false, error: 'Inquiry not found.' },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: inquiry,
+      data: found,
     });
   } catch (error) {
     console.error('Error in GET /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Gagal mengambil detail inquiry' },
+      { success: false, error: 'Failed to retrieve inquiry.' },
       { status: 500 }
     );
   }
 }
 
-/**
- * PATCH /api/inquiries/[id]: Perbarui status, catatan tindak lanjut, atau sales assignee
- */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -63,100 +37,53 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { status, notes, assigned_to } = body;
+    const { status, notes } = body;
 
-    if (status && !ALLOWED_STATUSES.includes(status)) {
+    if (!status) {
       return NextResponse.json(
-        {
-          success: false,
-          error: `Status tidak valid. Pilihan: ${ALLOWED_STATUSES.join(', ')}`,
-        },
+        { success: false, error: 'Status is required.' },
         { status: 400 }
       );
     }
 
-    let updatedInquiry;
-    try {
-      const updateData: Record<string, any> = {
-        updated_at: new Date(),
-      };
-      if (status !== undefined) updateData.status = status;
-      if (notes !== undefined) updateData.notes = notes;
-      if (assigned_to !== undefined) updateData.assigned_to = assigned_to;
-
-      const [res] = await db
-        .update(inquiries)
-        .set(updateData)
-        .where(eq(inquiries.id, id))
-        .returning();
-
-      updatedInquiry = res;
-    } catch (dbError) {
-      console.warn('DB update fallback for inquiry status:', (dbError as Error).message);
-      updatedInquiry = {
-        id,
-        status: status || 'contacted',
-        notes,
-        assigned_to,
-        updated_at: new Date().toISOString(),
-      };
+    const success = await updateSqliteInquiryStatus(id, status, notes);
+    if (!success) {
+      return NextResponse.json(
+        { success: false, error: 'Inquiry not found.' },
+        { status: 404 }
+      );
     }
-
-    const statusLabels: Record<string, string> = {
-      pending: 'Menunggu Respon',
-      contacted: 'Sudah Dihubungi',
-      scheduled: 'Jadwal Test Drive / Showroom Visit',
-      closed: 'Selesai / Deal',
-    };
 
     return NextResponse.json({
       success: true,
-      message: `Status inquiry ${id} berhasil diubah menjadi "${status ? statusLabels[status] || status : 'Diperbarui'}".`,
-      data: updatedInquiry,
+      message: `Inquiry status updated to ${status}.`,
     });
   } catch (error) {
     console.error('Error in PATCH /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Gagal memperbarui status inquiry' },
+      { success: false, error: 'Failed to update inquiry status.' },
       { status: 500 }
     );
   }
 }
 
-/**
- * PUT /api/inquiries/[id]: Alias untuk PATCH
- */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  return PATCH(request, { params });
-}
-
-/**
- * DELETE /api/inquiries/[id]: Hapus inquiry
- */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-
-    try {
-      await db.delete(inquiries).where(eq(inquiries.id, id));
-    } catch (dbError) {
-      console.warn('DB delete inquiry fallback:', (dbError as Error).message);
-    }
+    const success = await deleteSqliteInquiry(id);
 
     return NextResponse.json({
       success: true,
-      message: `Inquiry ${id} berhasil dihapus.`,
+      message: `Inquiry ${id} deleted.`,
+      deleted: success,
     });
   } catch (error) {
     console.error('Error in DELETE /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Gagal menghapus inquiry' },
+      { success: false, error: 'Failed to delete inquiry.' },
       { status: 500 }
     );
   }
@@ -167,7 +94,7 @@ export async function OPTIONS() {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });

@@ -54,7 +54,25 @@ function PromoCard({
 
 export function PromoSection() {
   const [selectedPromo, setSelectedPromo] = useState<PromoItem | null>(null);
-  const topPromos = MOCK_PROMOS.slice(0, 3);
+  const [promos, setPromos] = useState<PromoItem[]>(MOCK_PROMOS);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch('/api/promos')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && Array.isArray(data.data)) {
+          setPromos(data.data);
+        }
+      })
+      .catch((err) => console.warn('Failed to load promotions:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const topPromos = promos.slice(0, 3);
 
   return (
     <section id="promo" className="py-20 sm:py-28">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CarImage } from '@/types/car';
 import {
   Image as ImageIcon,
@@ -12,6 +12,7 @@ import {
   Sparkles,
   Check,
   Eye,
+  Upload,
 } from 'lucide-react';
 
 interface AdminCarPhotoManagerProps {
@@ -53,6 +54,44 @@ export default function AdminCarPhotoManager({
   const [urlInput, setUrlInput] = useState('');
   const [showPresets, setShowPresets] = useState(false);
   const [previewZoomUrl, setPreviewZoomUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (data.success && data.url) {
+        const newImage: CarImage = {
+          id: `img-up-${Date.now()}-${images.length + 1}`,
+          car_id: '',
+          url: data.url,
+          is_main: images.length === 0,
+          sort_order: images.length,
+        };
+        onChange([...images, newImage]);
+      } else {
+        alert(data.error || 'Failed to upload image.');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Error uploading image file.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleAddCustomUrl = () => {
     if (!urlInput.trim()) return;
@@ -173,22 +212,39 @@ export default function AdminCarPhotoManager({
         </div>
       )}
 
-      {/* Input custom URL */}
-      <div className="flex gap-2">
+      {/* Input custom URL and file upload */}
+      <div className="flex flex-wrap gap-2">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          accept="image/*"
+          className="hidden"
+        />
+
         <input
           type="url"
           value={urlInput}
           onChange={(e) => setUrlInput(e.target.value)}
           placeholder="Paste image URL (https://...)"
-          className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+          className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
         />
         <button
           type="button"
           onClick={handleAddCustomUrl}
-          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+          className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Photo</span>
+          <span>Add URL</span>
+        </button>
+        <button
+          type="button"
+          disabled={isUploading}
+          onClick={() => fileInputRef.current?.click()}
+          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all cursor-pointer disabled:opacity-50"
+        >
+          <Upload className={`w-4 h-4 ${isUploading ? 'animate-bounce' : ''}`} />
+          <span>{isUploading ? 'Uploading...' : 'Upload Image File'}</span>
         </button>
       </div>
 

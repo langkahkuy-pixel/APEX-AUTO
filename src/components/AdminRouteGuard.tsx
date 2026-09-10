@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { Lock, ShieldAlert, KeyRound } from 'lucide-react';
+import { Lock, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 
 interface AdminRouteGuardProps {
@@ -16,9 +16,9 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      // Redirect unauthenticated user to login
+      // Redirect unauthenticated user to /admin/login
       const timer = setTimeout(() => {
-        router.push('/login?from=/admin');
+        router.push('/admin/login?from=/admin');
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -50,11 +50,11 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
           </div>
           <div className="pt-2 flex flex-col gap-2.5">
             <Link
-              href="/login?from=/admin"
+              href="/admin/login?from=/admin"
               className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all"
             >
               <KeyRound className="w-4 h-4" />
-              <span>Sign In Now</span>
+              <span>Sign In to Admin Portal</span>
             </Link>
             <Link
               href="/"

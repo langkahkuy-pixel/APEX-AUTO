@@ -44,63 +44,10 @@ import {
   Pencil,
   Check,
   Trash2,
+  RotateCw,
 } from 'lucide-react';
 
 type AdminTab = 'overview' | 'inventory' | 'promos' | 'inquiries' | 'branches';
-
-interface InquiryItem {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  carName: string;
-  message: string;
-  timeAgo: string;
-  status: 'new' | 'contacted' | 'scheduled';
-}
-
-const INITIAL_INQUIRIES: InquiryItem[] = [
-  {
-    id: 'inq-001',
-    name: 'Kenjiro Tanaka',
-    phone: '+65 9123 4567',
-    email: 'kenjiro@sgmail.com',
-    carName: 'Porsche 911 Carrera S (2022)',
-    message: 'I would like to arrange a test drive at your Leng Kee showroom this weekend. Are the COE papers ready for viewing?',
-    timeAgo: '15 mins ago',
-    status: 'new',
-  },
-  {
-    id: 'inq-002',
-    name: 'Amanda Wijaya',
-    phone: '+65 8234 5678',
-    email: 'amanda.w@bizsg.com',
-    carName: 'Mercedes-Benz E200 Avantgarde (2023)',
-    message: 'Are there promotional financing schemes or preferential interest subsidies available for this unit?',
-    timeAgo: '1 hour ago',
-    status: 'new',
-  },
-  {
-    id: 'inq-003',
-    name: 'David Lim',
-    phone: '+65 9876 5432',
-    email: 'davidlim@techgroup.sg',
-    carName: 'BMW M4 Competition Coupe (2022)',
-    message: 'Could you share a copy of the STA Grade A 160-point inspection logbook?',
-    timeAgo: '3 hours ago',
-    status: 'contacted',
-  },
-  {
-    id: 'inq-004',
-    name: 'Siti Rahma',
-    phone: '+65 8765 4321',
-    email: 'siti.rahma@exportcar.id',
-    carName: 'Toyota Vellfire 2.5 ZG Hybrid (2023)',
-    message: 'Can you assist with regional handover and cross-border transport documentation?',
-    timeAgo: '1 day ago',
-    status: 'scheduled',
-  },
-];
 
 const SHOWROOM_BRANCHES = [
   {
@@ -150,7 +97,10 @@ function AdminDashboardContent() {
 
   // Cars inventory state
   const [carsList, setCarsList] = useState<CarType[]>(MOCK_CARS);
+  const [isLoadingCars, setIsLoadingCars] = useState(true);
   const [selectedCarForEdit, setSelectedCarForEdit] = useState<CarType | null>(null);
+  const [carToDelete, setCarToDelete] = useState<CarType | null>(null);
+  const [isDeletingCar, setIsDeletingCar] = useState(false);
   const [formModalMode, setFormModalMode] = useState<'create' | 'edit'>('create');
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [toastNotice, setToastNotice] = useState<string | null>(null);
@@ -159,8 +109,68 @@ function AdminDashboardContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'reserved' | 'sold'>('all');
 
+  // Promos management state
+  const [promosList, setPromosList] = useState<PromoItem[]>(MOCK_PROMOS);
+  const [isLoadingPromos, setIsLoadingPromos] = useState(true);
+  const [selectedPromoForEdit, setSelectedPromoForEdit] = useState<PromoItem | null>(null);
+  const [promoModalMode, setPromoModalMode] = useState<'create' | 'edit'>('create');
+  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+
   // Inquiries state
   const [inquiriesList, setInquiriesList] = useState<AdminInquiry[]>(MOCK_INQUIRIES);
+  const [isLoadingInquiries, setIsLoadingInquiries] = useState(true);
+
+  // Fetch functions connecting to SQLite backend API
+  const fetchCars = async () => {
+    try {
+      setIsLoadingCars(true);
+      const res = await fetch('/api/cars');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setCarsList(data.data);
+      }
+    } catch (err) {
+      console.error('Error fetching cars:', err);
+    } finally {
+      setIsLoadingCars(false);
+    }
+  };
+
+  const fetchPromos = async () => {
+    try {
+      setIsLoadingPromos(true);
+      const res = await fetch('/api/promos');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setPromosList(data.data);
+      }
+    } catch (err) {
+      console.error('Error fetching promos:', err);
+    } finally {
+      setIsLoadingPromos(false);
+    }
+  };
+
+  const fetchInquiries = async () => {
+    try {
+      setIsLoadingInquiries(true);
+      const res = await fetch('/api/inquiries');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setInquiriesList(data.data);
+      }
+    } catch (err) {
+      console.error('Error fetching inquiries:', err);
+    } finally {
+      setIsLoadingInquiries(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCars();
+    fetchPromos();
+    fetchInquiries();
+  }, []);
 
   // Update tab in URL query params
   const handleTabChange = (tab: AdminTab) => {
@@ -173,7 +183,9 @@ function AdminDashboardContent() {
   // Stats calculation
   const totalCars = carsList.length;
   const availableCars = carsList.filter((c) => c.status === 'available').length;
-  const totalValuationSGD = carsList.reduce((acc, c) => acc + c.price, 0);
+  const reservedCars = carsList.filter((c) => c.status === 'reserved').length;
+  const soldCars = carsList.filter((c) => c.status === 'sold').length;
+  const totalValuationSGD = carsList.reduce((acc, c) => acc + (c.price || 0), 0);
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'new').length;
 
   // Filtered inventory
@@ -198,32 +210,84 @@ function AdminDashboardContent() {
     setIsFormModalOpen(true);
   };
 
-  const handleSaveCar = (savedCar: CarType) => {
-    if (formModalMode === 'create') {
-      setCarsList((prev) => [savedCar, ...prev]);
-      setToastNotice(`New vehicle "${savedCar.brand} ${savedCar.model}" added to inventory.`);
-    } else {
-      setCarsList((prev) =>
-        prev.map((c) => (c.id === savedCar.id ? savedCar : c))
-      );
-      setToastNotice(`Vehicle details for "${savedCar.brand} ${savedCar.model}" updated.`);
+  const handleSaveCar = async (savedCar: CarType) => {
+    try {
+      if (formModalMode === 'create') {
+        const res = await fetch('/api/cars', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savedCar),
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          setCarsList((prev) => [data.data, ...prev]);
+          setToastNotice(`New vehicle "${savedCar.brand} ${savedCar.model}" added to inventory.`);
+        } else {
+          setToastNotice(data.error || 'Failed to add vehicle.');
+        }
+      } else {
+        const res = await fetch(`/api/cars/${savedCar.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savedCar),
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          setCarsList((prev) =>
+            prev.map((c) => (c.id === savedCar.id ? data.data : c))
+          );
+          setToastNotice(`Vehicle details for "${savedCar.brand} ${savedCar.model}" updated.`);
+        } else {
+          setToastNotice(data.error || 'Failed to update vehicle.');
+        }
+      }
+      setIsFormModalOpen(false);
+      setTimeout(() => setToastNotice(null), 4000);
+    } catch (e) {
+      console.error('Failed to save car:', e);
+      setToastNotice('Network or server error while saving vehicle.');
     }
-    setTimeout(() => setToastNotice(null), 4000);
   };
 
-  const handleQuickStatusChange = (carId: string, newStatus: CarStatus) => {
+  const handleQuickStatusChange = async (carId: string, newStatus: CarStatus) => {
+    // Optimistic UI update
     setCarsList((prev) =>
       prev.map((c) => (c.id === carId ? { ...c, status: newStatus } : c))
     );
-    setToastNotice(`Vehicle status updated to ${newStatus.toUpperCase()}`);
+    try {
+      await fetch(`/api/cars/${carId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      setToastNotice(`Vehicle status updated to ${newStatus.toUpperCase()}`);
+    } catch (e) {
+      console.error('Error updating status:', e);
+    }
     setTimeout(() => setToastNotice(null), 3000);
   };
 
-  // Promos management state
-  const [promosList, setPromosList] = useState<PromoItem[]>(MOCK_PROMOS);
-  const [selectedPromoForEdit, setSelectedPromoForEdit] = useState<PromoItem | null>(null);
-  const [promoModalMode, setPromoModalMode] = useState<'create' | 'edit'>('create');
-  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+  const confirmDeleteCar = async () => {
+    if (!carToDelete) return;
+    setIsDeletingCar(true);
+    try {
+      const res = await fetch(`/api/cars/${carToDelete.id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setCarsList((prev) => prev.filter((c) => c.id !== carToDelete.id));
+        setToastNotice(`Vehicle "${carToDelete.brand} ${carToDelete.model}" removed from inventory.`);
+      } else {
+        setToastNotice(data.error || 'Failed to remove vehicle.');
+      }
+      setCarToDelete(null);
+      setTimeout(() => setToastNotice(null), 4000);
+    } catch (e) {
+      console.error('Error deleting car:', e);
+      setToastNotice('Network error while removing vehicle.');
+    } finally {
+      setIsDeletingCar(false);
+    }
+  };
 
   const handleOpenCreatePromo = () => {
     setSelectedPromoForEdit(null);
@@ -237,30 +301,65 @@ function AdminDashboardContent() {
     setIsPromoModalOpen(true);
   };
 
-  const handleSavePromo = (savedPromo: PromoItem) => {
-    if (promoModalMode === 'create') {
-      setPromosList((prev) => [savedPromo, ...prev]);
-      setToastNotice(`Promotional campaign "${savedPromo.title}" added.`);
-    } else {
-      setPromosList((prev) =>
-        prev.map((p) => (p.id === savedPromo.id ? savedPromo : p))
-      );
-      setToastNotice(`Promotional campaign "${savedPromo.title}" updated.`);
+  const handleSavePromo = async (savedPromo: PromoItem) => {
+    try {
+      if (promoModalMode === 'create') {
+        const res = await fetch('/api/promos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savedPromo),
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          setPromosList((prev) => [data.data, ...prev]);
+          setToastNotice(`Promotional campaign "${savedPromo.title}" added.`);
+        }
+      } else {
+        const res = await fetch(`/api/promos/${savedPromo.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savedPromo),
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          setPromosList((prev) =>
+            prev.map((p) => (p.id === savedPromo.id ? data.data : p))
+          );
+          setToastNotice(`Promotional campaign "${savedPromo.title}" updated.`);
+        }
+      }
+      setIsPromoModalOpen(false);
+      setTimeout(() => setToastNotice(null), 4000);
+    } catch (e) {
+      console.error('Error saving promo:', e);
     }
-    setTimeout(() => setToastNotice(null), 4000);
   };
 
-  const handleDeletePromo = (promoId: string) => {
-    setPromosList((prev) => prev.filter((p) => p.id !== promoId));
-    setToastNotice('Promotional campaign removed from the system.');
-    setTimeout(() => setToastNotice(null), 3000);
+  const handleDeletePromo = async (promoId: string) => {
+    try {
+      await fetch(`/api/promos/${promoId}`, { method: 'DELETE' });
+      setPromosList((prev) => prev.filter((p) => p.id !== promoId));
+      setToastNotice('Promotional campaign removed from the system.');
+      setTimeout(() => setToastNotice(null), 3000);
+    } catch (e) {
+      console.error('Error deleting promo:', e);
+    }
   };
 
-  const handleInquiryStatusChange = (id: string, newStatus: AdminInquiry['status']) => {
+  const handleInquiryStatusChange = async (id: string, newStatus: AdminInquiry['status']) => {
     setInquiriesList((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
     );
-    setToastNotice(`Inquiry status updated to ${newStatus.toUpperCase()}`);
+    try {
+      await fetch(`/api/inquiries/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      setToastNotice(`Inquiry status updated to ${newStatus.toUpperCase()}`);
+    } catch (e) {
+      console.error('Error updating inquiry status:', e);
+    }
     setTimeout(() => setToastNotice(null), 3000);
   };
 
@@ -278,10 +377,10 @@ function AdminDashboardContent() {
                 <div className="font-extrabold text-sm sm:text-base text-white flex items-center gap-1.5">
                   APEX AUTO{' '}
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">
-                    MANAGEMENT
+                    CMS
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400">Luxury Showroom Management Portal</div>
+                <div className="text-[10px] text-slate-400">Showroom Management System</div>
               </div>
             </Link>
           </div>
@@ -300,7 +399,7 @@ function AdminDashboardContent() {
               target="_blank"
               className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 transition-colors"
             >
-              <span>View Showroom</span>
+              <span>View Website</span>
               <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
             </Link>
 
@@ -342,13 +441,13 @@ function AdminDashboardContent() {
             }`}
           >
             <Car className="w-4 h-4" />
-            <span>Vehicles & COE</span>
+            <span>Inventory ({totalCars})</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 activeTab === 'inventory' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
               }`}
             >
-              {totalCars}
+              {availableCars} Available
             </span>
           </button>
 
@@ -362,13 +461,13 @@ function AdminDashboardContent() {
             }`}
           >
             <Tag className="w-4 h-4" />
-            <span>Privileges & Promos</span>
+            <span>Promotions</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 activeTab === 'promos' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
               }`}
             >
-              {MOCK_PROMOS.length}
+              {promosList.length}
             </span>
           </button>
 
@@ -382,7 +481,7 @@ function AdminDashboardContent() {
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Client Inquiries</span>
+            <span>Inquiries / Leads</span>
             {newInquiriesCount > 0 && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
@@ -407,13 +506,6 @@ function AdminDashboardContent() {
           >
             <Building2 className="w-4 h-4" />
             <span>Showroom Hubs</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === 'branches' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              3 Hubs
-            </span>
           </button>
         </div>
       </nav>
@@ -436,7 +528,7 @@ function AdminDashboardContent() {
                   Apex Auto Showroom Command Centre
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Welcome back, <strong className="text-white">{user?.name || 'Owner'}</strong>. Showroom inventory, COE validity periods, vehicle inspection records, and client inquiries are synchronized securely.
+                  Welcome back, <strong className="text-white">{user?.name || 'Owner'}</strong>. Showroom inventory, COE records, promotion campaigns, and visitor inquiries are synchronized live via SQLite.
                 </p>
               </div>
             </div>
@@ -445,64 +537,68 @@ function AdminDashboardContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Total Inventory Units</span>
+                  <span className="text-xs font-medium">Total Inventory</span>
                   <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                     <Car className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">{totalCars} Units</div>
-                <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3 h-3" /> {availableCars} units ready for viewing & delivery
+                <div className="text-2xl font-black text-white">{totalCars}</div>
+                <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <span className="text-emerald-400 font-bold">{availableCars} Available</span>
+                  <span>•</span>
+                  <span>{reservedCars + soldCars} Reserved/Sold</span>
                 </div>
               </div>
 
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
+              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-emerald-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Total Showroom Valuation</span>
+                  <span className="text-xs font-medium">Available Units</span>
                   <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">
-                  S${(totalValuationSGD / 1000000).toFixed(2)}M
-                </div>
-                <div className="text-[11px] text-slate-400 font-medium">
-                  SGD Nett across 3 Showroom Hubs
+                <div className="text-2xl font-black text-emerald-400">{availableCars}</div>
+                <div className="text-[11px] text-slate-400">
+                  Ready for client test drives & viewings
                 </div>
               </div>
 
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
+              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-blue-500/40 transition-colors">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Client Inquiries</span>
-                  <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center">
+                  <span className="text-xs font-medium">Reserved / Sold Units</span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <Tag className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">
+                  {reservedCars} <span className="text-sm font-normal text-slate-400">res. / {soldCars} sold</span>
+                </div>
+                <div className="text-[11px] text-slate-400">
+                  Pending COE transfers and deliveries
+                </div>
+              </div>
+
+              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-rose-500/40 transition-colors">
+                <div className="flex items-center justify-between text-slate-400">
+                  <span className="text-xs font-medium">Visitor Inquiries / Leads</span>
+                  <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">{inquiriesList.length} Inquiries</div>
-                <div className="text-[11px] text-amber-400 flex items-center gap-1 font-medium">
-                  <Clock className="w-3 h-3" /> {newInquiriesCount} leads pending follow-up
+                <div className="text-2xl font-black text-white">{inquiriesList.length}</div>
+                <div className="text-[11px] text-slate-400">
+                  <span className="text-rose-400 font-bold">{newInquiriesCount} new messages</span> requiring sales followup
                 </div>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Active Showroom Hubs</span>
-                  <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-white">3 Hubs</div>
-                <div className="text-[11px] text-slate-400">Leng Kee, Ubi, Sin Ming</div>
               </div>
             </div>
 
-            {/* Quick Actions & Recent Summary */}
+            {/* Overview Quick Actions & Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
                     <Clock className="w-4 h-4 text-amber-400" />
-                    Recent Inquiries
+                    Recent Leads & Inquiries
                   </h3>
                   <button
                     type="button"
@@ -513,7 +609,7 @@ function AdminDashboardContent() {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {inquiriesList.slice(0, 3).map((inq) => (
+                  {inquiriesList.slice(0, 4).map((inq) => (
                     <div
                       key={inq.id}
                       className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -545,7 +641,7 @@ function AdminDashboardContent() {
                         className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap cursor-pointer"
                       >
                         <Send className="w-3 h-3" />
-                        <span>Reply via WhatsApp</span>
+                        <span>Reply WhatsApp</span>
                       </a>
                     </div>
                   ))}
@@ -557,28 +653,28 @@ function AdminDashboardContent() {
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    System & Operational Integrity
+                    Database & Real-Time Sync
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    All database services and inventory synchronization channels are running normally.
+                    Embedded SQLite engine is active. Any vehicle, promo, or status change writes directly to disk and updates the live site instantly.
                   </p>
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">PostgreSQL Database:</span>
-                    <span className="text-emerald-400 font-bold">Connected & Ready</span>
+                    <span className="text-slate-400">Database Engine:</span>
+                    <span className="text-emerald-400 font-bold">SQLite (Monolithic Local)</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">STA Inspection Status:</span>
-                    <span className="text-white font-medium">100% Grade A Pass</span>
+                    <span className="text-slate-400">Total Portfolio Value:</span>
+                    <span className="text-white font-mono font-bold">S${totalValuationSGD.toLocaleString('en-US')}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Powertrain Warranty:</span>
-                    <span className="text-amber-400 font-medium">12 Months Apex Care</span>
+                    <span className="text-slate-400">Active Promotions:</span>
+                    <span className="text-amber-400 font-medium">{promosList.length} Campaign Banners</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400">Settlement Currency:</span>
-                    <span className="text-white font-mono font-bold">Singapore Dollar (SGD Nett)</span>
+                    <span className="text-slate-400">Showroom Locations:</span>
+                    <span className="text-white font-medium">3 Hubs (Leng Kee, Ubi, Sin Ming)</span>
                   </div>
                 </div>
                 <button
@@ -587,7 +683,7 @@ function AdminDashboardContent() {
                   className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Car className="w-4 h-4" />
-                  <span>Manage Showroom Inventory</span>
+                  <span>Open Car Inventory</span>
                 </button>
               </div>
             </div>
@@ -595,16 +691,16 @@ function AdminDashboardContent() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 2: INVENTORY */}
+        {/* TAB 2: INVENTORY (CRUD) */}
         {/* ========================================================= */}
         {activeTab === 'inventory' && (
           <div className="space-y-6 animate-in fade-in">
             {/* Action Bar */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Showroom Vehicle Inventory</h2>
+                <h2 className="text-xl font-bold text-white">Car Inventory Management</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Manage {totalCars} active vehicles, COE certifications, and pricing.
+                  Create, update, filter, or remove vehicles from the public showroom catalog.
                 </p>
               </div>
 
@@ -615,21 +711,30 @@ function AdminDashboardContent() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search make, model, hub..."
-                    className="pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors w-56 sm:w-64"
+                    placeholder="Search brand, model, hub..."
+                    className="pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors w-52 sm:w-60"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as any)}
-                  className="py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
                 >
                   <option value="all">All Statuses</option>
-                  <option value="available">Available (Ready)</option>
-                  <option value="reserved">Reserved</option>
-                  <option value="sold">Sold (Closed)</option>
+                  <option value="available">Available ({availableCars})</option>
+                  <option value="reserved">Reserved ({reservedCars})</option>
+                  <option value="sold">Sold ({soldCars})</option>
                 </select>
+
+                <button
+                  type="button"
+                  onClick={fetchCars}
+                  title="Reload inventory from database"
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+                >
+                  <RotateCw className={`w-4 h-4 ${isLoadingCars ? 'animate-spin' : ''}`} />
+                </button>
 
                 <button
                   type="button"
@@ -637,7 +742,7 @@ function AdminDashboardContent() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add New Vehicle</span>
+                  <span>Add New Car</span>
                 </button>
               </div>
             </div>
@@ -666,41 +771,45 @@ function AdminDashboardContent() {
                   <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
                     <tr>
                       <th className="py-3.5 px-4 font-semibold">Vehicle</th>
-                      <th className="py-3.5 px-4 font-semibold">Year / Capacity</th>
+                      <th className="py-3.5 px-4 font-semibold">Body & Fuel</th>
+                      <th className="py-3.5 px-4 font-semibold">Year & Mileage</th>
                       <th className="py-3.5 px-4 font-semibold">Price (SGD Nett)</th>
-                      <th className="py-3.5 px-4 font-semibold">COE Expiry</th>
-                      <th className="py-3.5 px-4 font-semibold">Showroom Hub</th>
-                      <th className="py-3.5 px-4 font-semibold">Availability</th>
+                      <th className="py-3.5 px-4 font-semibold">Location</th>
+                      <th className="py-3.5 px-4 font-semibold">Unit Status</th>
                       <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-medium">
                     {filteredCars.length > 0 ? (
                       filteredCars.map((car) => (
-                        <tr key={car.id} className="hover:bg-slate-855/50 transition-colors">
+                        <tr key={car.id} className="hover:bg-slate-800/40 transition-colors">
                           <td className="py-3.5 px-4 text-white font-bold">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-8 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-slate-800">
+                              <div className="w-12 h-9 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-slate-800">
                                 <img
-                                  src={car.images[0]?.url || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=300'}
-                                  alt={car.model}
+                                  src={car.images?.[0]?.url || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=300'}
+                                  alt={`${car.brand} ${car.model}`}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                               <div>
-                                <div>
+                                <div className="text-white text-sm">
                                   {car.brand} {car.model}
                                 </div>
-                                <div className="text-[10px] text-slate-500 font-mono font-normal">
-                                  ID: {car.id} • {car.body_type}
+                                <div className="text-[10px] text-slate-400 font-mono font-normal">
+                                  {car.transmission} • {car.color}
                                 </div>
                               </div>
                             </div>
                           </td>
                           <td className="py-3.5 px-4">
+                            <div className="text-white font-semibold">{car.body_type}</div>
+                            <div className="text-[10px] text-slate-400">{car.fuel_type}</div>
+                          </td>
+                          <td className="py-3.5 px-4">
                             <div className="text-white font-semibold">{car.year}</div>
                             <div className="text-[10px] text-slate-400">
-                              {car.engine_capacity_cc ? `${car.engine_capacity_cc} cc` : car.fuel_type}
+                              {car.mileage_km.toLocaleString('en-US')} km
                             </div>
                           </td>
                           <td className="py-3.5 px-4 text-amber-400 font-bold">
@@ -711,13 +820,9 @@ function AdminDashboardContent() {
                               </div>
                             )}
                           </td>
-                          <td className="py-3.5 px-4 text-slate-300">
-                            <div className="inline-flex items-center gap-1 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-[11px]">
-                              <BadgeCheck className="w-3 h-3 text-amber-400" />
-                              <span>{car.coe_expiry || '10-Year COE'}</span>
-                            </div>
+                          <td className="py-3.5 px-4 text-slate-400">
+                            <span className="line-clamp-1">{car.location}</span>
                           </td>
-                          <td className="py-3.5 px-4 text-slate-400">{car.location}</td>
                           <td className="py-3.5 px-4">
                             <QuickStatusChanger
                               carId={car.id}
@@ -727,11 +832,11 @@ function AdminDashboardContent() {
                             />
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <div className="inline-flex items-center justify-end gap-2">
+                            <div className="inline-flex items-center justify-end gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditCar(car)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
                                 title="Edit vehicle details"
                               >
                                 <Pencil className="w-3 h-3" />
@@ -740,19 +845,29 @@ function AdminDashboardContent() {
                               <Link
                                 href={`/mobil/${car.id}`}
                                 target="_blank"
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+                                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+                                title="View public detail page"
                               >
-                                <span>View</span>
-                                <ArrowUpRight className="w-3 h-3" />
+                                <ArrowUpRight className="w-3.5 h-3.5" />
                               </Link>
+                              <button
+                                type="button"
+                                onClick={() => setCarToDelete(car)}
+                                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
+                                title="Delete vehicle"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7} className="text-center py-8 text-slate-500 text-xs">
-                          No vehicles matching your search criteria were found.
+                        <td colSpan={7} className="text-center py-12 text-slate-500 text-xs">
+                          {isLoadingCars
+                            ? 'Loading vehicle catalog from database...'
+                            : 'No vehicles found matching your criteria.'}
                         </td>
                       </tr>
                     )}
@@ -764,15 +879,15 @@ function AdminDashboardContent() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: PROMOS */}
+        {/* TAB 3: PROMOTIONS (CRUD) */}
         {/* ========================================================= */}
         {activeTab === 'promos' && (
           <div className="space-y-6 animate-in fade-in">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Showroom Privileges & Promotional Campaigns</h2>
+                <h2 className="text-xl font-bold text-white">Homepage Promotional Banners</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Manage active promotional campaigns displayed on the homepage, including terms & conditions.
+                  Manage promotional incentives, savings nominals, and terms & conditions displayed dynamically on the homepage.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -782,15 +897,15 @@ function AdminDashboardContent() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Create Campaign</span>
+                  <span>Create Promo Banner</span>
                 </button>
                 <Link
-                  href="/#promo-section"
+                  href="/#promo"
                   target="_blank"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition-all"
                 >
                   <Eye className="w-3.5 h-3.5" />
-                  <span>View on Homepage</span>
+                  <span>Preview on Homepage</span>
                 </Link>
               </div>
             </div>
@@ -802,64 +917,45 @@ function AdminDashboardContent() {
                   className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors shadow-lg"
                 >
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase font-mono">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
                         {promo.badge}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-mono">
-                        Valid till {promo.valid_until}
-                      </span>
+                      <span className="text-xs text-slate-400 font-mono">{promo.valid_until}</span>
                     </div>
 
-                    <h3 className="text-base font-bold text-white">{promo.title}</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">{promo.description}</p>
+                    <div>
+                      <h3 className="text-base font-bold text-white leading-snug">{promo.title}</h3>
+                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">{promo.description}</p>
+                    </div>
 
-                    <div className="space-y-1.5 pt-2">
-                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        Included Privileges:
+                    {promo.discount_sgd && (
+                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Savings Nominal</span>
+                        <span className="text-lg font-black text-amber-400 font-mono">
+                          S${promo.discount_sgd.toLocaleString('en-US')}
+                        </span>
                       </div>
-                      <ul className="text-xs text-slate-300 space-y-1">
-                        {promo.benefits.map((b, i) => (
-                          <li key={i} className="flex items-start gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 space-y-3">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Status: Active
-                      </span>
-                      {promo.discount_sgd && promo.discount_sgd > 0 && (
-                        <span className="text-amber-400 font-bold font-mono">
-                          Save S${promo.discount_sgd.toLocaleString('en-US')}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-end gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEditPromo(promo)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
-                      >
-                        <Pencil className="w-3 h-3" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePromo(promo.id)}
-                        className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-semibold flex items-center gap-1 border border-rose-500/30 transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        <span>Delete</span>
-                      </button>
-                    </div>
+                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditPromo(promo)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      <span>Edit Promo</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePromo(promo.id)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Remove</span>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -868,10 +964,27 @@ function AdminDashboardContent() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 4: INQUIRIES */}
+        {/* TAB 4: INQUIRIES / LEADS */}
         {/* ========================================================= */}
         {activeTab === 'inquiries' && (
-          <div className="animate-in fade-in">
+          <div className="space-y-6 animate-in fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
+              <div>
+                <h2 className="text-xl font-bold text-white">Visitor Inquiries & Sales Leads</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Incoming leads submitted via the public contact forms and vehicle inquiry buttons.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={fetchInquiries}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                <RotateCw className={`w-3.5 h-3.5 ${isLoadingInquiries ? 'animate-spin' : ''}`} />
+                <span>Refresh Leads</span>
+              </button>
+            </div>
+
             <AdminInquiryList
               inquiries={inquiriesList}
               onStatusChange={handleInquiryStatusChange}
@@ -880,70 +993,37 @@ function AdminDashboardContent() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 5: BRANCHES & SHOWROOM INFO */}
+        {/* TAB 5: BRANCHES */}
         {/* ========================================================= */}
         {activeTab === 'branches' && (
           <div className="space-y-6 animate-in fade-in">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">Showroom Hubs & Client Concierge</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Official Apex Auto showroom branches for private viewings, technical inspection, and delivery handovers.
-                </p>
-              </div>
-              <div className="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>All Hubs Operational</span>
-              </div>
+            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
+              <h2 className="text-xl font-bold text-white">Showroom Hubs & Service Centres</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Apex Auto Singapore physical customer experience locations.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {SHOWROOM_BRANCHES.map((branch) => (
                 <div
                   key={branch.id}
-                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors"
+                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg"
                 >
-                  <div className="space-y-3">
+                  <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                       <Building2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-[10px] text-amber-400 font-mono uppercase tracking-wider font-semibold">
-                        {branch.zone}
-                      </span>
-                      <h3 className="text-base font-bold text-white mt-0.5">{branch.name}</h3>
-                    </div>
-
-                    <div className="space-y-2 text-xs text-slate-300 pt-2">
-                      <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
-                        <span>{branch.address}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                        <span>{branch.phone}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                        <span>{branch.hours}</span>
-                      </div>
+                      <h3 className="text-sm font-bold text-white">{branch.name}</h3>
+                      <span className="text-[10px] text-amber-400 font-mono">{branch.zone}</span>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-400">Showroom Display Units:</span>
-                      <span className="text-white font-bold">{branch.unitsCount} Vehicles</span>
-                    </div>
-                    <a
-                      href={`https://wa.me/${branch.whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20Client%20Concierge%20at%20${encodeURIComponent(branch.name)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Contact Hub Concierge</span>
-                    </a>
+                  <div className="space-y-2 text-xs text-slate-400">
+                    <p>{branch.address}</p>
+                    <p className="font-mono">{branch.hours}</p>
+                    <p className="text-white font-medium">{branch.phone}</p>
                   </div>
                 </div>
               ))}
@@ -969,6 +1049,58 @@ function AdminDashboardContent() {
         onClose={() => setIsPromoModalOpen(false)}
         onSave={handleSavePromo}
       />
+
+      {/* Confirmation Modal for Deleting Car */}
+      {carToDelete && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setCarToDelete(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            <div className="text-center space-y-1.5">
+              <h3 className="text-lg font-bold text-white">Remove Vehicle from Inventory?</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Are you sure you want to delete <strong className="text-white">{carToDelete.brand} {carToDelete.model}</strong>? This action will remove the car and its image gallery from the database and public catalog.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                disabled={isDeletingCar}
+                onClick={() => setCarToDelete(null)}
+                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingCar}
+                onClick={confirmDeleteCar}
+                className="py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-900/30 transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                {isDeletingCar ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <span>Delete Vehicle</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal for Logout */}
       {showLogoutConfirm && (
@@ -997,7 +1129,7 @@ function AdminDashboardContent() {
               <button
                 type="button"
                 onClick={() => setShowLogoutConfirm(false)}
-                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
               >
                 Cancel
               </button>

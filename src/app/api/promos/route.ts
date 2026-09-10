@@ -1,95 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { promos } from '@/db/schema';
+import { getSqlitePromos, createSqlitePromo } from '@/db/sqlite';
 import { MOCK_PROMOS } from '@/data/mock-promos';
-import { eq, and, desc } from 'drizzle-orm';
-import { PromoItem } from '@/types/promo';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const featuredParam = searchParams.get('featured');
-    const categoryParam = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '50', 10);
 
-    let promoList: PromoItem[] = [];
-
+    let promoList;
     try {
-      const conditions = [eq(promos.is_active, true)];
-      if (featuredParam === 'true') {
-        conditions.push(eq(promos.is_featured, true));
-      }
-
-      const rows = await db
-        .select()
-        .from(promos)
-        .where(and(...conditions))
-        .orderBy(desc(promos.is_featured), desc(promos.created_at))
-        .limit(limit);
-
-      if (rows && rows.length > 0) {
-        promoList = rows.map((r) => ({
-          id: r.id,
-          slug: r.slug,
-          title: r.title,
-          tagline: r.tagline,
-          badge: r.badge,
-          discount_sgd: r.discount_sgd ? parseFloat(r.discount_sgd.toString()) : undefined,
-          description: r.description,
-          benefits: r.benefits ? JSON.parse(r.benefits) : [],
-          terms_conditions: r.terms_conditions ? JSON.parse(r.terms_conditions) : [],
-          valid_until: r.valid_until,
-          image_url: r.image_url,
-          highlight_color: (r.highlight_color as 'amber' | 'emerald' | 'blue' | 'purple') || 'amber',
-          cta_text: r.cta_text,
-          cta_whatsapp_text: r.cta_whatsapp_text,
-          is_featured: r.is_featured,
-        }));
-      }
-    } catch (dbErr) {
-      console.warn('DB error fetching promos, falling back to mock data:', (dbErr as Error).message);
-    }
-
-    // Fallback to MOCK_PROMOS if database returned empty or was offline
-    if (promoList.length === 0) {
+      promoList = await getSqlitePromos();
+    } catch (err) {
+      console.warn('SQLite error fetching promos, fallback to mock data:', err);
       promoList = MOCK_PROMOS;
-    }
-
-    // Filter by category if requested
-    if (categoryParam && categoryParam !== 'Semua' && categoryParam !== 'All') {
-      promoList = promoList.filter((p) => {
-        if (categoryParam === 'COE') return p.badge.includes('COE') || p.id.includes('coe');
-        if (categoryParam === 'Financing') return p.badge.includes('FINANCING') || p.id.includes('interest');
-        if (categoryParam === 'Trade-In') return p.badge.includes('TRADE-IN') || p.id.includes('tradein');
-        if (categoryParam === 'EV') return p.badge.includes('EV') || p.id.includes('ev');
-        return true;
-      });
     }
 
     if (featuredParam === 'true') {
       promoList = promoList.filter((p) => p.is_featured);
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        count: promoList.length,
-        data: promoList,
-      },
-      {
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-        },
-      }
-    );
+    return NextResponse.json({
+      success: true,
+      data: promoList,
+      total: promoList.length,
+    });
   } catch (error) {
-    console.error('Error fetching active promos:', error);
+    console.error('Error in GET /api/promos:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to load active promotional campaigns',
+        error: 'Failed to retrieve promotional campaigns.',
       },
       { status: 500 }
     );
@@ -97,92 +37,62 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST /api/promos: Buat program promo showroom baru
+ * POST /api/promos: Tambah program promosi baru
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
     const {
       title,
-      slug,
-      tagline,
-      badge,
+      tagline = '',
+      badge = 'SPECIAL PROMOTION',
       discount_sgd,
-      description,
+      description = '',
       benefits = [],
       terms_conditions = [],
-      valid_until,
+      valid_until = 'Ongoing',
       image_url,
       highlight_color = 'amber',
-      cta_text = 'Claim Exclusive Privilege',
-      cta_whatsapp_text = 'Hello Apex Auto, I would like to inquire about this promotion',
+      cta_text = 'Claim via WhatsApp',
+      cta_whatsapp_text,
       is_featured = false,
-      is_active = true,
     } = body;
 
-    if (!title || !badge || !description || !valid_until || !image_url) {
+    if (!title || typeof title !== 'string' || !title.trim()) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Required fields missing: title, badge, description, valid_until, and image_url are required.',
+          error: 'Promotion title is required.',
         },
         { status: 400 }
       );
     }
 
-    const generatedSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-    let createdPromo;
-    try {
-      const [inserted] = await db
-        .insert(promos)
-        .values({
-          slug: generatedSlug,
-          title,
-          tagline: tagline || title,
-          badge,
-          discount_sgd: discount_sgd ? discount_sgd.toString() : null,
-          description,
-          benefits: JSON.stringify(Array.isArray(benefits) ? benefits : [benefits]),
-          terms_conditions: JSON.stringify(Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions]),
-          valid_until,
-          image_url,
-          highlight_color,
-          cta_text,
-          cta_whatsapp_text,
-          is_featured: Boolean(is_featured),
-          is_active: Boolean(is_active),
-        })
-        .returning();
-
-      createdPromo = inserted;
-    } catch (dbErr) {
-      console.warn('DB promo insert error, fallback mock:', (dbErr as Error).message);
-      createdPromo = {
-        id: `prm-${Date.now()}`,
-        slug: generatedSlug,
-        title,
-        tagline: tagline || title,
-        badge,
-        discount_sgd: discount_sgd ? Number(discount_sgd) : undefined,
-        description,
-        benefits: Array.isArray(benefits) ? benefits : [benefits],
-        terms_conditions: Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions],
-        valid_until,
-        image_url,
-        highlight_color,
-        cta_text,
-        cta_whatsapp_text,
-        is_featured: Boolean(is_featured),
-        is_active: Boolean(is_active),
-        created_at: new Date().toISOString(),
-      };
-    }
+    const createdPromo = await createSqlitePromo({
+      title: title.trim(),
+      tagline: tagline.trim(),
+      badge: badge.trim(),
+      discount_sgd: discount_sgd ? Number(discount_sgd) : undefined,
+      description: description.trim(),
+      benefits: Array.isArray(benefits) ? benefits : [benefits].filter(Boolean),
+      terms_conditions: Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions].filter(Boolean),
+      valid_until,
+      image_url:
+        image_url ||
+        'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80',
+      highlight_color,
+      cta_text,
+      cta_whatsapp_text:
+        cta_whatsapp_text ||
+        `Hello Apex Auto, I would like to inquire about the ${title} promotion.`,
+      is_featured: Boolean(is_featured),
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Promotional campaign created successfully.',
+        message: `Promotion "${createdPromo.title}" successfully created.`,
         data: createdPromo,
       },
       { status: 201 }
@@ -190,7 +100,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in POST /api/promos:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to create new promotional campaign.' },
+      {
+        success: false,
+        error: 'Failed to create promotion.',
+      },
       { status: 500 }
     );
   }

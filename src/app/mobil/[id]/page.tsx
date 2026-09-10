@@ -22,10 +22,24 @@ import {
   Award,
 } from 'lucide-react';
 
+import { getSqliteCarById } from '@/db/sqlite';
+
 interface CarDetailPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export const dynamicParams = true;
+
+async function fetchCar(id: string) {
+  try {
+    const car = await getSqliteCarById(id);
+    if (car) return car;
+  } catch (e) {
+    console.warn('Failed to get car from sqlite:', e);
+  }
+  return MOCK_CARS.find((c) => c.id === id) || null;
 }
 
 export async function generateStaticParams() {
@@ -38,7 +52,7 @@ export async function generateMetadata({
   params,
 }: CarDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const car = MOCK_CARS.find((c) => c.id === id);
+  const car = await fetchCar(id);
 
   if (!car) {
     return {
@@ -54,7 +68,7 @@ export async function generateMetadata({
 
 export default async function CarDetailPage({ params }: CarDetailPageProps) {
   const { id } = await params;
-  const car = MOCK_CARS.find((c) => c.id === id);
+  const car = await fetchCar(id);
 
   if (!car) {
     notFound();

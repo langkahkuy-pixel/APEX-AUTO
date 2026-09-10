@@ -64,9 +64,27 @@ export function CatalogSection() {
     }
   };
 
+  const [cars, setCars] = useState<Car[]>(MOCK_CARS);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/cars')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && Array.isArray(data.data)) {
+          setCars(data.data);
+        }
+      })
+      .catch((err) => console.warn('Failed to load cars catalog:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Filter and sort logic
   const filteredCars = useMemo(() => {
-    return MOCK_CARS.filter((car) => {
+    return cars.filter((car) => {
       // Search by brand, model, color, features
       if (filters.search.trim()) {
         const query = filters.search.toLowerCase().trim();

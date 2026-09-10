@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { findSqliteUser } from '@/db/sqlite';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -32,20 +30,15 @@ export async function POST(request: NextRequest) {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // 2. Cari akun pengguna di database PostgreSQL
-    let userRecord;
+    // 2. Cari akun pengguna di SQLite database
+    let userRecord = null;
     try {
-      const [found] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, cleanEmail))
-        .limit(1);
-      userRecord = found;
+      userRecord = await findSqliteUser(cleanEmail);
     } catch (dbErr) {
-      console.warn('DB error during login query:', (dbErr as Error).message);
+      console.warn('DB error during login query:', dbErr);
     }
 
-    // Default fallback demo accounts
+    // Fallback demo account
     const DEMO_OWNER = {
       id: 'usr-owner-001',
       full_name: 'Alvin Tan (Showroom Principal)',
@@ -59,7 +52,6 @@ export async function POST(request: NextRequest) {
     let authUser = null;
 
     if (userRecord) {
-      // Check password: match plaintext password123 or hashed
       if (
         userRecord.password_hash === password ||
         password === 'password123' ||
@@ -89,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid email or password. Please use the showroom demo credentials.',
+          error: 'Invalid email or password. Please use the showroom demo credentials (owner@apexautosg.com / password123).',
         },
         { status: 401 }
       );

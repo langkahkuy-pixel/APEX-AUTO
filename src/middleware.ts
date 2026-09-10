@@ -19,6 +19,7 @@ export function middleware(request: NextRequest) {
     (activeToken!.startsWith('apex_tok_') ||
       activeToken === 'demo_token' ||
       activeToken === 'mock_token_12345' ||
+      activeToken!.startsWith('apex_mock_jwt_') ||
       activeToken!.length >= 16);
 
   // 1. Proteksi rute API Panel Kelola (/api/admin/*)
@@ -54,24 +55,35 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  // 2. Proteksi Halaman Dashboard Web (/admin, /kelola-showroom)
+  // 2. Auth Pages: /admin/login, /login, /lupa-sandi, /forgot-password
+  const isAuthPage =
+    pathname === '/admin/login' ||
+    pathname === '/login' ||
+    pathname === '/lupa-sandi' ||
+    pathname === '/forgot-password';
+
+  // Jika sudah login dan membuka halaman login, redirect langsung ke dashboard /admin
+  if (isAuthPage && isValidToken) {
+    return NextResponse.redirect(new URL('/admin', request.url));
+  }
+
+  // Jika membuka halaman auth dan belum login, izinkan akses langsung
+  if (isAuthPage) {
+    return NextResponse.next();
+  }
+
+  // 3. Proteksi Halaman Dashboard Web (/admin, /kelola-showroom)
   const isDashboardPage =
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/kelola-showroom');
+    (pathname.startsWith('/admin') || pathname.startsWith('/kelola-showroom')) &&
+    !pathname.startsWith('/admin/login');
 
   if (isDashboardPage) {
     if (!isValidToken) {
-      // Redirect ke login dengan query redirect
-      const loginUrl = new URL('/login', request.url);
+      // Redirect ke /admin/login dengan query redirect
+      const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('redirect', pathname + (search || ''));
       return NextResponse.redirect(loginUrl);
     }
-  }
-
-  // 3. Jika sudah login dan membuka /login atau /lupa-sandi, redirect langsung ke /admin
-  const isAuthPage = pathname === '/login' || pathname === '/lupa-sandi' || pathname === '/forgot-password';
-  if (isAuthPage && isValidToken) {
-    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   return NextResponse.next();

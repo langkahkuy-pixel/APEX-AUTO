@@ -60,38 +60,39 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    // Simulate authentication delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const data = await response.json();
 
-    // Validasi kredensial lokal tiruan
-    if (
-      email.toLowerCase().trim() === DEMO_OWNER.email &&
-      password === DEMO_OWNER.password
-    ) {
-      // Simpan sesi autentikasi lokal
+      if (!response.ok || !data.success) {
+        setIsLoading(false);
+        setError(data.error || 'Invalid credentials. Please verify your email and password.');
+        return;
+      }
+
       if (typeof window !== 'undefined') {
         const sessionData = {
-          user: {
-            name: DEMO_OWNER.name,
-            email: DEMO_OWNER.email,
-            role: DEMO_OWNER.role,
-          },
-          token: `apex_mock_jwt_${Date.now()}`,
+          user: data.user,
+          token: data.token,
           loggedInAt: new Date().toISOString(),
+          expiresAt: data.expiresAt,
         };
         localStorage.setItem('apex_auth_session', JSON.stringify(sessionData));
+        document.cookie = `apex_session_token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
       }
 
       setIsLoading(false);
       setSuccess(true);
-
-      // Redirect ke halaman beranda atau dashboard
       setTimeout(() => {
-        router.push('/');
-      }, 1200);
-    } else {
+        router.push('/admin');
+      }, 500);
+    } catch (err) {
       setIsLoading(false);
-      setError('Invalid email or password. Please use the demo account below.');
+      setError('Connection error. Please try again.');
     }
   };
 

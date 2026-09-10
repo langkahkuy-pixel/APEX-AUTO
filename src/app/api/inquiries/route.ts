@@ -1,20 +1,85 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { inquiries, cars } from '@/db/schema';
-import { eq, desc, and, or, ilike } from 'drizzle-orm';
+import { getSqliteInquiries, createSqliteInquiry } from '@/db/sqlite';
 import { MOCK_INQUIRIES } from '@/data/mock-inquiries';
 
+/**
+ * GET /api/inquiries: Ambil daftar seluruh inquiries / leads untuk dashboard CMS admin
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const statusParam = searchParams.get('status');
+    const searchParam = searchParams.get('search');
+
+    let inquiriesList;
+    try {
+      inquiriesList = await getSqliteInquiries();
+    } catch (err) {
+      console.warn('SQLite fetch inquiries fallback:', err);
+      inquiriesList = MOCK_INQUIRIES;
+    }
+
+    if (statusParam && statusParam !== 'all') {
+      inquiriesList = inquiriesList.filter((i) => i.status === statusParam);
+    }
+
+    if (searchParam && searchParam.trim()) {
+      const term = searchParam.toLowerCase().trim();
+      inquiriesList = inquiriesList.filter(
+        (i) =>
+          i.customerName.toLowerCase().includes(term) ||
+          i.phone.toLowerCase().includes(term) ||
+          i.email.toLowerCase().includes(term) ||
+          i.carName.toLowerCase().includes(term) ||
+          i.message.toLowerCase().includes(term)
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: inquiriesList,
+      total: inquiriesList.length,
+      unreadCount: inquiriesList.filter((i) => i.status === 'new').length,
+    });
+  } catch (error) {
+    console.error('Error in GET /api/inquiries:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to retrieve inquiries.',
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/inquiries: Terima formulir pesan / leads dari pengunjung website
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, contact, message, car_id, interest } = body;
+    const {
+      name,
+      contact,
+      email,
+      message,
+      car_id,
+      car_name,
+      car_price_sgd,
+      interest,
+      trade_in_car,
+      loan_type,
+      preferred_contact,
+      branch,
+    } = body;
 
-    // 1. Validasi field wajib
+    // Validation
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Nama lengkap wajib diisi minimal 2 karakter',
+          error: 'Please enter your full name (minimum 2 characters).',
         },
         { status: 400 }
       );
@@ -24,7 +89,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Nomor kontak WhatsApp atau email wajib diisi',
+          error: 'Please provide a valid WhatsApp phone number or email address.',
         },
         { status: 400 }
       );
@@ -34,147 +99,42 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Pesan pertanyaan wajib diisi minimal 3 karakter',
+          error: 'Message content is required (minimum 3 characters).',
         },
         { status: 400 }
       );
     }
 
-    let validCarId: string | null = null;
-    if (car_id && typeof car_id === 'string' && car_id.trim()) {
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (uuidRegex.test(car_id.trim())) {
-        validCarId = car_id.trim();
-      }
-    }
-
-    // 2. Simpan ke database PostgreSQL (Drizzle)
-    let createdInquiry;
-    try {
-      const [inserted] = await db
-        .insert(inquiries)
-        .values({
-          name: name.trim(),
-          contact: contact.trim(),
-          message: message.trim(),
-          car_id: validCarId,
-          interest: interest ? String(interest).trim() : null,
-          status: 'pending',
-        })
-        .returning();
-      createdInquiry = inserted;
-    } catch (dbError) {
-      console.warn('DB error inserting inquiry, fallback to in-memory response:', (dbError as Error).message);
-      createdInquiry = {
-        id: `inq-${Date.now()}`,
-        name: name.trim(),
-        contact: contact.trim(),
-        message: message.trim(),
-        car_id: validCarId,
-        interest: interest ? String(interest).trim() : null,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-      };
-    }
+    const createdInquiry = await createSqliteInquiry({
+      name: name.trim(),
+      contact: contact.trim(),
+      email: email ? email.trim() : (contact.includes('@') ? contact.trim() : ''),
+      car_id: car_id || undefined,
+      car_name: car_name || interest || 'Showroom Inquiry',
+      car_price_sgd: car_price_sgd ? Number(car_price_sgd) : undefined,
+      message: message.trim(),
+      interest: interest || car_name || undefined,
+      trade_in_car: trade_in_car || undefined,
+      loan_type: loan_type || 'bank_loan',
+      preferred_contact: preferred_contact || 'whatsapp',
+      branch: branch || 'Apex Auto Flagship @ Leng Kee',
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Inquiry berhasil diterima oleh showroom',
+        message: 'Your inquiry has been successfully transmitted to the Apex Auto sales team.',
         data: createdInquiry,
+        referenceId: createdInquiry.id,
       },
-      {
-        status: 201,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
+      { status: 201 }
     );
   } catch (error) {
-    console.error('Error processing inquiry:', error);
+    console.error('Error in POST /api/inquiries:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Terjadi kesalahan sistem saat memproses inquiry Anda',
-      },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const statusParam = searchParams.get('status');
-    const searchParam = searchParams.get('search');
-    const limit = parseInt(searchParams.get('limit') || '50', 10);
-
-    let list: any[] = [];
-    try {
-      const conditions = [];
-      if (statusParam && statusParam !== 'all' && statusParam !== 'Semua') {
-        conditions.push(eq(inquiries.status, statusParam));
-      }
-      if (searchParam && searchParam.trim()) {
-        const q = `%${searchParam.trim()}%`;
-        conditions.push(
-          or(
-            ilike(inquiries.name, q),
-            ilike(inquiries.contact, q),
-            ilike(inquiries.message, q),
-            ilike(inquiries.interest, q)
-          )
-        );
-      }
-
-      list = await db.query.inquiries.findMany({
-        where: conditions.length > 0 ? and(...conditions) : undefined,
-        limit,
-        orderBy: (inq, { desc }) => [desc(inq.created_at)],
-        with: {
-          car: true,
-          assignedUser: true,
-        },
-      });
-    } catch (dbError) {
-      console.warn('DB error fetching inquiries, fallback to mock data:', (dbError as Error).message);
-    }
-
-    if (!list || list.length === 0) {
-      list = MOCK_INQUIRIES;
-      if (statusParam && statusParam !== 'all' && statusParam !== 'Semua') {
-        list = list.filter((item) => item.status === statusParam);
-      }
-      if (searchParam && searchParam.trim()) {
-        const q = searchParam.toLowerCase().trim();
-        list = list.filter(
-          (item) =>
-            item.name.toLowerCase().includes(q) ||
-            item.contact.toLowerCase().includes(q) ||
-            item.message.toLowerCase().includes(q) ||
-            (item.car_name && item.car_name.toLowerCase().includes(q))
-        );
-      }
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        count: list.length,
-        data: list,
-      },
-      {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    );
-  } catch (error) {
-    console.error('Error listing inquiries:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Gagal memuat daftar inquiry',
+        error: 'Failed to process inquiry submission.',
       },
       { status: 500 }
     );
