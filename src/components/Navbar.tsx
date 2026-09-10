@@ -2,18 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronRight } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '#unggulan', label: 'Featured' },
-  { href: '#katalog', label: 'Inventory' },
-  { href: '#promo', label: 'Promotions' },
-  { href: '#kontak-showroom', label: 'Contact' },
+  { href: '/', label: 'Home' },
+  { href: '/inventory', label: 'Inventory' },
+  { href: '/promotions', label: 'Promotions' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -38,19 +40,29 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-[13px] font-medium tracking-wide transition-colors ${
-                  scrolled
-                    ? 'text-zinc-500 hover:text-zinc-900'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-[13px] font-medium tracking-wide transition-colors ${
+                    isActive
+                      ? scrolled
+                        ? 'text-zinc-900 font-semibold'
+                        : 'text-white font-semibold'
+                      : scrolled
+                        ? 'text-zinc-500 hover:text-zinc-900'
+                        : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="block h-0.5 mt-0.5 rounded-full bg-amber-500" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Actions */}
@@ -86,17 +98,24 @@ export function Navbar() {
         }`}
       >
         <nav className="px-6 pb-4 space-y-1 bg-white border-t border-zinc-100">
-          {[...NAV_LINKS, { href: '/login', label: 'Login' }].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between px-3 py-3 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors"
-            >
-              {link.label}
-              <ChevronRight className="w-4 h-4 text-zinc-300" />
-            </Link>
-          ))}
+          {[...NAV_LINKS, { href: '/login', label: 'Login' }].map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center justify-between px-3 py-3 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'text-amber-600 bg-amber-50/50 rounded-lg'
+                    : 'text-zinc-600 hover:text-zinc-900'
+                }`}
+              >
+                {link.label}
+                <ChevronRight className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-zinc-300'}`} />
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </header>

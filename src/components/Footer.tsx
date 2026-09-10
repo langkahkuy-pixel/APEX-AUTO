@@ -15,11 +15,11 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
           </Link>
           <nav className="flex flex-wrap items-center gap-6">
             {[
-              { href: '/#katalog', label: 'Inventory' },
-              { href: '/#unggulan', label: 'Featured' },
-              { href: '/#promo', label: 'Promotions' },
+              { href: '/inventory', label: 'Inventory' },
+              { href: '/', label: 'Featured' },
+              { href: '/promotions', label: 'Promotions' },
               { href: '/tentang-kami', label: 'About' },
-              { href: '/#kontak-showroom', label: 'Contact' },
+              { href: '/contact', label: 'Contact' },
             ].map((link) => (
               <Link
                 key={link.href}

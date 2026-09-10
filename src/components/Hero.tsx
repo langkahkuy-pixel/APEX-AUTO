@@ -62,7 +62,7 @@ export function Hero() {
           </h1>
 
           <a
-            href="#katalog"
+            href="/inventory"
             className="inline-flex items-center gap-2 mt-10 text-sm font-medium text-white/80 hover:text-white transition-colors group"
           >
             View Inventory

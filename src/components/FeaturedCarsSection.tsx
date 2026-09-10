@@ -75,7 +75,7 @@ export function FeaturedCarsSection() {
             Featured
           </h2>
           <Link
-            href="#katalog"
+            href="/inventory"
             className="group flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors"
           >
             View all
