@@ -4,9 +4,9 @@ import { ContactShowroomSection } from '@/components/ContactShowroomSection';
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Contact — Apex Auto | Visit Our Showrooms',
+  title: 'Contact — Apex Auto | Leng Kee Flagship Showroom',
   description:
-    'Visit Apex Auto showrooms at Leng Kee, Ubi Car Hub, and Sin Ming. Send an inquiry, schedule a test drive, or get a trade-in valuation. WhatsApp and online form available.',
+    'Visit Apex Auto Flagship Showroom at 24 Leng Kee Road, Singapore. Send an inquiry, schedule a private test drive, or get a trade-in valuation. WhatsApp and online form available.',
 };
 
 export default function ContactPage() {

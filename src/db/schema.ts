@@ -40,7 +40,7 @@ export const cars = pgTable('cars', {
   description: text('description'),
   features: text('features'), // Fitur mobil (JSON atau comma-separated)
   status: varchar('status', { length: 50 }).notNull().default('available'), // 'available' | 'reserved' | 'sold'
-  location: varchar('location', { length: 255 }).notNull(), // Leng Kee, Ubi, Sin Ming
+  location: varchar('location', { length: 255 }).notNull(), // Leng Kee Flagship
   depreciation_sgd: numeric('depreciation_sgd', { precision: 12, scale: 2 }), // Estimasi depresiasi tahunan SGD
   coe_expiry: varchar('coe_expiry', { length: 100 }), // Masa berlaku COE (e.g. 'Apr 2031 (7 tahun 2 bulan)')
   engine_capacity_cc: integer('engine_capacity_cc'), // Kapasitas mesin CC

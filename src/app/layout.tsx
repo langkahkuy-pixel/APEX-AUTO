@@ -11,7 +11,7 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'Apex Auto — Premier Luxury & Pre-Owned Car Showroom',
   description:
-    'Explore our curated luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details across Leng Kee, Ubi, and Sin Ming showrooms.',
+    'Explore our curated luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details at our Leng Kee Flagship showroom.',
   keywords: [
     'luxury car showroom',
     'certified pre-owned cars',

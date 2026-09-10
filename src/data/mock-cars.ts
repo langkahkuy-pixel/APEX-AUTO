@@ -91,7 +91,7 @@ export const MOCK_CARS: Car[] = [
     description: 'Dynamic driving performance with BMW M Sport heritage. Fully serviced at Performance Motors, original accident-free paintwork, and sporty Alcantara upholstery.',
     features: ['M Sport Aerodynamics', 'Harman Kardon Sound', 'BMW Live Cockpit Professional', 'Head-Up Display', 'Reversing Assistant'],
     status: 'available',
-    location: 'Ubi Car Hub, Singapore',
+    location: 'Leng Kee Showroom, Singapore',
     is_featured: true,
     created_at: '2026-08-18T09:15:00Z',
     depreciation_sgd: 16800,
@@ -129,7 +129,7 @@ export const MOCK_CARS: Car[] = [
     description: 'Luxury hybrid SUV delivering outstanding fuel efficiency (21.3 km/L). Spacious cabin, electric ventilated seats, and full Toyota Safety Sense 2.0 suite.',
     features: ['Toyota Safety Sense', 'JBL Premium Audio', 'Ventilated Front Seats', 'Panoramic Electrochromic Glass', 'Handsfree Power Tailgate'],
     status: 'available',
-    location: 'Sin Ming Autocare, Singapore',
+    location: 'Leng Kee Showroom, Singapore',
     is_featured: false,
     created_at: '2026-08-15T11:20:00Z',
     depreciation_sgd: 15200,
@@ -205,7 +205,7 @@ export const MOCK_CARS: Car[] = [
     description: 'Elegant and athletic 4-door coupe. Features S-Line styling package, Audi Virtual Cockpit Plus, and premium Milano leather sport seats.',
     features: ['Audi Virtual Cockpit Plus', 'Matrix LED Headlights', 'S-Line Sports Package', 'Bang & Olufsen 3D Sound', '19" S-Line Alloys'],
     status: 'available',
-    location: 'Ubi Car Hub, Singapore',
+    location: 'Leng Kee Showroom, Singapore',
     is_featured: false,
     created_at: '2026-08-10T13:45:00Z',
     depreciation_sgd: 15600,
@@ -243,7 +243,7 @@ export const MOCK_CARS: Car[] = [
     description: 'First-class executive luxury MPV. Powered captain seats with extendable ottomans, dual sunroofs, and high-definition rear roof entertainment system.',
     features: ['Pilot Ottoman Seats', 'Twin Sunroof', 'Rear Ceiling Monitor 13.3"', 'Power Sliding Doors', 'JBL Premium Surround'],
     status: 'available',
-    location: 'Sin Ming Autocare, Singapore',
+    location: 'Leng Kee Showroom, Singapore',
     is_featured: true,
     created_at: '2026-08-25T11:00:00Z',
     depreciation_sgd: 20500,
@@ -281,7 +281,7 @@ export const MOCK_CARS: Car[] = [
     description: 'Sporty compact sedan featuring excellent fuel economy and responsive turbo performance. Official Kah Motor unit with active factory warranty.',
     features: ['Honda Sensing Suite', 'Bose Premium 12-Speaker', 'Apple CarPlay & Android Auto', 'Smart Entry with Walk-Away Lock'],
     status: 'sold',
-    location: 'Ubi Car Hub, Singapore',
+    location: 'Leng Kee Showroom, Singapore',
     is_featured: false,
     created_at: '2026-08-01T09:00:00Z',
     depreciation_sgd: 13200,
@@ -310,8 +310,6 @@ export const MOCK_CARS: Car[] = [
 export const SINGAPORE_LOCATIONS = [
   'All Locations',
   'Leng Kee Showroom, Singapore',
-  'Ubi Car Hub, Singapore',
-  'Sin Ming Autocare, Singapore',
 ];
 
 export const BODY_TYPES: string[] = [

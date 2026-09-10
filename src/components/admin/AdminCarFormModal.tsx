@@ -32,8 +32,6 @@ const FUEL_TYPES: FuelType[] = ['Petrol', 'Hybrid', 'Electric', 'Diesel'];
 const TRANSMISSIONS: Transmission[] = ['Automatic', 'Manual'];
 const LOCATIONS = [
   'Leng Kee Showroom (South/Central)',
-  'Ubi Experience Centre (East Hub)',
-  'Sin Ming Hub (North-Central)',
 ];
 
 const DEFAULT_PRESET_IMAGES = [

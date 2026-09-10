@@ -49,7 +49,7 @@ export const MOCK_INQUIRIES: AdminInquiry[] = [
     status: 'new',
     createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
     salesAssigned: 'Jessica Lee (Finance Lead)',
-    branch: 'Apex Auto Experience Centre @ Ubi',
+    branch: 'Apex Auto Flagship @ Leng Kee',
   },
   {
     id: 'inq-sg-003',
@@ -66,7 +66,7 @@ export const MOCK_INQUIRIES: AdminInquiry[] = [
     status: 'contacted',
     createdAt: new Date(Date.now() - 180 * 60 * 1000).toISOString(),
     salesAssigned: 'Alvin Tan (Principal)',
-    branch: 'Apex Auto Prestige Hub @ Sin Ming',
+    branch: 'Apex Auto Flagship @ Leng Kee',
   },
   {
     id: 'inq-sg-004',
@@ -100,7 +100,7 @@ export const MOCK_INQUIRIES: AdminInquiry[] = [
     status: 'contacted',
     createdAt: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
     salesAssigned: 'Marcus Tan (Senior Specialist)',
-    branch: 'Apex Auto Experience Centre @ Ubi',
+    branch: 'Apex Auto Flagship @ Leng Kee',
   },
   {
     id: 'inq-sg-006',
@@ -117,6 +117,6 @@ export const MOCK_INQUIRIES: AdminInquiry[] = [
     status: 'deal_closed',
     createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
     salesAssigned: 'Jessica Lee (Finance Lead)',
-    branch: 'Apex Auto Prestige Hub @ Sin Ming',
+    branch: 'Apex Auto Flagship @ Leng Kee',
   },
 ];

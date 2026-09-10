@@ -178,8 +178,6 @@ export default function AdminCarEditModal({
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
                 >
                   <option value="Leng Kee Showroom (South/Central)">Leng Kee Showroom (South/Central)</option>
-                  <option value="Ubi Experience Centre (East Hub)">Ubi Experience Centre (East Hub)</option>
-                  <option value="Sin Ming Hub (North-Central)">Sin Ming Hub (North-Central)</option>
                 </select>
               </div>
             </div>

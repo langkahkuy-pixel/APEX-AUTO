@@ -176,30 +176,6 @@ const SHOWROOMS = [
     accentColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
     highlight: 'Central Luxury Automotive District',
   },
-  {
-    name: 'Ubi Techpark Showroom',
-    tag: 'Certified Pre-Owned',
-    role: 'Curated prestige pre-owned inventory & on-site trade-in appraisal',
-    address: '10 Ubi Crescent, Ubi Techpark, Singapore 408564',
-    hours: 'Mon–Sat: 09:30–18:30 • Sun: By Appointment',
-    phone: '+65 8234 5678',
-    mapUrl: 'https://maps.google.com/?q=10+Ubi+Crescent+Singapore',
-    image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80',
-    accentColor: 'border-blue-500/40 text-blue-400 bg-blue-500/10',
-    highlight: 'Eastern Commercial Automotive Hub',
-  },
-  {
-    name: 'Sin Ming Service & Delivery Hub',
-    tag: 'Technical & Handover Hub',
-    role: 'Pre-delivery inspection, scheduled servicing & warranty handover',
-    address: '20 Sin Ming Lane, Midview City, Singapore 573968',
-    hours: 'Mon–Sat: 08:30–18:00 • Sun: Closed',
-    phone: '+65 8345 6789',
-    mapUrl: 'https://maps.google.com/?q=20+Sin+Ming+Lane+Singapore',
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-    accentColor: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
-    highlight: 'Dedicated Technical & Aftercare Centre',
-  },
 ];
 
 
@@ -363,10 +339,10 @@ export default function AboutPage() {
             delay={200}
           />
           <AnimatedStat
-            value="3"
-            suffix=" Hubs"
-            label="Strategic Locations"
-            sublabel="Leng Kee, Ubi, and Sin Ming"
+            value="1"
+            suffix=" Flagship"
+            label="Principal Showroom"
+            sublabel="24 Leng Kee Road, Singapore"
             delay={300}
           />
         </div>
@@ -605,26 +581,26 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 5: SHOWROOM NETWORK & STRATEGIC HUBS
+          SECTION 5: FLAGSHIP SHOWROOM
       ═══════════════════════════════════════════════════════════════ */}
       <section className="py-24 sm:py-32 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           {/* Section Header */}
           <div className="max-w-2xl mx-auto text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold text-blue-400 uppercase tracking-widest mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">
               <Building2 className="w-3.5 h-3.5" />
-              <span>3 Strategic Hubs</span>
+              <span>Flagship Showroom</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Showroom Network &amp; Service Centers
+              Our Flagship Showroom
             </h2>
             <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
-              Strategically situated across Singapore&apos;s prime automotive belts to deliver sales, trade-in valuations, and aftercare.
+              Centrally located along Singapore&apos;s prime automotive belt at 24 Leng Kee Road.
             </p>
           </div>
 
-          {/* 3 Showcase Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Showcase Card */}
+          <div className="max-w-2xl mx-auto">
             {SHOWROOMS.map((hub) => (
               <div
                 key={hub.name}

@@ -61,28 +61,6 @@ const SHOWROOM_BRANCHES = [
     unitsCount: 14,
     status: 'Fully Operational',
   },
-  {
-    id: 'branch-2',
-    name: 'Apex Auto Experience Centre @ Ubi',
-    address: '81 Ubi Avenue 4, #01-08 UB.One, Singapore 408830',
-    zone: 'East Automotive Hub',
-    phone: '+65 6890 1234',
-    whatsapp: '+65 8234 5678',
-    hours: 'Mon - Sat: 09:30 - 18:30 SGT',
-    unitsCount: 9,
-    status: 'Fully Operational',
-  },
-  {
-    id: 'branch-3',
-    name: 'Apex Auto Prestige Hub @ Sin Ming',
-    address: '160 Sin Ming Drive, #03-12, Singapore 575722',
-    zone: 'North-Central Prestige Hub',
-    phone: '+65 6901 2345',
-    whatsapp: '+65 8345 6789',
-    hours: 'Mon - Sun: 10:00 - 18:00 SGT',
-    unitsCount: 6,
-    status: 'Fully Operational',
-  },
 ];
 
 function AdminDashboardContent() {
@@ -673,8 +651,8 @@ function AdminDashboardContent() {
                     <span className="text-amber-400 font-medium">{promosList.length} Campaign Banners</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-400">Showroom Locations:</span>
-                    <span className="text-white font-medium">3 Hubs (Leng Kee, Ubi, Sin Ming)</span>
+                    <span className="text-slate-400">Showroom Location:</span>
+                    <span className="text-white font-medium">Leng Kee Flagship (24 Leng Kee Rd)</span>
                   </div>
                 </div>
                 <button

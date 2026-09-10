@@ -159,7 +159,7 @@ export function PromoTermsModal({ promo, onClose }: PromoTermsModalProps) {
                   {promo.terms_conditions.length + 1}
                 </span>
                 <span className="leading-relaxed">
-                  Customers must present their WhatsApp confirmation or reference voucher prior to signing the Sales Agreement at our Leng Kee, Ubi, or Sin Ming showrooms.
+                  Customers must present their WhatsApp confirmation or reference voucher prior to signing the Sales Agreement at our Leng Kee Flagship showroom.
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
