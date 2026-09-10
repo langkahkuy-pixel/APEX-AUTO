@@ -187,7 +187,7 @@ export function CatalogSection() {
 
           <div className="flex items-center gap-3 self-start md:self-auto">
             <span className="text-xs text-slate-500">
-              Showing <span className="font-bold text-amber-600">{filteredCars.length}</span> of {MOCK_CARS.length} vehicles
+              Showing <span className="font-bold text-amber-600">{filteredCars.length}</span> of {cars.length} vehicles
             </span>
             {hasActiveFilters && (
               <button
@@ -284,6 +284,72 @@ export function CatalogSection() {
             </div>
           </div>
 
+          {/* Quick Body Style Filter Buttons Bar (Always Visible at Top) */}
+          <div className="pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <CarIcon className="w-3.5 h-3.5 text-amber-500" />
+                <span>Body Style Filter</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => scrollChips('left')}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  title="Scroll left"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollChips('right')}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  title="Scroll right"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={desktopChipsRef}
+              className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 pt-0.5"
+            >
+              {BODY_TYPES.map((type) => {
+                const isAll = type === 'All' || type === 'Semua';
+                const isActive = isAll ? isAllBodySelected : filters.bodyType === type;
+                const count = isAll
+                  ? cars.length
+                  : cars.filter((c) => c.body_type === type).length;
+                const displayLabel = isAll ? 'All Models' : type;
+
+                return (
+                  <button
+                    key={type}
+                    id={`filter-body-${type.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={() => setFilters({ ...filters, bodyType: type })}
+                    className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                      isActive
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                        : 'bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span>{displayLabel}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                        isActive
+                          ? 'bg-slate-950/20 text-slate-950 font-bold'
+                          : 'bg-slate-200 text-slate-600'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Active Filter Chips (if any filters active) */}
           {hasActiveFilters && (
             <div id="active-filters-container" className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -374,74 +440,8 @@ export function CatalogSection() {
           {/* Desktop Accordion Filter Panel (md and up, expands when isFilterOpen) */}
           {isFilterOpen && (
             <div className="hidden md:block pt-5 border-t border-slate-100 space-y-5 animate-fade-in">
-              {/* Vehicle Body Style - Horizontal Scrolling Chips */}
-              <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <div className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                    <CarIcon className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Vehicle Body Style</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => scrollChips('left')}
-                      className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                      title="Scroll left"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollChips('right')}
-                      className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                      title="Scroll right"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div
-                  ref={desktopChipsRef}
-                  className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 pt-0.5"
-                >
-                  {BODY_TYPES.map((type) => {
-                    const isAll = type === 'All' || type === 'Semua';
-                    const isActive = isAll ? isAllBodySelected : filters.bodyType === type;
-                    const count = isAll
-                      ? MOCK_CARS.length
-                      : MOCK_CARS.filter((c) => c.body_type === type).length;
-                    const displayLabel = isAll ? 'All Models' : type;
-
-                    return (
-                      <button
-                        key={type}
-                        id={`filter-body-${type.toLowerCase()}`}
-                        onClick={() => setFilters({ ...filters, bodyType: type })}
-                        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                          isActive
-                            ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
-                            : 'bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-100'
-                        }`}
-                      >
-                        <span>{displayLabel}</span>
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                            isActive
-                              ? 'bg-slate-950/20 text-slate-950 font-bold'
-                              : 'bg-slate-200 text-slate-600'
-                          }`}
-                        >
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* 3-Column Dropdowns: Price Range, Year, Location */}
-              <div className="grid grid-cols-3 gap-4 pt-2 border-t border-slate-100">
+              <div className="grid grid-cols-3 gap-4">
                 {/* Price Filter */}
                 <div>
                   <label htmlFor="filter-price" className="block text-xs font-semibold text-slate-600 mb-1.5">
@@ -602,14 +602,14 @@ export function CatalogSection() {
                     const isAll = type === 'All' || type === 'Semua';
                     const isActive = isAll ? isAllBodySelected : filters.bodyType === type;
                     const count = isAll
-                      ? MOCK_CARS.length
-                      : MOCK_CARS.filter((c) => c.body_type === type).length;
+                      ? cars.length
+                      : cars.filter((c) => c.body_type === type).length;
                     const displayLabel = isAll ? 'All Models' : type;
 
                     return (
                       <button
                         key={type}
-                        id={`mobile-filter-body-${type.toLowerCase()}`}
+                        id={`mobile-filter-body-${type.toLowerCase().replace(/\s+/g, '-')}`}
                         onClick={() => setFilters({ ...filters, bodyType: type })}
                         className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
                           isActive

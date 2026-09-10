@@ -149,10 +149,14 @@ export async function ensureDatabase(): Promise<Client> {
       });
     }
 
-    // Auto-seed cars and images
-    const carsCount = await db.execute('SELECT COUNT(*) as count FROM cars');
-    if (Number(carsCount.rows[0]?.count || 0) === 0) {
-      for (const car of MOCK_CARS) {
+    // Auto-seed cars and images (insert any missing cars)
+    for (const car of MOCK_CARS) {
+      const existingCar = await db.execute({
+        sql: 'SELECT id FROM cars WHERE id = ? LIMIT 1',
+        args: [car.id],
+      });
+
+      if (existingCar.rows.length === 0) {
         const now = car.created_at || new Date().toISOString();
         const featuresJson = Array.isArray(car.features)
           ? JSON.stringify(car.features)

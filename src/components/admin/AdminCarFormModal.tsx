@@ -27,7 +27,16 @@ interface AdminCarFormModalProps {
   onSave: (carData: Car) => void;
 }
 
-const BODY_TYPES: BodyType[] = ['Sedan', 'SUV', 'Coupe', 'Sports', 'MPV', 'Hatchback'];
+const BODY_TYPES: BodyType[] = [
+  'Sedan',
+  'SUV',
+  'Coupe',
+  'Hatchback',
+  'Convertible',
+  'Station Wagon',
+  'MPV',
+  'Sports',
+];
 const FUEL_TYPES: FuelType[] = ['Petrol', 'Hybrid', 'Electric', 'Diesel'];
 const TRANSMISSIONS: Transmission[] = ['Automatic', 'Manual'];
 const LOCATIONS = [

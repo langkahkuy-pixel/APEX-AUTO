@@ -7,6 +7,8 @@ export type BodyType =
   | 'SUV'
   | 'Coupe'
   | 'Hatchback'
+  | 'Convertible'
+  | 'Station Wagon'
   | 'MPV'
   | 'Sports';
 
