@@ -67,17 +67,6 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className={`hidden sm:inline text-[13px] font-medium transition-colors ${
-                scrolled
-                  ? 'text-zinc-500 hover:text-zinc-900'
-                  : 'text-white/70 hover:text-white'
-              }`}
-            >
-              Login
-            </Link>
-
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -98,7 +87,7 @@ export function Navbar() {
         }`}
       >
         <nav className="px-6 pb-4 space-y-1 bg-white border-t border-zinc-100">
-          {[...NAV_LINKS, { href: '/login', label: 'Login' }].map((link) => {
+          {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link

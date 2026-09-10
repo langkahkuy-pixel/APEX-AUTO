@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, LogIn } from 'lucide-react';
 
 const SOCIAL_LINKS = [
   {
@@ -101,6 +101,19 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
                 {link.label}
               </Link>
             ))}
+
+            <Link
+              href="/login"
+              id="footer-login-btn"
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                isDark
+                  ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border-zinc-700/80 hover:border-amber-500/50 shadow-sm'
+                  : 'bg-white hover:bg-zinc-50 text-zinc-700 hover:text-zinc-900 border-zinc-200 hover:border-amber-500/50 shadow-2xs'
+              }`}
+            >
+              <LogIn className="w-3.5 h-3.5 text-amber-500" />
+              <span>Login</span>
+            </Link>
           </nav>
         </div>
 
@@ -119,6 +132,15 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
             </span>
             <span className="hidden sm:inline opacity-30">•</span>
             <span>UEN: 202012345A</span>
+            <span className="hidden sm:inline opacity-30">•</span>
+            <Link
+              href="/login"
+              className={`hover:underline transition-colors ${
+                isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600'
+              }`}
+            >
+              Staff Portal
+            </Link>
           </div>
 
           {/* Social media icons */}
