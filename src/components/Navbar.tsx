@@ -8,6 +8,7 @@ import { Menu, X, ChevronRight } from 'lucide-react';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/inventory', label: 'Inventory' },
+  { href: '/tentang-kami', label: 'About Us' },
   { href: '/promotions', label: 'Service' },
   { href: '/contact', label: 'Contact' },
 ];

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -18,75 +17,13 @@ import {
   Clock,
   Phone,
   MessageCircle,
-  Navigation,
-  CheckCircle2,
-  BadgeCheck,
   Gauge,
   Search,
   Scale,
   HeartHandshake,
   ChevronRight,
-  Landmark,
-  Compass,
   Check,
-  ExternalLink,
-  Car,
-  Wrench,
-  Percent,
 } from 'lucide-react';
-
-/* ───── Animated Counter Component ───── */
-function AnimatedStat({
-  value,
-  suffix,
-  label,
-  sublabel,
-  delay = 0,
-}: {
-  value: string;
-  suffix?: string;
-  label: string;
-  sublabel?: string;
-  delay?: number;
-}) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`relative p-6 sm:p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800/80 backdrop-blur-md transition-all duration-700 hover:border-amber-500/30 hover:bg-zinc-900/80 group ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      <div className="text-4xl sm:text-5xl font-black text-white tracking-tight tabular-nums flex items-baseline justify-center gap-0.5">
-        <span>{value}</span>
-        {suffix && <span className="text-amber-400 text-2xl font-bold">{suffix}</span>}
-      </div>
-      <div className="text-xs sm:text-sm font-bold text-zinc-200 mt-2 tracking-wide uppercase">
-        {label}
-      </div>
-      {sublabel && (
-        <div className="text-[11px] text-zinc-500 mt-1 font-medium">
-          {sublabel}
-        </div>
-      )}
-      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-amber-500/0 to-transparent group-hover:via-amber-500/50 transition-all duration-500" />
-    </div>
-  );
-}
 
 /* ───── 100-Point Inspection Data ───── */
 const INSPECTION_PHASES = [
@@ -162,23 +99,6 @@ const INSPECTION_PHASES = [
   },
 ];
 
-/* ───── Showroom Network Data ───── */
-const SHOWROOMS = [
-  {
-    name: 'Leng Kee Flagship Showroom',
-    tag: 'Flagship Gallery',
-    role: 'Principal luxury vehicle gallery & private VIP handover lounge',
-    address: '24 Leng Kee Road, Singapore 159096',
-    hours: 'Mon–Sat: 09:00–19:00 • Sun: 10:00–18:00',
-    phone: '+65 8123 4567',
-    mapUrl: 'https://maps.google.com/?q=24+Leng+Kee+Road+Singapore',
-    image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80',
-    accentColor: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
-    highlight: 'Central Luxury Automotive District',
-  },
-];
-
-
 /* ───── Core Values Data ───── */
 const CORE_VALUES = [
   {
@@ -186,28 +106,24 @@ const CORE_VALUES = [
     title: 'Transparent SGD Nett Pricing',
     desc: 'Every vehicle is quoted in clear SGD Nett with zero surprise administrative fees, full GST inclusion, and clear residual COE calculations.',
     tag: 'Zero Surcharges',
-    color: 'amber',
   },
   {
     icon: FileCheck2,
     title: 'Verified Vehicle Provenance',
     desc: 'Each unit is authenticated through official LTA title records, verified mileage logs, and documented authorised agent maintenance histories.',
     tag: 'Accredited History',
-    color: 'emerald',
   },
   {
     icon: HeartHandshake,
     title: 'Consultative Advisory',
     desc: 'Non-commissioned luxury automotive specialists evaluate your driving patterns and annual mileage to advise the optimal model and financing fit.',
     tag: 'Client-First',
-    color: 'blue',
   },
   {
     icon: Award,
     title: 'Master Quality Benchmarks',
     desc: 'Only motorcars passing our rigorous 100-point mechanical, structural, and cosmetic inspection qualify for presentation in our showrooms.',
     tag: 'Top 5% Selection',
-    color: 'purple',
   },
 ];
 
@@ -234,191 +150,166 @@ export default function AboutPage() {
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
 
   return (
-    <main className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-amber-500 selection:text-zinc-950">
+    <main className="min-h-screen flex flex-col bg-[#FAFAFA] text-zinc-900">
       <Navbar />
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 1: IMMERSIVE LUXURY HERO
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-zinc-950 pt-28 pb-20">
-        {/* Background Visual Asset with Cinematic Dark Overlay */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <Image
-            src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2400&q=80"
-            alt="Apex Auto Luxury Showroom Gallery"
-            fill
-            priority
-            className="object-cover object-center opacity-45 scale-105 transition-transform duration-1000"
-            sizes="100vw"
-          />
-          {/* Radial & directional gradient scrims */}
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-950/50" />
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/70 to-transparent" />
-          <div className="absolute -top-40 right-0 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px]" />
-          <div className="absolute -bottom-40 left-0 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px]" />
-        </div>
+      {/* Spacer for fixed navbar */}
+      <div className="pt-16" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full text-center sm:text-left">
-          <div className="max-w-3xl mx-auto sm:mx-0">
-            {/* Breadcrumb Navigation */}
-            <nav className="inline-flex items-center gap-2 text-xs text-zinc-400 mb-6 px-3 py-1.5 rounded-full bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-md">
-              <Link href="/" className="hover:text-amber-400 transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3 h-3 text-zinc-600" />
-              <span className="text-zinc-200 font-medium">About Apex Auto</span>
-            </nav>
+      {/* ── 1. Page Header / Hero Section ── */}
+      <section className="py-12 sm:py-16 border-b border-zinc-200/80 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          {/* Breadcrumb Navigation */}
+          <nav className="inline-flex items-center gap-2 text-xs text-zinc-400 mb-4">
+            <Link href="/" className="hover:text-zinc-900 transition-colors">
+              Home
+            </Link>
+            <ChevronRight className="w-3 h-3 text-zinc-400" />
+            <span className="text-zinc-800 font-medium">About Us</span>
+          </nav>
 
-            {/* Sub-badge */}
-            <div className="flex items-center justify-center sm:justify-start gap-2 mb-5">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold tracking-wide">
-                <BadgeCheck className="w-3.5 h-3.5" />
-                Licensed Motor Dealer &bull; UEN: 202012345A
-              </span>
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>About Apex Auto</span>
             </div>
-
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white tracking-tight leading-[1.08]">
-              Pioneering the Benchmark for{' '}
-              <span className="text-gradient-gold">Luxury Automotive</span>{' '}
-              Showrooms Since 2010
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 tracking-tight leading-[1.15]">
+              Singapore&apos;s Premier Luxury Automobile Showroom
             </h1>
-
-            {/* Subtitle */}
-            <p className="mt-6 text-base sm:text-lg text-zinc-300 leading-relaxed max-w-2xl font-normal">
-              Apex Auto is Singapore&apos;s trusted gateway for verified prestige motorcars, underpinned by transparent SGD Nett pricing, uncompromising 100-point inspections, and consultative advisory.
+            <p className="text-sm sm:text-base text-zinc-500 mt-4 leading-relaxed max-w-2xl">
+              Since 2010, Apex Auto has redefined the luxury automotive experience along Leng Kee Road with transparent SGD Nett pricing, certified 100-point inspections, and dedicated consultative client advisory.
             </p>
 
-            {/* Quick Action Buttons */}
-            <div className="mt-9 flex flex-wrap items-center justify-center sm:justify-start gap-3.5">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href="/#katalog"
-                className="group inline-flex items-center gap-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-7 py-3.5 rounded-2xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-0.5 text-sm"
+                href="/inventory"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5"
               >
-                <span>Explore Inventory</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span>Browse Inventory</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-sm transition-colors"
+              >
+                <Building2 className="w-4 h-4 text-amber-400" />
+                <span>Visit Showroom</span>
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20to%20consult%20with%20a%20luxury%20automotive%20advisor"
+                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles%20and%20services."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white font-semibold px-6 py-3.5 rounded-2xl backdrop-blur-md transition-all text-sm"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-sm transition-colors"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
-                <span>Contact Advisors</span>
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <span>WhatsApp Concierge</span>
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 2: KEY METRICS (STATISTIK UTAMA)
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative z-20 -mt-8 sm:-mt-12 max-w-7xl mx-auto px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6">
-          <AnimatedStat
-            value="500"
-            suffix="+"
-            label="Vehicles Delivered"
-            sublabel="Verified prestige & pre-owned sales"
-            delay={0}
-          />
-          <AnimatedStat
-            value="15"
-            suffix="+"
-            label="Years Heritage"
-            sublabel="Serving motorists since 2010"
-            delay={100}
-          />
-          <AnimatedStat
-            value="4.9"
-            suffix="★"
-            label="Google Client Rating"
-            sublabel="350+ independent reviews"
-            delay={200}
-          />
-          <AnimatedStat
-            value="1"
-            suffix=" Flagship"
-            label="Principal Showroom"
-            sublabel="24 Leng Kee Road, Singapore"
-            delay={300}
-          />
+      {/* ── 2. Key Metrics ── */}
+      <section className="py-10 bg-[#FAFAFA] border-b border-zinc-200/80">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
+                500<span className="text-amber-500">+</span>
+              </div>
+              <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
+                Vehicles Delivered
+              </p>
+              <p className="text-xs text-zinc-400 mt-1">Verified prestige &amp; pre-owned</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
+                15<span className="text-amber-500">+</span>
+              </div>
+              <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
+                Years Heritage
+              </p>
+              <p className="text-xs text-zinc-400 mt-1">Serving motorists since 2010</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums flex items-center gap-1">
+                4.9<span className="text-amber-500 text-2xl">★</span>
+              </div>
+              <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
+                Client Rating
+              </p>
+              <p className="text-xs text-zinc-400 mt-1">350+ independent reviews</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
+              <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
+                1 <span className="text-amber-500 text-lg font-bold">Flagship</span>
+              </div>
+              <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
+                Showroom Hub
+              </p>
+              <p className="text-xs text-zinc-400 mt-1">24 Leng Kee Road, Singapore</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 3: VISI, MISI & CORE VALUES (VISUAL LAYOUT)
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 sm:py-32 relative overflow-hidden">
+      {/* ── 3. Corporate Philosophy & Core Values ── */}
+      <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">
-              <Compass className="w-3.5 h-3.5" />
-              <span>Corporate Philosophy</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
+              Corporate Philosophy
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
               Guided by Integrity, Driven by Passion
             </h2>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
+            <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
               We eliminate traditional dealership friction through radical price transparency, authenticated vehicle provenance, and enduring automotive stewardship.
             </p>
           </div>
 
-          {/* Dual Highlight Cards: Vision & Mission */}
+          {/* Vision & Mission Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {/* Vision Card */}
-            <div className="relative p-8 sm:p-10 rounded-3xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-md hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-6 group-hover:scale-105 transition-transform">
-                  <Eye className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                  Our Vision
-                </h3>
-                <p className="text-zinc-300 text-sm leading-relaxed mb-6">
-                  To be Singapore&apos;s definitive luxury automotive authority, where acquiring a prestigious motorcar is celebrated as a seamless, dignified experience characterized by honest advisory, complete pricing clarity, and genuine client care.
-                </p>
+            <div className="rounded-2xl border border-zinc-200 bg-white p-7 sm:p-8 shadow-xs">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-5 text-amber-600">
+                <Eye className="w-5 h-5" />
               </div>
-
-              {/* Scannable Highlights */}
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-800/80">
+              <h3 className="text-lg sm:text-xl font-semibold text-zinc-900 mb-2">
+                Our Vision
+              </h3>
+              <p className="text-sm text-zinc-500 leading-relaxed mb-6">
+                To be Singapore&apos;s definitive luxury automotive authority, where acquiring a prestigious motorcar is celebrated as a seamless, dignified experience characterized by honest advisory, complete pricing clarity, and genuine client care.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
                 {['Accredited Dealership', 'Zero-Surprise Pricing', 'Lifelong Relationship'].map((pill) => (
                   <span
                     key={pill}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-800/60 border border-zinc-700/60 text-xs text-zinc-300 font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
                   >
-                    <Check className="w-3 h-3 text-amber-400" />
+                    <Check className="w-3.5 h-3.5 text-amber-500" />
                     <span>{pill}</span>
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* Mission Card */}
-            <div className="relative p-8 sm:p-10 rounded-3xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-md hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-105 transition-transform">
-                  <Target className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                  Our Mission
-                </h3>
-                <p className="text-zinc-300 text-sm leading-relaxed mb-6">
-                  To curate exceptional luxury motorcars backed by unbending 100-point inspection standards, complete COE depreciation transparency, and competitive bank financing partnerships that safeguard our clients&apos; investments.
-                </p>
+            <div className="rounded-2xl border border-zinc-200 bg-white p-7 sm:p-8 shadow-xs">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-5 text-amber-600">
+                <Target className="w-5 h-5" />
               </div>
-
-              {/* Scannable Highlights */}
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-800/80">
+              <h3 className="text-lg sm:text-xl font-semibold text-zinc-900 mb-2">
+                Our Mission
+              </h3>
+              <p className="text-sm text-zinc-500 leading-relaxed mb-6">
+                To curate exceptional luxury motorcars backed by unbending 100-point inspection standards, complete COE depreciation transparency, and competitive bank financing partnerships that safeguard our clients&apos; investments.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
                 {['100-Point Inspection', 'STA Grade-A Protocol', 'Preferred Bank Rates'].map((pill) => (
                   <span
                     key={pill}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-800/60 border border-zinc-700/60 text-xs text-zinc-300 font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
                   >
-                    <Check className="w-3 h-3 text-emerald-400" />
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
                     <span>{pill}</span>
                   </span>
                 ))}
@@ -426,28 +317,26 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Core Values (4 Interactive Visual Cards Grid) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* 4 Core Values Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {CORE_VALUES.map((val) => {
               const Icon = val.icon;
               return (
                 <div
                   key={val.title}
-                  className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/70 hover:border-zinc-700 hover:bg-zinc-900/70 transition-all duration-300 flex flex-col justify-between group"
+                  className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xs flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center text-amber-400 group-hover:border-amber-500/40 transition-colors">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-                        {val.tag}
-                      </span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 mb-4">
+                      <Icon className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white text-base mb-2">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 inline-block mb-2">
+                      {val.tag}
+                    </span>
+                    <h4 className="font-semibold text-zinc-900 text-base mb-2">
                       {val.title}
                     </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-500 leading-relaxed">
                       {val.desc}
                     </p>
                   </div>
@@ -458,49 +347,22 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 4: 100-POINT INSPECTION (INTERACTIVE TIMELINE & STEPS)
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 sm:py-32 bg-zinc-900/30 border-y border-zinc-800/60 relative overflow-hidden">
+      {/* ── 4. Certified 100-Point Inspection Protocol ── */}
+      <section className="py-16 sm:py-20 bg-white border-y border-zinc-200/80">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="max-w-2xl mx-auto text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-3">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Inspection Standard</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
+              Inspection Standard
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
               Certified 100-Point Inspection Protocol
             </h2>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
+            <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
               Every vehicle in our collection undergoes an exhaustive 5-stage certification by certified master technicians before entering the showroom.
             </p>
           </div>
 
-          {/* Interactive Step Switcher Tabs */}
-          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
-            {INSPECTION_PHASES.map((phase, idx) => {
-              const isActive = activePhaseIndex === idx;
-              return (
-                <button
-                  key={phase.num}
-                  onClick={() => setActivePhaseIndex(idx)}
-                  className={`flex-shrink-0 flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                    isActive
-                      ? 'bg-amber-500 text-zinc-950 font-bold shadow-lg shadow-amber-500/20'
-                      : 'bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700'
-                  }`}
-                >
-                  <span className={`text-[11px] font-black ${isActive ? 'text-zinc-950' : 'text-amber-400'}`}>
-                    {phase.num}
-                  </span>
-                  <span>{phase.short}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* 5 Numbered Cards Grid (Interactive Focus) */}
+          {/* 5 Numbered Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-10">
             {INSPECTION_PHASES.map((phase, idx) => {
               const Icon = phase.icon;
@@ -510,38 +372,34 @@ export default function AboutPage() {
                 <div
                   key={phase.num}
                   onClick={() => setActivePhaseIndex(idx)}
-                  className={`cursor-pointer p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                  className={`cursor-pointer p-6 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${
                     isSelected
-                      ? 'bg-zinc-900 border-amber-500 shadow-xl shadow-amber-500/10 ring-1 ring-amber-500/50'
-                      : 'bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900/70'
+                      ? 'bg-amber-50/60 border-amber-500 shadow-sm'
+                      : 'bg-white border-zinc-200 hover:border-zinc-300'
                   }`}
                 >
                   <div>
-                    {/* Number & Icon */}
                     <div className="flex items-center justify-between mb-4">
-                      <span className={`text-2xl font-black ${isSelected ? 'text-amber-400' : 'text-zinc-600'}`}>
+                      <span className={`text-xl font-bold ${isSelected ? 'text-amber-600' : 'text-zinc-400'}`}>
                         {phase.num}
                       </span>
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                        isSelected ? 'bg-amber-500/15 text-amber-400' : 'bg-zinc-800 text-zinc-400'
+                        isSelected ? 'bg-amber-500 text-slate-950' : 'bg-zinc-100 text-zinc-600'
                       }`}>
                         <Icon className="w-4.5 h-4.5" />
                       </div>
                     </div>
-
-                    <h4 className="font-bold text-white text-sm mb-2 leading-snug">
+                    <h4 className="font-semibold text-zinc-900 text-sm mb-2">
                       {phase.title}
                     </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">
                       {phase.desc}
                     </p>
                   </div>
-
-                  {/* Checklist Points */}
-                  <div className="pt-3 border-t border-zinc-800/60 space-y-1.5">
+                  <div className="pt-3 border-t border-zinc-100 space-y-1.5">
                     {phase.points.slice(0, 2).map((pt, pIdx) => (
-                      <div key={pIdx} className="flex items-start gap-1.5 text-[11px] text-zinc-400">
-                        <Check className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+                      <div key={pIdx} className="flex items-start gap-1.5 text-[11px] text-zinc-600">
+                        <Check className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" />
                         <span className="line-clamp-1">{pt}</span>
                       </div>
                     ))}
@@ -551,14 +409,14 @@ export default function AboutPage() {
             })}
           </div>
 
-          {/* Warranty & Accident-Free Guarantee Banner */}
-          <div className="p-7 sm:p-8 rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-900/60 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+          {/* Warranty Banner */}
+          <div className="p-6 sm:p-8 rounded-2xl bg-zinc-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
             <div className="flex items-start sm:items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                <Award className="w-7 h-7" />
+              <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                <Award className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-white">
+                <h4 className="text-base sm:text-lg font-bold text-white">
                   12 to 24 Months Showroom Warranty &amp; Accident-Free Guarantee
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
@@ -566,164 +424,132 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-
             <a
               href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20details%20on%20the%20100-point%20inspection%20and%20warranty%20coverage"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs px-5 py-3 rounded-xl transition-all shrink-0"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all shrink-0"
             >
               <span>Inquire on Warranty</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 5: FLAGSHIP SHOWROOM
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 sm:py-32 relative overflow-hidden">
+      {/* ── 5. Flagship Showroom ── */}
+      <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Flagship Showroom</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Our Flagship Showroom
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
+              Principal Showroom
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+              Visit Our Flagship Showroom
             </h2>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
-              Centrally located along Singapore&apos;s prime automotive belt at 24 Leng Kee Road.
+            <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
+              Experience our curated luxury automobile collection at our premier Leng Kee Road location.
             </p>
           </div>
 
-          {/* Showcase Card */}
-          <div className="max-w-2xl mx-auto">
-            {SHOWROOMS.map((hub) => (
-              <div
-                key={hub.name}
-                className="rounded-3xl bg-zinc-900/50 border border-zinc-800/80 overflow-hidden flex flex-col justify-between hover:border-zinc-700 transition-all duration-300 group shadow-xl"
-              >
-                {/* Hub Photography */}
-                <div className="relative h-56 w-full overflow-hidden">
-                  <Image
-                    src={hub.image}
-                    alt={hub.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-                  
-                  {/* Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider border backdrop-blur-md ${hub.accentColor}`}>
-                      {hub.tag}
-                    </span>
-                  </div>
+          <div className="max-w-2xl">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-xs">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Main Showroom</span>
+                </div>
+                <span className="text-xs font-medium text-zinc-400">South / Central Prime Belt</span>
+              </div>
 
-                  <div className="absolute bottom-3 left-4 right-4">
-                    <span className="text-[11px] font-medium text-zinc-300 bg-zinc-950/70 px-2.5 py-1 rounded-lg backdrop-blur-md">
-                      {hub.highlight}
-                    </span>
+              <h3 className="font-bold text-zinc-900 text-xl sm:text-2xl">
+                Apex Auto Leng Kee Flagship
+              </h3>
+              <p className="text-xs text-amber-600 font-medium mt-1 mb-6">
+                Principal luxury vehicle gallery &amp; private VIP handover lounge
+              </p>
+
+              <div className="space-y-4 text-sm text-zinc-600 border-t border-zinc-100 pt-6">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
+                  <div>
+                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Address</span>
+                    <p className="text-zinc-800 font-medium mt-0.5">24 Leng Kee Road, Singapore 159096</p>
+                    <p className="text-xs text-zinc-400">Opposite Leng Kee Autoworld · Near Redhill MRT</p>
                   </div>
                 </div>
-
-                {/* Hub Information */}
-                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-1.5">
-                      {hub.name}
-                    </h3>
-                    <p className="text-xs text-amber-400 font-medium mb-4 leading-relaxed">
-                      {hub.role}
-                    </p>
-
-                    <div className="space-y-2.5 text-xs text-zinc-400">
-                      <div className="flex items-start gap-2.5">
-                        <MapPin className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
-                        <span>{hub.address}</span>
-                      </div>
-                      <div className="flex items-start gap-2.5">
-                        <Clock className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
-                        <span>{hub.hours}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5">
-                        <Phone className="w-4 h-4 text-zinc-500 shrink-0" />
-                        <a
-                          href={`tel:${hub.phone.replace(/[^0-9+]/g, '')}`}
-                          className="hover:text-amber-400 transition-colors"
-                        >
-                          {hub.phone}
-                        </a>
-                      </div>
-                    </div>
+                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Operating Hours</span>
+                    <p className="text-zinc-800 font-medium mt-0.5">Mon–Sat: 09:00–19:00 • Sun: 10:00–18:00</p>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-2.5 mt-6 pt-5 border-t border-zinc-800/80">
-                    <a
-                      href={`https://wa.me/${hub.phone.replace(/[^0-9]/g, '')}?text=Hello%20Apex%20Auto%20${encodeURIComponent(hub.name)},%20I%20would%20like%20to%20schedule%20a%20showroom%20visit`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-semibold text-xs transition-all text-center"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span>WhatsApp</span>
-                    </a>
-                    <a
-                      href={hub.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all text-center"
-                    >
-                      <Navigation className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Directions</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
+                  <div>
+                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Telephone</span>
+                    <a href="tel:+6581234567" className="text-zinc-800 font-medium hover:text-amber-600 transition-colors">
+                      +65 8123 4567
                     </a>
                   </div>
                 </div>
               </div>
-            ))}
+
+              <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-wrap items-center gap-3">
+                <a
+                  href="https://maps.google.com/?q=24+Leng+Kee+Road+Singapore"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs transition-colors"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Open in Google Maps</span>
+                </a>
+                <a
+                  href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%20Leng%20Kee%20Flagship%2C%20I%20would%20like%20to%20schedule%20a%20private%20visit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-xs transition-colors"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>WhatsApp Concierge</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 6: FINANCING PARTNERS & FINAL CTA
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 sm:py-32 bg-zinc-900/30 border-t border-zinc-800/60 relative overflow-hidden">
+      {/* ── 6. Strategic Banking Alliances ── */}
+      <section className="py-16 sm:py-20 bg-white border-t border-zinc-200/80">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Financing Partners Header */}
-          <div className="max-w-2xl mx-auto text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-3">
-              <Landmark className="w-3.5 h-3.5" />
-              <span>Strategic Banking Alliances</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
+              Financing Partnerships
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
               Preferential Financing &amp; Fast Approval
             </h2>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
+            <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
               Apex Auto collaborates directly with Singapore&apos;s leading banking institutions to secure bespoke interest rates and expedited 24-hour financing approvals.
             </p>
           </div>
 
-          {/* Bank Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {BANK_PARTNERS.map((bank) => (
               <div
                 key={bank.name}
-                className="p-7 rounded-2xl bg-zinc-900/50 border border-zinc-800/80 hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between"
+                className="rounded-2xl border border-zinc-200 bg-[#FAFAFA] p-6 shadow-xs flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-bold text-white text-base">{bank.name}</h4>
-                    <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                    <h4 className="font-semibold text-zinc-900 text-base">{bank.name}</h4>
+                    <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                       {bank.rate}
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
+                  <p className="text-xs text-zinc-500 leading-relaxed">
                     {bank.desc}
                   </p>
                 </div>
@@ -731,42 +557,36 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Final Conversion Banner */}
-          <div className="p-8 sm:p-14 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 border border-zinc-800/90 text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-1/4 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
-            
-            <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-4">
+          {/* Final Call to Action Banner */}
+          <div className="rounded-3xl bg-zinc-900 text-white p-8 sm:p-12 text-center shadow-lg">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
               Begin Your Prestige Ownership Journey
             </h3>
-            <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto mb-8 leading-relaxed">
+            <p className="text-sm text-zinc-400 max-w-xl mx-auto mb-8 leading-relaxed">
               Explore our verified showroom inventory or reserve a private VIP consultation with our non-commissioned automotive advisors.
             </p>
-
             <div className="flex flex-wrap items-center justify-center gap-3.5">
               <Link
-                href="/#katalog"
-                className="group inline-flex items-center gap-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-7 py-3.5 rounded-2xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-0.5 text-sm"
+                href="/inventory"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5"
               >
-                <span>Explore Current Inventory</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span>Explore Inventory</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
-              <a
-                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20to%20schedule%20a%20private%20VIP%20showroom%20viewing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-400 font-semibold px-6 py-3.5 rounded-2xl transition-all text-sm"
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/15 transition-all"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>Schedule Private VIP Viewing</span>
-              </a>
+                <Building2 className="w-4 h-4 text-amber-400" />
+                <span>Contact Showroom</span>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Dark Theme Footer */}
-      <Footer theme="dark" />
+      {/* Standard Light Theme Footer */}
+      <Footer />
     </main>
   );
 }
-
