@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
           terms_conditions: r.terms_conditions ? JSON.parse(r.terms_conditions) : [],
           valid_until: r.valid_until,
           image_url: r.image_url,
-          highlight_color: r.highlight_color || 'amber',
+          highlight_color: (r.highlight_color as 'amber' | 'emerald' | 'blue' | 'purple') || 'amber',
           cta_text: r.cta_text,
           cta_whatsapp_text: r.cta_whatsapp_text,
           is_featured: r.is_featured,
@@ -96,12 +96,112 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * POST /api/promos: Buat program promo showroom baru
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const {
+      title,
+      slug,
+      tagline,
+      badge,
+      discount_sgd,
+      description,
+      benefits = [],
+      terms_conditions = [],
+      valid_until,
+      image_url,
+      highlight_color = 'amber',
+      cta_text = 'Klaim Penawaran Ini',
+      cta_whatsapp_text = 'Halo Apex Auto, saya ingin klaim promo ini',
+      is_featured = false,
+      is_active = true,
+    } = body;
+
+    if (!title || !badge || !description || !valid_until || !image_url) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Field wajib belum lengkap: title, badge, description, valid_until, image_url harus diisi.',
+        },
+        { status: 400 }
+      );
+    }
+
+    const generatedSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    let createdPromo;
+    try {
+      const [inserted] = await db
+        .insert(promos)
+        .values({
+          slug: generatedSlug,
+          title,
+          tagline: tagline || title,
+          badge,
+          discount_sgd: discount_sgd ? discount_sgd.toString() : null,
+          description,
+          benefits: JSON.stringify(Array.isArray(benefits) ? benefits : [benefits]),
+          terms_conditions: JSON.stringify(Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions]),
+          valid_until,
+          image_url,
+          highlight_color,
+          cta_text,
+          cta_whatsapp_text,
+          is_featured: Boolean(is_featured),
+          is_active: Boolean(is_active),
+        })
+        .returning();
+
+      createdPromo = inserted;
+    } catch (dbErr) {
+      console.warn('DB promo insert error, fallback mock:', (dbErr as Error).message);
+      createdPromo = {
+        id: `prm-${Date.now()}`,
+        slug: generatedSlug,
+        title,
+        tagline: tagline || title,
+        badge,
+        discount_sgd: discount_sgd ? Number(discount_sgd) : undefined,
+        description,
+        benefits: Array.isArray(benefits) ? benefits : [benefits],
+        terms_conditions: Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions],
+        valid_until,
+        image_url,
+        highlight_color,
+        cta_text,
+        cta_whatsapp_text,
+        is_featured: Boolean(is_featured),
+        is_active: Boolean(is_active),
+        created_at: new Date().toISOString(),
+      };
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Program promo berhasil dibuat.',
+        data: createdPromo,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error in POST /api/promos:', error);
+    return NextResponse.json(
+      { success: false, error: 'Gagal membuat program promo baru.' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });

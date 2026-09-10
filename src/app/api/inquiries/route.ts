@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { inquiries, cars } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, desc, and, or, ilike } from 'drizzle-orm';
+import { MOCK_INQUIRIES } from '@/data/mock-inquiries';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +42,6 @@ export async function POST(request: NextRequest) {
 
     let validCarId: string | null = null;
     if (car_id && typeof car_id === 'string' && car_id.trim()) {
-      // Periksa apakah car_id valid format UUID
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (uuidRegex.test(car_id.trim())) {
         validCarId = car_id.trim();
@@ -105,11 +105,30 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const statusParam = searchParams.get('status');
+    const searchParam = searchParams.get('search');
     const limit = parseInt(searchParams.get('limit') || '50', 10);
 
     let list: any[] = [];
     try {
+      const conditions = [];
+      if (statusParam && statusParam !== 'all' && statusParam !== 'Semua') {
+        conditions.push(eq(inquiries.status, statusParam));
+      }
+      if (searchParam && searchParam.trim()) {
+        const q = `%${searchParam.trim()}%`;
+        conditions.push(
+          or(
+            ilike(inquiries.name, q),
+            ilike(inquiries.contact, q),
+            ilike(inquiries.message, q),
+            ilike(inquiries.interest, q)
+          )
+        );
+      }
+
       list = await db.query.inquiries.findMany({
+        where: conditions.length > 0 ? and(...conditions) : undefined,
         limit,
         orderBy: (inq, { desc }) => [desc(inq.created_at)],
         with: {
@@ -118,7 +137,24 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (dbError) {
-      console.warn('DB error fetching inquiries:', (dbError as Error).message);
+      console.warn('DB error fetching inquiries, fallback to mock data:', (dbError as Error).message);
+    }
+
+    if (!list || list.length === 0) {
+      list = MOCK_INQUIRIES;
+      if (statusParam && statusParam !== 'all' && statusParam !== 'Semua') {
+        list = list.filter((item) => item.status === statusParam);
+      }
+      if (searchParam && searchParam.trim()) {
+        const q = searchParam.toLowerCase().trim();
+        list = list.filter(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.contact.toLowerCase().includes(q) ||
+            item.message.toLowerCase().includes(q) ||
+            (item.car_name && item.car_name.toLowerCase().includes(q))
+        );
+      }
     }
 
     return NextResponse.json(

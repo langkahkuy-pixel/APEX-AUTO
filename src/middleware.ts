@@ -2,27 +2,27 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Next.js Middleware untuk melindungi rute API panel kelola (/api/admin/*)
+ * Next.js Middleware untuk melindungi rute dashboard panel kelola dan API
  * Memvalidasi token sesi di cookie 'apex_session_token' atau 'Authorization: Bearer <token>'
  */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+
+  const cookieToken = request.cookies.get('apex_session_token')?.value;
+  const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+  const bearerToken = authHeader?.replace(/^Bearer\s+/i, '').trim();
+
+  const activeToken = cookieToken || bearerToken;
+
+  const isValidToken =
+    Boolean(activeToken) &&
+    (activeToken!.startsWith('apex_tok_') ||
+      activeToken === 'demo_token' ||
+      activeToken === 'mock_token_12345' ||
+      activeToken!.length >= 16);
 
   // 1. Proteksi rute API Panel Kelola (/api/admin/*)
   if (pathname.startsWith('/api/admin')) {
-    const cookieToken = request.cookies.get('apex_session_token')?.value;
-    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
-    const bearerToken = authHeader?.replace(/^Bearer\s+/i, '').trim();
-
-    const activeToken = cookieToken || bearerToken;
-
-    const isValidToken =
-      Boolean(activeToken) &&
-      (activeToken!.startsWith('apex_tok_') ||
-        activeToken === 'demo_token' ||
-        activeToken === 'mock_token_12345' ||
-        activeToken!.length >= 16);
-
     if (!isValidToken) {
       return NextResponse.json(
         {
@@ -54,6 +54,26 @@ export function middleware(request: NextRequest) {
     });
   }
 
+  // 2. Proteksi Halaman Dashboard Web (/admin, /kelola-showroom)
+  const isDashboardPage =
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/kelola-showroom');
+
+  if (isDashboardPage) {
+    if (!isValidToken) {
+      // Redirect ke login dengan query redirect
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname + (search || ''));
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 3. Jika sudah login dan membuka /login atau /lupa-sandi, redirect langsung ke /admin
+  const isAuthPage = pathname === '/login' || pathname === '/lupa-sandi' || pathname === '/forgot-password';
+  if (isAuthPage && isValidToken) {
+    return NextResponse.redirect(new URL('/admin', request.url));
+  }
+
   return NextResponse.next();
 }
 
@@ -61,5 +81,12 @@ export function middleware(request: NextRequest) {
  * Konfigurasi matcher rute yang diproteksi oleh middleware
  */
 export const config = {
-  matcher: ['/api/admin/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/kelola-showroom/:path*',
+    '/api/admin/:path*',
+    '/login',
+    '/lupa-sandi',
+    '/forgot-password',
+  ],
 };

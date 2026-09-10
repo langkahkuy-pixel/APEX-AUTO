@@ -9,9 +9,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Apex Auto Singapore — Showroom Mobil Mewah & Pre-Owned Singapura',
+  title: 'Apex Auto Singapore — Premier Luxury & Pre-Owned Car Showroom',
   description:
-    'Jelajahi katalog mobil pre-owned dan mewah terbaik di Singapura. Transparansi harga SGD Nett, sertifikasi inspeksi 100 titik, dan informasi COE terpercaya di Leng Kee, Ubi, dan Sin Ming.',
+    'Explore Singapore’s finest luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details across Leng Kee, Ubi, and Sin Ming showrooms.',
   keywords: [
     'Singapore car showroom',
     'used cars Singapore',
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
     'Apex Auto SG',
   ],
   openGraph: {
-    title: 'Apex Auto Singapore — Showroom Mobil Mewah & Pre-Owned Singapura',
+    title: 'Apex Auto Singapore — Premier Luxury & Pre-Owned Car Showroom',
     description:
-      'Katalog mobil pre-owned pilihan dengan harga SGD Nett transparan dan garansi inspeksi resmi.',
+      'Curated pre-owned prestige cars with transparent SGD Nett pricing and official showroom warranty.',
     type: 'website',
   },
 };
@@ -36,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${jakarta.variable} scroll-smooth`}>
-      <body className="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
+    <html lang="en" className={`${jakarta.variable} scroll-smooth`}>
+      <body className="bg-[#FAFAFA] text-zinc-900 min-h-screen flex flex-col font-sans antialiased">
         {children}
         <WhatsAppButton variant="floating" />
       </body>

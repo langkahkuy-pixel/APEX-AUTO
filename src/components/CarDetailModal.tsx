@@ -30,7 +30,7 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
   const currentImage = car.images[activeImageIndex] || car.images[0];
 
   const waText = encodeURIComponent(
-    `Halo Apex Auto Singapore, saya tertarik dengan mobil ${car.brand} ${car.model} (${car.year}) seharga SGD $${car.price.toLocaleString('en-US')}. Bisakah jadwalkan test drive atau info detail simulasi kredit?`
+    `Hello Apex Auto Singapore, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')}. Could you arrange a private viewing or share financing simulation details?`
   );
   const waUrl = `https://wa.me/6581234567?text=${waText}`;
 
@@ -69,12 +69,12 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
                 />
               )}
               <div className="absolute top-4 left-4 flex gap-2">
-                <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  {car.status === 'available' ? 'Tersedia' : car.status === 'reserved' ? 'Dipesan' : 'Terjual'}
+                <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md uppercase">
+                  {car.status === 'available' ? 'Available' : car.status === 'reserved' ? 'Reserved' : 'Sold'}
                 </span>
                 {car.is_featured && (
-                  <span className="bg-amber-500 text-slate-950 text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                    Unggulan
+                  <span className="bg-amber-500 text-slate-950 text-xs font-bold px-3 py-1 rounded-full shadow-md uppercase">
+                    Featured
                   </span>
                 )}
               </div>
@@ -103,32 +103,32 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
           {/* Pricing & Financial Summary */}
           <div className="bg-gradient-to-r from-slate-950 to-slate-900 border border-slate-800 rounded-2xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <div className="text-xs text-slate-400 font-medium">Harga Jual Nett (SGD)</div>
+              <div className="text-xs text-slate-400 font-medium uppercase">SGD Nett Selling Price</div>
               <div className="text-2xl sm:text-3xl font-black text-white mt-1">
                 SGD ${car.price.toLocaleString('en-US')}
               </div>
               <div className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Termasuk COE & GST
+                <CheckCircle2 className="w-3 h-3" /> Includes COE &amp; GST 9%
               </div>
             </div>
 
             {car.depreciation_sgd && (
               <div>
-                <div className="text-xs text-slate-400 font-medium">Estimasi Depresiasi</div>
+                <div className="text-xs text-slate-400 font-medium uppercase">Est. Annual Depreciation</div>
                 <div className="text-xl font-bold text-amber-400 mt-1">
-                  SGD ${car.depreciation_sgd.toLocaleString('en-US')} / thn
+                  SGD ${car.depreciation_sgd.toLocaleString('en-US')} / yr
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1">Perkiraan biaya tahunan</div>
+                <div className="text-[11px] text-slate-400 mt-1">Estimated annual cost</div>
               </div>
             )}
 
             {car.monthly_est_sgd && (
               <div>
-                <div className="text-xs text-slate-400 font-medium">Est. Angsuran Bulanan</div>
+                <div className="text-xs text-slate-400 font-medium uppercase">Est. Monthly Installment</div>
                 <div className="text-xl font-bold text-slate-200 mt-1">
-                  SGD ${car.monthly_est_sgd.toLocaleString('en-US')} / bln
+                  SGD ${car.monthly_est_sgd.toLocaleString('en-US')} / mo
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1">Skema DP 30% tenor 7 thn</div>
+                <div className="text-[11px] text-slate-400 mt-1">30% DP, 7-year loan tenure</div>
               </div>
             )}
           </div>
@@ -137,47 +137,47 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
           <div>
             <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
               <FileText className="w-4 h-4 text-amber-400" />
-              Spesifikasi Lengkap Kendaraan
+              Vehicle Technical Specifications
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <Calendar className="w-3.5 h-3.5 text-amber-500" /> Tahun Pembuatan
+                  <Calendar className="w-3.5 h-3.5 text-amber-500" /> Manufacture Year
                 </div>
                 <div className="text-sm font-semibold text-white">{car.year}</div>
               </div>
 
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <Gauge className="w-3.5 h-3.5 text-amber-500" /> Jarak Tempuh
+                  <Gauge className="w-3.5 h-3.5 text-amber-500" /> Odometer Mileage
                 </div>
                 <div className="text-sm font-semibold text-white">{car.mileage_km.toLocaleString('en-US')} km</div>
               </div>
 
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <Cog className="w-3.5 h-3.5 text-amber-500" /> Transmisi
+                  <Cog className="w-3.5 h-3.5 text-amber-500" /> Transmission
                 </div>
                 <div className="text-sm font-semibold text-white">{car.transmission}</div>
               </div>
 
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <Fuel className="w-3.5 h-3.5 text-amber-500" /> Bahan Bakar
+                  <Fuel className="w-3.5 h-3.5 text-amber-500" /> Fuel Type
                 </div>
                 <div className="text-sm font-semibold text-white">{car.fuel_type}</div>
               </div>
 
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <BadgeDollarSign className="w-3.5 h-3.5 text-amber-500" /> Masa Berlaku COE
+                  <BadgeDollarSign className="w-3.5 h-3.5 text-amber-500" /> COE Expiry
                 </div>
-                <div className="text-sm font-semibold text-white">{car.coe_expiry || 'Hingga 10 Tahun'}</div>
+                <div className="text-sm font-semibold text-white">{car.coe_expiry || 'Up to 10 Years'}</div>
               </div>
 
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                  <MapPin className="w-3.5 h-3.5 text-amber-500" /> Lokasi Showroom
+                  <MapPin className="w-3.5 h-3.5 text-amber-500" /> Showroom Location
                 </div>
                 <div className="text-sm font-semibold text-white truncate">{car.location}</div>
               </div>
@@ -186,7 +186,7 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
 
           {/* Description */}
           <div>
-            <h3 className="text-base font-bold text-white mb-2">Deskripsi & Riwayat Mobil</h3>
+            <h3 className="text-base font-bold text-white mb-2">Vehicle History &amp; Condition</h3>
             <p className="text-sm text-slate-300 leading-relaxed bg-slate-950/40 p-4 rounded-xl border border-slate-800">
               {car.description}
             </p>
@@ -196,7 +196,7 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
           <div>
             <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              Kelengkapan & Fitur Unggulan
+              Factory Features &amp; Options
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {car.features.map((feature, idx) => (
@@ -215,14 +215,14 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
         {/* Footer Actions */}
         <div className="p-4 sm:p-6 border-t border-slate-800 bg-slate-950/80 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-10 backdrop-blur-sm">
           <div className="text-xs text-slate-400 text-center sm:text-left">
-            Tertarik dengan unit ini? Tim konsultan kami siap melayani penjadwalan test drive dan hitungan kredit.
+            Interested in this vehicle? Our automotive advisors are available for viewing appointments and trade-in valuations.
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={onClose}
               className="w-1/3 sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold transition-colors"
             >
-              Tutup
+              Close
             </button>
             <a
               href={waUrl}
@@ -231,7 +231,7 @@ export function CarDetailModal({ car, onClose }: CarDetailModalProps) {
               className="w-2/3 sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-900/40 transition-all hover:scale-[1.02]"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Hubungi Sales via WhatsApp</span>
+              <span>Inquire via WhatsApp</span>
             </a>
           </div>
         </div>

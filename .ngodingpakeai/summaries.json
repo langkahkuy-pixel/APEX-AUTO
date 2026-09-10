@@ -1,0 +1,242 @@
+{
+  ".agents/skills/design-taste-frontend/SKILL.md": {
+    "summary": "Panduan standar desain frontend premium dan estetika visual modern anti-template untuk website showroom mobil Singapura."
+  },
+  ".cursor/skills/ngodingpakeai/SKILL.md": {
+    "summary": "Dokumentasi dan instruksi integrasi CLI NgodingPakeAI untuk sinkronisasi proyek dan pelacakan task pengembangan."
+  },
+  ".gitignore": {
+    "summary": "Konfigurasi pengabaian file Git untuk node_modules, build artifacts .next, file environment, dan file log lokal."
+  },
+  ".ngodingpakeaiignore": {
+    "summary": "Daftar pola file dan direktori yang diabaikan dari pemindaian dan sinkronisasi metadata NgodingPakeAI."
+  },
+  "AGENTS.md": {
+    "summary": "Aturan dan pedoman integrasi agen AI untuk sinkronisasi kode, panduan loop task, dan eksekusi bertahap NgodingPakeAI."
+  },
+  "drizzle/migrations/0000_woozy_proteus.sql": {
+    "summary": "Migrasi SQL awal Drizzle ORM untuk membuat tabel cars dan car_images pada database PostgreSQL."
+  },
+  "drizzle/migrations/0001_nappy_slapstick.sql": {
+    "summary": "Migrasi SQL Drizzle untuk menambahkan kolom depreciation_sgd, coe_expiry, engine_capacity_cc, dan monthly_est_sgd ke tabel cars."
+  },
+  "drizzle/migrations/0002_clear_tarantula.sql": {
+    "summary": "Migrasi SQL Drizzle untuk membuat tabel inquiries penampung pesan dan pertanyaan calon pembeli showroom."
+  },
+  "drizzle/migrations/0003_aspiring_doorman.sql": {
+    "summary": "Migrasi SQL Drizzle untuk membuat tabel promos program promosi dan subsidi showroom mobil Singapura."
+  },
+  "drizzle/migrations/0004_secret_shen.sql": {
+    "summary": "Migrasi SQL Drizzle untuk membuat tabel users pengelola showroom, relasi pembuat mobil, dan penugasan inquiry sales."
+  },
+  "drizzle/migrations/meta/0000_snapshot.json": {
+    "summary": "Snapshot metadata skema migrasi 0000 Drizzle Kit untuk tabel cars dan car_images."
+  },
+  "drizzle/migrations/meta/0001_snapshot.json": {
+    "summary": "Snapshot metadata skema migrasi 0001 Drizzle Kit untuk pembaruan kolom detail mobil Singapura."
+  },
+  "drizzle/migrations/meta/0002_snapshot.json": {
+    "summary": "Snapshot metadata skema migrasi 0002 Drizzle Kit untuk skema tabel inquiries."
+  },
+  "drizzle/migrations/meta/0003_snapshot.json": {
+    "summary": "Snapshot metadata skema migrasi 0003 Drizzle Kit untuk skema tabel promos."
+  },
+  "drizzle/migrations/meta/0004_snapshot.json": {
+    "summary": "Snapshot metadata skema migrasi 0004 Drizzle Kit untuk skema tabel users dan relasi database."
+  },
+  "drizzle/migrations/meta/_journal.json": {
+    "summary": "Jurnal riwayat urutan migrasi skema Drizzle Kit yang mencatat seluruh entri migrasi 0000 hingga 0004."
+  },
+  "drizzle.config.ts": {
+    "summary": "Konfigurasi Drizzle Kit untuk path skema PostgreSQL, direktori migrasi, dan kredensial koneksi DATABASE_URL."
+  },
+  "eslint.config.mjs": {
+    "summary": "Konfigurasi linter ESLint untuk Next.js dengan aturan Core Web Vitals dan dukungan TypeScript."
+  },
+  "next.config.ts": {
+    "summary": "Konfigurasi Next.js App Router termasuk konfigurasi optimasi gambar dari Unsplash dan Cloudinary."
+  },
+  "package-lock.json": {
+    "summary": "Lockfile dependency NPM yang mengunci versi paket Next.js, React, Drizzle ORM, Tailwind CSS, dan Lucide Icons."
+  },
+  "package.json": {
+    "summary": "Manifest proyek npm yang mendefinisikan dependency Next.js 16, React 19, Drizzle ORM, Postgres client, dan skrip build."
+  },
+  "postcss.config.mjs": {
+    "summary": "Konfigurasi PostCSS untuk memproses utility class Tailwind CSS ke dalam styling aplikasi."
+  },
+  "README.md": {
+    "summary": "Dokumentasi proyek website Showroom Mobil Singapura, instruksi instalasi lokal, dan panduan arsitektur."
+  },
+  "skills-lock.json": {
+    "summary": "File pengunci versi skill dan ekstensi kustomisasi untuk lingkungan agen cerdas."
+  },
+  "src/app/admin/layout.tsx": {
+    "summary": "Layout halaman dashboard admin dengan pembungkus AdminRouteGuard untuk proteksi sesi autentikasi pemilik showroom."
+  },
+  "src/app/admin/page.tsx": {
+    "summary": "Halaman dashboard utama panel kelola showroom dengan tab ringkasan statistik, manajemen mobil, kelola promo, dan daftar inquiry pembeli."
+  },
+  "src/app/api/admin/overview/route.ts": {
+    "summary": "Endpoint API GET /api/admin/overview yang menyajikan metrik statistik total unit mobil, nilai inventaris SGD, promo aktif, dan total inquiry."
+  },
+  "src/app/api/auth/forgot-password/route.ts": {
+    "summary": "Endpoint API POST /api/auth/forgot-password untuk permintaan token reset kata sandi pemilik showroom dengan fallback simulasi token aman."
+  },
+  "src/app/api/auth/login/route.ts": {
+    "summary": "Endpoint API POST /api/auth/login untuk verifikasi kredensial pemilik showroom dan penerbitan cookie sesi apex_session_token."
+  },
+  "src/app/api/auth/logout/route.ts": {
+    "summary": "Endpoint API POST dan GET /api/auth/logout untuk menghapus cookie sesi apex_session_token dan mengakhiri sesi login."
+  },
+  "src/app/api/auth/reset-password/route.ts": {
+    "summary": "Endpoint API POST /api/auth/reset-password untuk mengatur ulang kata sandi pengguna berdasarkan token pemulihan yang valid."
+  },
+  "src/app/api/cars/route.ts": {
+    "summary": "Endpoint API GET dan POST /api/cars untuk pencarian katalog mobil publik dengan filter serta penambahan unit mobil baru ke inventaris."
+  },
+  "src/app/api/cars/[id]/images/route.ts": {
+    "summary": "Endpoint API GET, POST, PATCH, DELETE /api/cars/[id]/images untuk pengelolaan galeri foto mobil dan pemilihan foto utama."
+  },
+  "src/app/api/cars/[id]/images/[imageId]/route.ts": {
+    "summary": "Endpoint API PATCH dan DELETE /api/cars/[id]/images/[imageId] untuk pembaruan status foto tunggal atau penghapusan dari mobil."
+  },
+  "src/app/api/cars/[id]/route.ts": {
+    "summary": "Endpoint API GET, PUT, PATCH, DELETE /api/cars/[id] untuk detail mobil publik, pembaruan penuh, pembaruan parsial, dan penghapusan unit."
+  },
+  "src/app/api/cars/[id]/status/route.ts": {
+    "summary": "Endpoint API PATCH dan PUT /api/cars/[id]/status untuk pembaruan cepat status ketersediaan mobil (available, reserved, sold)."
+  },
+  "src/app/api/inquiries/route.ts": {
+    "summary": "Endpoint API POST dan GET /api/inquiries untuk pengiriman pesan pertanyaan calon pembeli dan pengambilan daftar inquiry masuk."
+  },
+  "src/app/api/inquiries/[id]/route.ts": {
+    "summary": "Endpoint API GET, PATCH, PUT, DELETE /api/inquiries/[id] untuk melihat detail pesan pembeli, memperbarui status follow-up, dan penghapusan data."
+  },
+  "src/app/api/promos/route.ts": {
+    "summary": "Endpoint API GET dan POST /api/promos untuk menampilkan daftar promo aktif publik serta pembuatan program promosi baru di showroom."
+  },
+  "src/app/api/promos/[id]/route.ts": {
+    "summary": "Endpoint API GET, PUT, PATCH, DELETE /api/promos/[id] untuk detail syarat promo, pembaruan program promo, dan penghapusan data promo."
+  },
+  "src/app/forgot-password/page.tsx": {
+    "summary": "Halaman antarmuka pemulihan kata sandi pemilik showroom dengan formulir email, token simulasi, dan pengaturan kata sandi baru."
+  },
+  "src/app/globals.css": {
+    "summary": "Stylesheet global aplikasi yang memuat direktif Tailwind CSS, font styling, dan variabel tema warna gelap premium."
+  },
+  "src/app/kelola-showroom/page.tsx": {
+    "summary": "Halaman rute alias kelola showroom yang me-render panel manajemen AdminDashboardPage lengkap."
+  },
+  "src/app/layout.tsx": {
+    "summary": "Root layout aplikasi Next.js dengan konfigurasi font Inter, metadata SEO Showroom Mobil Singapura, dan wrapper body."
+  },
+  "src/app/login/page.tsx": {
+    "summary": "Halaman login pemilik showroom dengan formulir autentikasi kredensial, feedback error, dan tombol pintasan akun demo."
+  },
+  "src/app/lupa-sandi/page.tsx": {
+    "summary": "Halaman redirect pintasan /lupa-sandi yang mengarahkan pengguna secara otomatis ke /forgot-password."
+  },
+  "src/app/mobil/[id]/page.tsx": {
+    "summary": "Halaman detail mobil publik yang menampilkan galeri foto, spesifikasi teknis COE dan depresiasi Singapura, kalkulator cicilan, dan tombol WhatsApp."
+  },
+  "src/app/page.tsx": {
+    "summary": "Halaman utama showroom yang memadukan komponen Hero, PromoSection, CatalogSection, ContactShowroomSection, dan Footer."
+  },
+  "src/components/admin/AdminCarEditModal.tsx": {
+    "summary": "Komponen modal dialog untuk mengedit data mobil dan status ketersediaan unit inventaris showroom secara interaktif."
+  },
+  "src/components/admin/AdminCarFormModal.tsx": {
+    "summary": "Komponen modal formulir lengkap untuk menambah atau mengubah detail mobil termasuk spesifikasi teknis, harga SGD, dan COE."
+  },
+  "src/components/admin/AdminCarPhotoManager.tsx": {
+    "summary": "Komponen pengelola galeri foto mobil dengan fitur tambah URL foto, hapus foto, dan penanda foto utama (is_main)."
+  },
+  "src/components/admin/AdminInquiryList.tsx": {
+    "summary": "Komponen tabel daftar pesan pertanyaan pembeli dengan filter status, tombol respon WhatsApp otomatis, dan pencatatan notulen follow-up."
+  },
+  "src/components/admin/AdminPromoFormModal.tsx": {
+    "summary": "Komponen formulir modal untuk membuat dan mengedit program promo showroom, benefit, syarat ketentuan, dan periode berlaku."
+  },
+  "src/components/admin/QuickStatusChanger.tsx": {
+    "summary": "Komponen dropdown selector cepat untuk mengubah status ketersediaan unit mobil antara Tersedia, Dipesan, atau Terjual."
+  },
+  "src/components/AdminRouteGuard.tsx": {
+    "summary": "Komponen pelindung rute panel admin sisi klien yang memeriksa sesi login pemilik dan mengarahkan pengguna yang belum login."
+  },
+  "src/components/CarCard.tsx": {
+    "summary": "Komponen kartu tampilan unit mobil di katalog dengan foto utama, badge status ketersediaan, estimasi depresiasi tahunan, dan harga SGD."
+  },
+  "src/components/CarDetailGallery.tsx": {
+    "summary": "Komponen galeri visual interaktif dengan foto utama beresolusi tinggi, thumbnail interaktif, dan modal Lightbox layar penuh."
+  },
+  "src/components/CarDetailModal.tsx": {
+    "summary": "Komponen modal pratinjau cepat detail spesifikasi mobil yang dapat dibuka langsung dari katalog tanpa berpindah halaman."
+  },
+  "src/components/CarInquiryForm.tsx": {
+    "summary": "Komponen formulir pertanyaan pembeli untuk konsultasi unit mobil, pengajuan trade-in, test drive, dan integrasi API /api/inquiries."
+  },
+  "src/components/CatalogSection.tsx": {
+    "summary": "Komponen seksi katalog utama dengan bilah pencarian real-time, filter kategori bodi, rentang harga, lokasi showroom, dan pengurutan."
+  },
+  "src/components/ContactShowroomSection.tsx": {
+    "summary": "Komponen seksi kontak showroom yang menampilkan alamat lokasi Leng Kee & Ubi, jam operasional, peta navigasi, dan formulir pesan langsung."
+  },
+  "src/components/Footer.tsx": {
+    "summary": "Komponen footer showroom dengan tautan navigasi, informasi kontak darurat WhatsApp, jam buka, dan hak cipta."
+  },
+  "src/components/Hero.tsx": {
+    "summary": "Komponen banner hero utama dengan visual luxury mobil Singapura, copywriting nilai tambah, tombol CTA katalog, dan statistik showroom."
+  },
+  "src/components/Navbar.tsx": {
+    "summary": "Komponen navigasi atas dengan logo showroom, link menu responsif, tombol kontak WhatsApp cepat, dan akses panel kelola."
+  },
+  "src/components/PromoSection.tsx": {
+    "summary": "Komponen seksi penawaran promo di halaman utama yang menampilkan spotlight featured promo, filter kategori promo, dan kartu diskon."
+  },
+  "src/components/PromoTermsModal.tsx": {
+    "summary": "Komponen modal dialog yang menampilkan rincian syarat dan ketentuan lengkap dari program promosi showroom terpilih."
+  },
+  "src/components/WhatsAppButton.tsx": {
+    "summary": "Komponen tombol WhatsApp mengambang (floating CTA) dengan template pesan pre-filled otomatis untuk menghubungkan pembeli ke sales."
+  },
+  "src/data/mock-admin.ts": {
+    "summary": "Data tiruan ringkasan metrik statistik dashboard admin, tren penjualan, dan inventaris showroom untuk mode demo."
+  },
+  "src/data/mock-cars.ts": {
+    "summary": "Koleksi data tiruan unit mobil pre-owned dan luxury di Singapura lengkap dengan spesifikasi COE, depresiasi, dan galeri foto."
+  },
+  "src/data/mock-inquiries.ts": {
+    "summary": "Data tiruan pesan pertanyaan calon pembeli showroom dengan berbagai status penanganan dan preferensi model mobil."
+  },
+  "src/data/mock-promos.ts": {
+    "summary": "Koleksi data tiruan program promosi aktif seperti subsidi COE, bunga cicilan rendah, dan bonus trade-in showroom."
+  },
+  "src/db/index.ts": {
+    "summary": "Inisialisasi koneksi database PostgreSQL menggunakan modul postgres client dan Drizzle ORM dengan integrasi skema lengkap."
+  },
+  "src/db/schema.ts": {
+    "summary": "Definisi skema Drizzle ORM untuk tabel users, cars, car_images, inquiries, promos, relasi relasional, dan inferensi tipe data."
+  },
+  "src/db/seed.ts": {
+    "summary": "Skrip seeder database untuk mengisi tabel cars, car_images, dan promos dengan dataset awal mobil Singapura."
+  },
+  "src/hooks/useAuth.ts": {
+    "summary": "Custom React Hook untuk manajemen state autentikasi login pemilik showroom, pengecekan cookie sesi, dan fungsi logout."
+  },
+  "src/lib/auth.ts": {
+    "summary": "Modul utilitas autentikasi backend untuk verifikasi token sesi apex_session_token dan proteksi otorisasi rute API admin."
+  },
+  "src/middleware.ts": {
+    "summary": "Middleware Next.js untuk proteksi rute dashboard /admin dan API /api/admin/* dari akses yang belum terautentikasi."
+  },
+  "src/types/car.ts": {
+    "summary": "Definisi tipe TypeScript untuk entitas Car, CarImage, filter katalog, dan kueri parameter mobil showroom Singapura."
+  },
+  "src/types/promo.ts": {
+    "summary": "Definisi tipe TypeScript untuk entitas PromoItem program penawaran dan subsidi showroom."
+  },
+  "tsconfig.json": {
+    "summary": "Konfigurasi TypeScript compiler dengan path alias @/*, modul ESNext, dan integrasi plugin Next.js."
+  }
+}

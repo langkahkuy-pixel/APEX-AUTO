@@ -105,42 +105,42 @@ export function CatalogSection() {
   };
 
   return (
-    <section id="katalog" className="py-12 sm:py-16 bg-slate-950 text-white min-h-screen">
+    <section id="katalog" className="py-12 sm:py-16 text-zinc-900 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Inventaris Showroom Singapura</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-amber-700 uppercase tracking-widest mb-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Singapore Showroom Inventory</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Katalog Mobil Pilihan
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Curated Car Catalog
             </h2>
-            <p className="text-sm text-slate-400 mt-1">
-              Temukan mobil idaman Anda dengan filter harga, tipe bodi, tahun, dan lokasi di Singapura.
+            <p className="text-sm text-slate-500 mt-1">
+              Filter through verified luxury and pre-owned vehicles with transparent SGD Nett pricing.
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
-            <span className="text-xs text-slate-400">
-              Menampilkan <span className="font-bold text-amber-400">{filteredCars.length}</span> dari {MOCK_CARS.length} mobil
+            <span className="text-xs text-slate-500">
+              Showing <span className="font-bold text-amber-600">{filteredCars.length}</span> of {MOCK_CARS.length} vehicles
             </span>
             {hasActiveFilters && (
               <button
                 id="reset-filter-header-btn"
                 onClick={resetFilters}
-                className="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 font-medium px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 transition-all hover:bg-rose-500/20"
+                className="inline-flex items-center gap-1.5 text-xs text-rose-600 hover:text-rose-700 font-medium px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 transition-all hover:bg-rose-100"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset Filter {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}</span>
+                <span>Reset Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}</span>
               </button>
             )}
           </div>
         </div>
 
         {/* Filter & Search Controls Container */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 mb-10 shadow-xl shadow-slate-950/50 backdrop-blur-sm space-y-5">
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 mb-10 shadow-sm space-y-5">
           {/* Top Row: Search Input & Sort Dropdown */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             {/* Search Input */}
@@ -151,16 +151,16 @@ export function CatalogSection() {
                 type="text"
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                placeholder="Cari berdasarkan merek, model, warna, atau fitur (mis. Mercedes, Porsche, Sunroof, Hybrid)..."
-                className="w-full pl-11 pr-20 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                placeholder="Search by brand, model, color, or feature (e.g. Mercedes, Porsche, Sunroof, Hybrid)..."
+                className="w-full pl-11 pr-20 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 transition-all"
               />
               {filters.search && (
                 <button
                   id="clear-search-btn"
                   onClick={() => setFilters({ ...filters, search: '' })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded-lg transition-colors"
                 >
-                  Hapus
+                  Clear
                 </button>
               )}
             </div>
@@ -173,12 +173,12 @@ export function CatalogSection() {
                 onChange={(e) =>
                   setFilters({ ...filters, sortBy: e.target.value as FilterState['sortBy'] })
                 }
-                className="w-full appearance-none px-4 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:border-amber-500 pr-10 cursor-pointer"
+                className="w-full appearance-none px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-amber-500 pr-10 cursor-pointer"
               >
-                <option value="newest">Urutan: Terbaru Ditambahkan</option>
-                <option value="price-asc">Harga: Terendah ke Tertinggi</option>
-                <option value="price-desc">Harga: Tertinggi ke Terendah</option>
-                <option value="year-desc">Tahun: Paling Baru</option>
+                <option value="newest">Sort: Recently Added</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="year-desc">Manufacture Year: Newest First</option>
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -186,15 +186,15 @@ export function CatalogSection() {
 
           {/* Quick Popular Search Suggestions */}
           <div className="flex flex-wrap items-center gap-2 pt-0.5">
-            <span className="text-[11px] text-slate-500 font-medium">Pencarian Populer:</span>
+            <span className="text-[11px] text-slate-400 font-medium">Popular Searches:</span>
             {['Mercedes', 'Porsche', 'BMW', 'Harrier', 'Hybrid', 'Sunroof'].map((tag) => (
               <button
                 key={tag}
                 onClick={() => setFilters({ ...filters, search: tag })}
                 className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
                   filters.search.toLowerCase() === tag.toLowerCase()
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-semibold'
-                    : 'bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
+                    ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold shadow-sm'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-100'
                 }`}
               >
                 {tag}
@@ -204,9 +204,9 @@ export function CatalogSection() {
 
           {/* Body Type Pills with Item Counts */}
           <div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
               <CarIcon className="w-3.5 h-3.5 text-amber-500" />
-              <span>Tipe Bodi Kendaraan</span>
+              <span>Vehicle Body Style</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {BODY_TYPES.map((type) => {
@@ -215,6 +215,7 @@ export function CatalogSection() {
                   type === 'Semua'
                     ? MOCK_CARS.length
                     : MOCK_CARS.filter((c) => c.body_type === type).length;
+                const displayLabel = type === 'Semua' ? 'All Models' : type;
 
                 return (
                   <button
@@ -223,16 +224,16 @@ export function CatalogSection() {
                     onClick={() => setFilters({ ...filters, bodyType: type })}
                     className={`px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 ${
                       isActive
-                        ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                        : 'bg-slate-950/80 text-slate-300 border border-slate-800 hover:border-slate-700 hover:text-white'
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                        : 'bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-100'
                     }`}
                   >
-                    <span>{type}</span>
+                    <span>{displayLabel}</span>
                     <span
                       className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                         isActive
                           ? 'bg-slate-950/20 text-slate-950 font-bold'
-                          : 'bg-slate-800 text-slate-400'
+                          : 'bg-slate-200 text-slate-600'
                       }`}
                     >
                       {count}
@@ -244,20 +245,20 @@ export function CatalogSection() {
           </div>
 
           {/* Bottom Row Filters: Price Range, Year, Location */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
             {/* Price Filter */}
             <div>
-              <label htmlFor="filter-price" className="block text-xs font-medium text-slate-400 mb-1.5">
-                Kisaran Harga (SGD)
+              <label htmlFor="filter-price" className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Price Range (SGD)
               </label>
               <div className="relative">
                 <select
                   id="filter-price"
                   value={filters.priceRange}
                   onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
-                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
+                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
                 >
-                  <option value="all">Semua Kisaran Harga</option>
+                  <option value="all">All Price Ranges</option>
                   <option value="under-150k">&lt; SGD $150,000</option>
                   <option value="150k-200k">SGD $150,000 - $200,000</option>
                   <option value="above-200k">&gt; SGD $200,000</option>
@@ -268,20 +269,20 @@ export function CatalogSection() {
 
             {/* Min Year Filter */}
             <div>
-              <label htmlFor="filter-year" className="block text-xs font-medium text-slate-400 mb-1.5">
-                Minimal Tahun Pembuatan
+              <label htmlFor="filter-year" className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Minimum Manufacture Year
               </label>
               <div className="relative">
                 <select
                   id="filter-year"
                   value={filters.minYear}
                   onChange={(e) => setFilters({ ...filters, minYear: Number(e.target.value) })}
-                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
+                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
                 >
-                  <option value={0}>Semua Tahun</option>
-                  <option value={2023}>2023 ke atas</option>
-                  <option value={2022}>2022 ke atas</option>
-                  <option value={2021}>2021 ke atas</option>
+                  <option value={0}>All Years</option>
+                  <option value={2023}>2023 &amp; Newer</option>
+                  <option value={2022}>2022 &amp; Newer</option>
+                  <option value={2021}>2021 &amp; Newer</option>
                 </select>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -289,19 +290,19 @@ export function CatalogSection() {
 
             {/* Location Filter */}
             <div>
-              <label htmlFor="filter-location" className="block text-xs font-medium text-slate-400 mb-1.5">
-                Lokasi Showroom Singapura
+              <label htmlFor="filter-location" className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Showroom Hub Location
               </label>
               <div className="relative">
                 <select
                   id="filter-location"
                   value={filters.location}
                   onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
+                  className="w-full appearance-none px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-amber-500 pr-8 cursor-pointer"
                 >
                   {SINGAPORE_LOCATIONS.map((loc) => (
                     <option key={loc} value={loc}>
-                      {loc}
+                      {loc === 'Semua Lokasi' ? 'All Showroom Hubs' : loc}
                     </option>
                   ))}
                 </select>
@@ -312,38 +313,38 @@ export function CatalogSection() {
 
           {/* Active Filter Chips / Tags */}
           {hasActiveFilters && (
-            <div id="active-filters-container" className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-              <span className="text-[11px] text-slate-500 font-medium">Filter Aktif ({activeFilterCount}):</span>
+            <div id="active-filters-container" className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
+              <span className="text-[11px] text-slate-400 font-medium">Active Filters ({activeFilterCount}):</span>
               {filters.search && (
-                <span id="chip-filter-search" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200 shadow-sm">
-                  <span>Kata Kunci: "{filters.search}"</span>
+                <span id="chip-filter-search" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-sm">
+                  <span>Keyword: "{filters.search}"</span>
                   <button
                     id="remove-filter-search"
-                    aria-label="Hapus filter pencarian"
+                    aria-label="Remove search keyword"
                     onClick={() => setFilters({ ...filters, search: '' })}
-                    className="hover:text-rose-400 hover:bg-slate-700/80 p-0.5 rounded-full text-slate-400 transition-colors"
+                    className="hover:text-rose-600 hover:bg-slate-200 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
                     ×
                   </button>
                 </span>
               )}
               {filters.bodyType !== 'Semua' && (
-                <span id="chip-filter-body" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200 shadow-sm">
-                  <span>Bodi: {filters.bodyType}</span>
+                <span id="chip-filter-body" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-sm">
+                  <span>Body: {filters.bodyType}</span>
                   <button
                     id="remove-filter-body"
-                    aria-label="Hapus filter tipe bodi"
+                    aria-label="Remove body filter"
                     onClick={() => setFilters({ ...filters, bodyType: 'Semua' })}
-                    className="hover:text-rose-400 hover:bg-slate-700/80 p-0.5 rounded-full text-slate-400 transition-colors"
+                    className="hover:text-rose-600 hover:bg-slate-200 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
                     ×
                   </button>
                 </span>
               )}
               {filters.priceRange !== 'all' && (
-                <span id="chip-filter-price" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200 shadow-sm">
+                <span id="chip-filter-price" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-sm">
                   <span>
-                    Harga:{' '}
+                    Price:{' '}
                     {filters.priceRange === 'under-150k'
                       ? '< SGD $150k'
                       : filters.priceRange === '150k-200k'
@@ -352,9 +353,9 @@ export function CatalogSection() {
                   </span>
                   <button
                     id="remove-filter-price"
-                    aria-label="Hapus filter harga"
+                    aria-label="Remove price filter"
                     onClick={() => setFilters({ ...filters, priceRange: 'all' })}
-                    className="hover:text-rose-400 hover:bg-slate-700/80 p-0.5 rounded-full text-slate-400 transition-colors"
+                    className="hover:text-rose-600 hover:bg-slate-200 p-0.5 rounded-full text-slate-400 transition-colors"
                   >
                     ×
                   </button>
@@ -389,10 +390,10 @@ export function CatalogSection() {
               <button
                 id="clear-all-chips-btn"
                 onClick={resetFilters}
-                className="inline-flex items-center gap-1 text-[11px] text-rose-400 hover:text-rose-300 ml-1 px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all font-medium"
+                className="inline-flex items-center gap-1 text-[11px] text-rose-600 hover:text-rose-700 ml-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all font-medium"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Hapus Semua Filter</span>
+                <span>Clear All Filters</span>
               </button>
             </div>
           )}
@@ -402,66 +403,66 @@ export function CatalogSection() {
         {filteredCars.length > 0 ? (
           <div>
             {/* Quick Sort Bar & Results Status */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800/80">
-              <div className="text-xs text-slate-400">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
+              <div className="text-xs text-slate-500">
                 {filters.search ? (
                   <span>
-                    Hasil pencarian: <span className="font-semibold text-amber-400">"{filters.search}"</span>{' '}
-                    ({filteredCars.length} mobil ditemukan)
+                    Search results for: <span className="font-semibold text-amber-600">"{filters.search}"</span>{' '}
+                    ({filteredCars.length} vehicles found)
                   </span>
                 ) : (
                   <span>
-                    Menampilkan <span className="font-semibold text-white">{filteredCars.length}</span> unit mobil
+                    Showing <span className="font-bold text-slate-900">{filteredCars.length}</span> verified units
                   </span>
                 )}
               </div>
 
               {/* Quick Sort Buttons */}
               <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-slate-500 mr-1 text-[11px]">Urutkan Cepat:</span>
+                <span className="text-slate-400 mr-1 text-[11px] font-medium">Quick Sort:</span>
                 <button
                   id="sort-quick-newest"
                   onClick={() => setFilters({ ...filters, sortBy: 'newest' })}
                   className={`px-3 py-1.5 rounded-xl transition-all ${
                     filters.sortBy === 'newest'
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/20'
-                      : 'bg-slate-900/90 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  Terbaru
+                  Newest
                 </button>
                 <button
                   id="sort-quick-price-asc"
                   onClick={() => setFilters({ ...filters, sortBy: 'price-asc' })}
                   className={`px-3 py-1.5 rounded-xl transition-all ${
                     filters.sortBy === 'price-asc'
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/20'
-                      : 'bg-slate-900/90 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  Harga: Rendah → Tinggi
+                  Price: Low → High
                 </button>
                 <button
                   id="sort-quick-price-desc"
                   onClick={() => setFilters({ ...filters, sortBy: 'price-desc' })}
                   className={`px-3 py-1.5 rounded-xl transition-all ${
                     filters.sortBy === 'price-desc'
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/20'
-                      : 'bg-slate-900/90 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  Harga: Tinggi → Rendah
+                  Price: High → Low
                 </button>
                 <button
                   id="sort-quick-year-desc"
                   onClick={() => setFilters({ ...filters, sortBy: 'year-desc' })}
                   className={`px-3 py-1.5 rounded-xl transition-all ${
                     filters.sortBy === 'year-desc'
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/20'
-                      : 'bg-slate-900/90 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  Tahun: Paling Baru
+                  Year: Newest
                 </button>
               </div>
             </div>
@@ -477,70 +478,70 @@ export function CatalogSection() {
           </div>
         ) : (
           /* Empty State */
-          <div className="text-center py-16 px-6 bg-slate-900/50 border border-dashed border-slate-800 rounded-3xl max-w-3xl mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4 text-amber-400 shadow-lg shadow-amber-500/5">
+          <div className="text-center py-16 px-6 bg-white border-2 border-dashed border-slate-300 rounded-3xl max-w-3xl mx-auto shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4 text-amber-600 shadow-sm">
               <Search className="w-6 h-6" />
             </div>
 
             {filters.search ? (
               <>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Tidak Ada Mobil Ditemukan untuk "{filters.search}"
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  No Vehicles Found for "{filters.search}"
                 </h3>
-                <p className="text-sm text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
-                  Kami tidak menemukan mobil dengan merek, model, atau fitur yang cocok dengan kata kunci tersebut di showroom kami.
+                <p className="text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
+                  We could not find any vehicle matching this keyword in our active Singapore inventory.
                 </p>
 
                 {/* Helpful tips */}
-                <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 text-left max-w-md mx-auto mb-6 text-xs text-slate-300 space-y-2">
-                  <div className="font-semibold text-amber-400">Saran Pencarian:</div>
-                  <ul className="list-disc list-inside space-y-1 text-slate-400">
-                    <li>Periksa kembali ejaan kata kunci (contoh: Mercedes, Porsche, BMW, Toyota).</li>
-                    <li>Coba gunakan kata kunci yang lebih umum seperti <span className="text-slate-200">SUV</span> atau <span className="text-slate-200">Sedan</span>.</li>
-                    <li>Mobil incaran Anda belum ada di katalog? Tim sourcing kami dapat mencarikan unit lelang atau dealer mitra di Singapura.</li>
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left max-w-md mx-auto mb-6 text-xs text-slate-700 space-y-2">
+                  <div className="font-bold text-amber-700">Search Tips:</div>
+                  <ul className="list-disc list-inside space-y-1 text-slate-600">
+                    <li>Double check the spelling of the brand or model (e.g. Mercedes, Porsche, BMW).</li>
+                    <li>Try broader terms like <span className="font-semibold text-slate-900">SUV</span> or <span className="font-semibold text-slate-900">Sedan</span>.</li>
+                    <li>Specific dream car not in stock? Our Singapore sourcing team can acquire units from our dealer network.</li>
                   </ul>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <button
                     onClick={() => setFilters({ ...filters, search: '' })}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition-all border border-slate-200"
                   >
-                    <span>Hapus Kata Kunci "{filters.search}"</span>
+                    <span>Clear Search Keyword</span>
                   </button>
                   <button
                     onClick={resetFilters}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 font-semibold text-xs transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-semibold text-xs transition-all"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Semua Filter</span>
+                    <span>Reset All Filters</span>
                   </button>
                   <a
                     href={`https://wa.me/6581234567?text=${encodeURIComponent(
-                      `Halo Apex Auto Singapore, saya sedang mencari mobil "${filters.search}" di Singapura. Apakah showroom bisa bantu mencarikan unit ini?`
+                      `Hello Apex Auto Singapore, I am searching for "${filters.search}" in Singapore. Can your team help source this vehicle?`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-900/30 transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all"
                   >
-                    <span>Minta Sales Carikan "{filters.search}"</span>
+                    <span>Request Sourcing for "{filters.search}"</span>
                   </a>
                 </div>
               </>
             ) : (
               <>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Tidak Ada Mobil yang Cocok dengan Filter
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  No Vehicles Match Current Filters
                 </h3>
-                <p className="text-sm text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
-                  Kombinasi filter tipe bodi, kisaran harga, atau tahun saat ini tidak memiliki unit yang cocok di inventaris.
+                <p className="text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
+                  The selected combination of body type, price range, or year currently has no matching inventory.
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Kembalikan Semua Filter</span>
+                  <span>Restore All Filters</span>
                 </button>
               </>
             )}
