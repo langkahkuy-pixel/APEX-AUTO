@@ -1,21 +1,21 @@
 import { Metadata } from 'next';
 import { Navbar } from '@/components/Navbar';
-import { PromoSection } from '@/components/PromoSection';
+import { ServiceSection } from '@/components/ServiceSection';
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Promotions — Apex Auto | Exclusive Deals & COE Specials',
+  title: 'Service — Apex Auto | Trusted Luxury Vehicle Maintenance',
   description:
-    'Discover exclusive Apex Auto promotions including COE bidding subsidies, preferential financing rates, trade-in bonuses, and EV green mobility rebates.',
+    'Expert periodic maintenance, advanced diagnostics, and luxury detailing for prestige vehicles. Certified technicians, genuine OEM parts, and service warranty at Apex Auto.',
 };
 
-export default function PromotionsPage() {
+export default function ServicePage() {
   return (
     <main className="min-h-screen flex flex-col bg-[#FAFAFA] text-zinc-900">
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="pt-16" />
-      <PromoSection />
+      <ServiceSection />
       <Footer />
     </main>
   );

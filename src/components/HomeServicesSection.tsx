@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Car as CarIcon, BadgeDollarSign, ArrowLeftRight, ArrowRight } from 'lucide-react';
+import { Car as CarIcon, Wrench, ArrowLeftRight, ArrowRight } from 'lucide-react';
 
 const SERVICES = [
   {
@@ -14,11 +14,11 @@ const SERVICES = [
     href: '/inventory',
   },
   {
-    icon: BadgeDollarSign,
-    title: 'Flexible Financing',
+    icon: Wrench,
+    title: 'Vehicle Service',
     description:
-      'Competitive rates from 1.88% p.a. with DBS, OCBC & UOB partnerships. 24-hour credit approval, flexible tenures up to 7 years, and complimentary first-year insurance.',
-    cta: 'Explore Financing',
+      'Expert periodic maintenance, advanced diagnostics, and premium detailing — all performed by factory-trained technicians using genuine OEM parts.',
+    cta: 'View Services',
     href: '/promotions',
   },
   {
