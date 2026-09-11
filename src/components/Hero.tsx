@@ -1,73 +1,248 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { ArrowDown } from 'lucide-react';
+import Link from 'next/link';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Sparkles,
+} from 'lucide-react';
+
+interface SlideImage {
+  id: number;
+  image: string;
+  alt: string;
+}
+
+const SLIDES: SlideImage[] = [
+  {
+    id: 1,
+    image: '/picture/Gemini_Generated_Image_91pk1h91pk1h91pk.jpg',
+    alt: 'Luxury sports car parked at scenic coastal lookout at sunset',
+  },
+  {
+    id: 2,
+    image: '/picture/Gemini_Generated_Image_jo6xjhjo6xjhjo6x.jpg',
+    alt: 'Driver cockpit view cruising along winding coastal road at golden hour',
+  },
+  {
+    id: 3,
+    image: '/picture/Gemini_Generated_Image_yj6i3dyj6i3dyj6i (1).jpg',
+    alt: 'Orange convertible cruising on coastal highway during golden hour',
+  },
+];
+
+const AUTOPLAY_INTERVAL_MS = 4000;
 
 export function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {
-        // Autoplay policy prevented playback, fallback poster remains visible
-      });
-    }
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
   }, []);
 
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
+  }, []);
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Continuous autoplay every 4 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, AUTOPLAY_INTERVAL_MS);
+
+    return () => clearInterval(timer);
+  }, [nextSlide]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prevSlide();
+      } else if (e.key === 'ArrowRight') {
+        nextSlide();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextSlide, prevSlide]);
+
+  // Touch handlers for mobile swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchEndXRef.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current === null || touchEndXRef.current === null) return;
+    const distance = touchStartXRef.current - touchEndXRef.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      prevSlide();
+    }
+
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+  };
+
   return (
-    <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden bg-zinc-950">
-      {/* Background Video Layer */}
+    <section
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Apex Auto Featured Banner Carousel"
+      className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden bg-zinc-950 select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* ── Background Slides (Image Carousel Layer) ── */}
       <div className="absolute inset-0 z-0">
-        {/* Fallback Poster Image */}
-        <Image
-          src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2400&q=80"
-          alt="Premier luxury car showroom"
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
+        {SLIDES.map((slide, index) => {
+          const isActive = index === currentIndex;
+          return (
+            <div
+              key={slide.id}
+              aria-hidden={!isActive}
+              className={`absolute inset-0 transition-opacity duration-[3000ms] ease-in-out ${
+                isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              }`}
+            >
+              {/* Image with subtle Ken Burns zoom effect when active */}
+              <div
+                className={`relative w-full h-full transform transition-transform duration-[5000ms] ease-out ${
+                  isActive ? 'scale-100' : 'scale-105'
+                }`}
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.alt}
+                  fill
+                  priority={index === 0}
+                  className="object-cover object-center"
+                  sizes="100vw"
+                  quality={90}
+                />
+              </div>
 
-        {/* Background Video */}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2400&q=80"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        >
-          <source
-            src="/videos/Luxury_car_commercial_video_1080p_202609091716.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        {/* Soft gradient for text legibility — minimal, not cinematic */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
+              {/* Multi-tier gradient overlay for readability & luxury depth */}
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/45 to-zinc-950/60" />
+              <div className="absolute inset-0 bg-radial-[at_center] from-transparent via-black/20 to-black/60" />
+            </div>
+          );
+        })}
       </div>
 
-      {/* Content — bottom-aligned, left-justified */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pb-20 lg:pb-24">
+      {/* ── Slide Navigation Arrows (Desktop & Tablet) ── */}
+      <div className="absolute inset-y-0 left-0 right-0 z-20 pointer-events-none flex items-center justify-between px-4 sm:px-8">
+        <button
+          type="button"
+          onClick={prevSlide}
+          aria-label="Previous slide"
+          className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-0.5 transition-transform" />
+        </button>
+        <button
+          type="button"
+          onClick={nextSlide}
+          aria-label="Next slide"
+          className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-0.5 transition-transform" />
+        </button>
+      </div>
+
+      {/* ── Hero Foreground Content (Static Text & CTAs) ── */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24 pt-28">
         <div className="max-w-3xl">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tighter text-white leading-[0.95]">
-            Premier Luxury
-            <br />
-            Motors
+          {/* Badge / Tagline */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-amber-400 mb-5 shadow-sm">
+            <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>Flagship Showroom</span>
+            <span className="w-1 h-1 rounded-full bg-amber-400" />
+            <span className="text-white/80 font-normal hidden sm:inline">
+              Certified Quality
+            </span>
+          </div>
+
+          {/* Static Heading */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white leading-[1.05]">
+            Luxury{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
+              Redefined
+            </span>
           </h1>
 
-          <a
-            href="/inventory"
-            className="inline-flex items-center gap-2 mt-10 text-sm font-medium text-white/80 hover:text-white transition-colors group"
-          >
-            View Inventory
-            <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-          </a>
+          {/* Static Subtitle */}
+          <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mt-5 leading-relaxed max-w-2xl font-light">
+            Certified prestige cars. SGD Nett pricing. Zero hidden fees.
+          </p>
+
+          {/* Action CTAs */}
+          <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3.5">
+            <Link
+              href="/inventory"
+              className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>View Cars</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base backdrop-blur-md border border-white/20 transition-all duration-200"
+            >
+              <span>Visit Us</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Bottom Controls: Dots Indicator & Counter (Pause/Play button removed) ── */}
+        <div className="mt-12 sm:mt-16 pt-6 border-t border-white/10 flex items-center justify-between gap-4">
+          {/* Interactive Indicator Dots */}
+          <div className="flex items-center gap-2.5">
+            {SLIDES.map((slide, index) => {
+              const isActive = index === currentIndex;
+              return (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Go to slide ${index + 1}`}
+                  className={`h-2.5 rounded-full transition-all duration-500 cursor-pointer ${
+                    isActive
+                      ? 'w-10 sm:w-12 bg-amber-500 shadow-md shadow-amber-500/40'
+                      : 'w-2.5 sm:w-3 bg-white/30 hover:bg-white/60'
+                  }`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Slide counter */}
+          <div className="flex items-center gap-4 text-xs font-medium text-white/70">
+            <span className="tracking-widest font-mono text-zinc-400">
+              <span className="text-white font-bold">0{currentIndex + 1}</span>
+              <span className="mx-1">/</span>
+              <span>0{SLIDES.length}</span>
+            </span>
+          </div>
         </div>
       </div>
     </section>
