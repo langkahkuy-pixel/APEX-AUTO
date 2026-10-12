@@ -85,8 +85,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
             {[
               { href: '/inventory', label: 'Inventory' },
               { href: '/', label: 'Featured' },
-              { href: '/promotions', label: 'Service' },
-              { href: '/contact', label: 'Contact' },
+              { href: '/tentang-kami', label: 'About Us' },
             ].map((link) => (
               <Link
                 key={link.href}

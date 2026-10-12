@@ -1,172 +1,42 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Car } from '@/types/car';
-import { Fuel, Gauge, Cog, MapPin, Calendar, MessageCircle, Eye } from 'lucide-react';
+import { ArrowRight, Heart, Info } from 'lucide-react';
+import type { Car } from '@/types/car';
+import { useState } from 'react';
 
-interface CarCardProps {
+export function CarCard({ car, saved = false, onToggleSave }: {
   car: Car;
-  onSelectCar?: (car: Car) => void;
-}
-
-export function CarCard({ car }: CarCardProps) {
-  const mainImage = car.images.find((img) => img.is_main) || car.images[0];
-
-  // WhatsApp prefilled message
-  const waText = encodeURIComponent(
-    `Hello Apex Auto, I would like to inquire about the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} listed on your website.`
-  );
-  const waUrl = `https://wa.me/6581234567?text=${waText}`;
-
-  // Status color badges
-  const statusBadge = () => {
-    switch (car.status) {
-      case 'available':
-        return (
-          <span className="inline-flex items-center gap-1 bg-emerald-600 text-white font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-sm backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>Available</span>
-          </span>
-        );
-      case 'reserved':
-        return (
-          <span className="inline-flex items-center gap-1 bg-amber-500 text-slate-950 font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-sm backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />
-            <span>Reserved</span>
-          </span>
-        );
-      case 'sold':
-        return (
-          <span className="inline-flex items-center gap-1 bg-rose-600 text-white font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-sm backdrop-blur-sm">
-            <span>Sold</span>
-          </span>
-        );
-      default:
-        return null;
-    }
-  };
+  saved?: boolean;
+  onToggleSave?: (id: string) => void;
+}) {
+  const image = car.images.find(image => image.is_main) || car.images[0];
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+  const detailPath = `/mobil/${car.id}`;
 
   return (
-    <div className="group bg-white border border-slate-200/90 rounded-2xl overflow-hidden hover:border-slate-300 transition-all duration-300 hover:shadow-md flex flex-col text-slate-900">
-      {/* Image Container with Link */}
-      <Link
-        href={`/mobil/${car.id}`}
-        className="block relative aspect-[16/10] w-full bg-slate-100 overflow-hidden cursor-pointer"
-      >
-        {mainImage ? (
-          <Image
-            src={mainImage.url}
-            alt={`${car.brand} ${car.model}`}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-            Photo unavailable
-          </div>
-        )}
-
-        {/* Overlay Badges */}
-        <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-          {statusBadge()}
-          {car.is_featured && (
-            <span className="bg-amber-500 text-slate-950 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full shadow-sm">
-              Featured
-            </span>
-          )}
-        </div>
-
-        <div className="absolute bottom-2 right-3 z-10">
-          <span className="bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-slate-200 shadow-sm">
-            {car.body_type}
-          </span>
-        </div>
+    <article className="group flex min-w-0 flex-col overflow-hidden bg-[#202020] text-white lg:h-[clamp(480px,40vw,560px)]">
+      <Link href={detailPath} aria-label={`View ${car.brand} ${car.model}`} className="relative block aspect-[16/10] overflow-hidden bg-zinc-900 focus-visible:outline-2 focus-visible:outline-amber-400 lg:h-[52%] lg:shrink-0 lg:aspect-auto lg:transition-[height] lg:duration-500 lg:group-hover:h-[42%] lg:group-focus-within:h-[42%] motion-reduce:transition-none">
+        {image && failedImageUrl !== image.url ? <Image src={image.url} alt={`${car.brand} ${car.model}`} fill onError={() => setFailedImageUrl(image.url)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 lg:group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none" /> : <div className="flex h-full items-center justify-center text-sm text-white/40">Photo unavailable</div>}
       </Link>
-
-      {/* Card Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between">
-        <div>
-          {/* Brand & Model */}
-          <div className="text-xs uppercase tracking-wider text-amber-600 font-bold mb-1">
-            {car.brand}
+      <div className="flex min-h-16 items-center gap-3 bg-[#363636] px-5 py-4">
+        <p className="shrink-0 text-xl font-bold tracking-tight">S${car.price.toLocaleString('en-SG')}</p>
+        {car.monthly_est_sgd ? <><span className="h-6 w-px shrink-0 bg-white/20" /><p className="inline-flex min-w-0 flex-wrap items-center gap-1 text-xs font-medium sm:text-sm"><Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> S${car.monthly_est_sgd.toLocaleString('en-SG')} <span className="font-normal text-white/60">/mo (est.)</span></p></> : <span className="ml-auto text-xs text-white/50">SGD Nett</span>}
+      </div>
+      <div className="flex flex-1 flex-col gap-5 px-5 pb-5 pt-6 lg:justify-between">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className="line-clamp-2 min-h-14 text-[clamp(1.3rem,1.8vw,1.65rem)] font-extrabold leading-tight tracking-tight text-amber-400"><Link href={detailPath} className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-amber-400">{car.brand} {car.model}</Link></h2>
+            <p className={`mt-2 text-[11px] font-semibold ${car.status === 'available' ? 'text-emerald-400' : car.status === 'reserved' ? 'text-amber-300' : 'text-white/45'}`}>{car.status === 'available' ? 'Available' : car.status === 'reserved' ? 'Reserved' : 'Sold'}</p>
           </div>
-          <Link href={`/mobil/${car.id}`}>
-            <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors line-clamp-1">
-              {car.model}
-            </h3>
-          </Link>
-
-          {/* Key Specs Grid */}
-          <div className="grid grid-cols-2 gap-y-2 gap-x-2 my-4 text-xs text-slate-600">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>Year {car.year}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Gauge className="w-3.5 h-3.5 text-slate-400" />
-              <span>{car.mileage_km.toLocaleString('en-US')} km</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Cog className="w-3.5 h-3.5 text-slate-400" />
-              <span>{car.transmission}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Fuel className="w-3.5 h-3.5 text-slate-400" />
-              <span>{car.fuel_type}</span>
-            </div>
-          </div>
-
-          {/* Location Badge */}
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2.5 mb-4">
-            <MapPin className="w-3 h-3 text-amber-500 shrink-0" />
-            <span className="truncate">{car.location}</span>
-          </div>
+          {onToggleSave && <button onClick={() => onToggleSave(car.id)} aria-pressed={saved} aria-label={`${saved ? 'Remove' : 'Save'} ${car.brand} ${car.model}${saved ? ' from saved cars' : ' to saved cars'}`} className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-amber-400 ${saved ? 'bg-amber-400/10 text-amber-400' : 'text-white/50 hover:text-amber-400'}`}><Heart className={`h-6 w-6 ${saved ? 'fill-current' : ''}`} strokeWidth={1.7} /></button>}
         </div>
-
-        {/* Pricing & Actions */}
-        <div>
-          <div className="flex items-baseline justify-between mb-4">
-            <div>
-              <div className="text-[10px] text-slate-400 font-semibold uppercase">SGD Nett Price</div>
-              <div className="text-lg font-extrabold text-slate-900">
-                SGD ${car.price.toLocaleString('en-US')}
-              </div>
-            </div>
-            {car.depreciation_sgd && (
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 font-semibold uppercase">Est. Depr / Yr</div>
-                <div className="text-xs font-bold text-emerald-600">
-                  SGD ${car.depreciation_sgd.toLocaleString('en-US')}/yr
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <Link
-              href={`/mobil/${car.id}`}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors border border-slate-200/80"
-            >
-              <Eye className="w-3.5 h-3.5 text-slate-500" />
-              <span>View Details</span>
-            </Link>
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors shadow-sm"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>Inquire</span>
-            </a>
-          </div>
+        <div className="flex items-center justify-between gap-2 divide-x divide-white/20 text-xs font-semibold sm:text-sm"><span className="pr-2">{car.year}</span><span className="whitespace-nowrap px-2">{car.mileage_km.toLocaleString('en-SG')} km</span><span className="pl-2">{car.body_type}</span></div>
+        <div className="overflow-hidden transition-all duration-500 lg:max-h-0 lg:translate-y-4 lg:opacity-0 lg:group-hover:max-h-16 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:max-h-16 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100 motion-reduce:transition-none">
+          <Link href={detailPath} className="flex items-center justify-center gap-3 rounded-full bg-amber-400 px-5 py-3 text-base font-semibold text-black transition-colors hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">View Details <span className="grid h-7 w-7 place-items-center rounded-full bg-black text-amber-400"><ArrowRight className="h-4 w-4" /></span></Link>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
-

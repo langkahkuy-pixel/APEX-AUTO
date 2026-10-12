@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { ContactShowroomSection } from '@/components/ContactShowroomSection';
 import {
   ShieldCheck,
   Award,
@@ -13,9 +14,6 @@ import {
   Eye,
   Target,
   Building2,
-  MapPin,
-  Clock,
-  Phone,
   MessageCircle,
   Gauge,
   Search,
@@ -174,7 +172,7 @@ export default function AboutPage() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/contact"
+                href="#contact-showroom"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
                 <Building2 className="w-4 h-4 text-amber-600" />
@@ -422,89 +420,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── 5. Flagship Showroom ── */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="max-w-2xl mb-12 sm:mb-16">
-            <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Flagship Showroom
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Visit Our Flagship Showroom
-            </h2>
-            <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Experience our curated luxury automobile collection at 24 Leng Kee Road.
-            </p>
-          </div>
-
-          <div className="max-w-2xl">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-xs">
-              <div className="flex items-center justify-between gap-4 mb-4">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/20">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Main Showroom</span>
-                </div>
-                <span className="text-xs font-medium text-zinc-400">Leng Kee Prime Belt</span>
-              </div>
-
-              <h3 className="font-bold text-zinc-900 text-xl sm:text-2xl">
-                Apex Auto Leng Kee Flagship
-              </h3>
-              <p className="text-xs text-amber-600 font-medium mt-1 mb-6">
-                Principal luxury showroom &amp; VIP consultation lounge
-              </p>
-
-              <div className="space-y-4 text-sm text-zinc-600 border-t border-zinc-100 pt-6">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
-                  <div>
-                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Address</span>
-                    <p className="text-zinc-800 font-medium mt-0.5">24 Leng Kee Road, Singapore 159096</p>
-                    <p className="text-xs text-zinc-400">Opposite Leng Kee Autoworld · Near Redhill MRT</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
-                  <div>
-                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Operating Hours</span>
-                    <p className="text-zinc-800 font-medium mt-0.5">Mon–Sat: 09:00–19:00 • Sun: 10:00–18:00</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="w-4 h-4 text-zinc-400 shrink-0 mt-1" />
-                  <div>
-                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">Telephone</span>
-                    <a href="tel:+6581234567" className="text-zinc-800 font-medium hover:text-amber-600 transition-colors">
-                      +65 8123 4567
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-wrap items-center gap-3">
-                <a
-                  href="https://maps.google.com/?q=24+Leng+Kee+Road+Singapore"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-semibold text-xs border border-zinc-200 transition-colors"
-                >
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Open in Google Maps</span>
-                </a>
-                <a
-                  href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%20Leng%20Kee%20Flagship%2C%20I%20would%20like%20to%20schedule%20a%20private%20visit"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-xs transition-colors"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>WhatsApp Concierge</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ContactShowroomSection />
 
       {/* ── 6. Strategic Banking Alliances ── */}
       <section className="py-16 sm:py-20 bg-white border-t border-zinc-200/80">
@@ -563,7 +479,7 @@ export default function AboutPage() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/contact"
+                href="#contact-showroom"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
                 <Building2 className="w-4 h-4 text-amber-600" />

@@ -23,7 +23,7 @@ export function WhatsAppButton({
   let message = 'Hello Apex Auto, I would like to inquire about vehicle purchases and showroom COE details.';
 
   if (car) {
-    message = `Hello Apex Auto, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} (Ref ID: ${car.id}). Is this unit available for a private viewing or test drive?`;
+    message = `Hello Apex Auto, I am interested in the ${car.brand} ${car.model} (${car.year}) priced at SGD $${car.price.toLocaleString('en-US')} (Ref ID: ${car.id}). Could you confirm availability and share financing details?`;
   } else if (customText) {
     message = customText;
   }

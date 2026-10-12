@@ -18,8 +18,8 @@ const SERVICES = [
     title: 'Vehicle Service',
     description:
       'Expert periodic maintenance, advanced diagnostics, and premium detailing — all performed by factory-trained technicians using genuine OEM parts.',
-    cta: 'View Services',
-    href: '/promotions',
+    cta: 'Enquire About Service',
+    href: '/tentang-kami#contact-showroom',
   },
   {
     icon: ArrowLeftRight,
@@ -27,7 +27,7 @@ const SERVICES = [
     description:
       'Get an instant on-site valuation with an additional S$5,000 trade-in bonus. Zero admin fees, same-day driveaway, and transparent appraisal within 30 minutes.',
     cta: 'Get Valuation',
-    href: '/contact',
+    href: '/tentang-kami#contact-showroom',
   },
 ];
 

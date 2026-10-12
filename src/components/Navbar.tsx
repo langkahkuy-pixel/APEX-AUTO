@@ -9,8 +9,6 @@ const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/inventory', label: 'Inventory' },
   { href: '/tentang-kami', label: 'About Us' },
-  { href: '/promotions', label: 'Service' },
-  { href: '/contact', label: 'Contact' },
 ];
 
 export function Navbar() {

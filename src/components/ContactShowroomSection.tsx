@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   MapPin,
   Clock,
+  Phone,
   Sparkles,
 } from 'lucide-react';
 
@@ -71,14 +72,14 @@ export function ContactShowroomSection() {
         : `APX-${Math.floor(100000 + Math.random() * 900000)}`;
       setReferenceCode(refCode);
       setStatus('success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error');
-      setErrorMessage(err.message || 'Failed to send. Check your connection.');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to send. Check your connection.');
     }
   };
 
   return (
-    <section id="contact-showroom" className="py-20 sm:py-28">
+    <section id="contact-showroom" className="scroll-mt-20 py-20 sm:py-28">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10 sm:mb-14">
@@ -151,6 +152,23 @@ export function ContactShowroomSection() {
                 </div>
               </div>
 
+              <div className="flex items-start gap-3.5 mt-5 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-600 shrink-0 mt-0.5">
+                  <Phone className="w-4 h-4 text-zinc-700" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block">
+                    Telephone
+                  </span>
+                  <a
+                    href={`tel:${FLAGSHIP_SHOWROOM.phone.replace(/\s/g, '')}`}
+                    className="text-zinc-800 font-medium mt-0.5 inline-block hover:text-amber-600 transition-colors"
+                  >
+                    {FLAGSHIP_SHOWROOM.phone}
+                  </a>
+                </div>
+              </div>
+
               {/* Action Buttons */}
               <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-wrap items-center gap-3">
                 <a
@@ -189,7 +207,7 @@ export function ContactShowroomSection() {
                     Ref: <span className="font-mono font-semibold text-zinc-700">{referenceCode}</span>
                   </p>
                   <p className="text-sm text-zinc-400">
-                    We'll reach out via WhatsApp shortly.
+                    We&apos;ll reach out via WhatsApp shortly.
                   </p>
                 </div>
               ) : (

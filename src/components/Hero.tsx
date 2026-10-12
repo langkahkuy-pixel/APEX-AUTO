@@ -205,7 +205,7 @@ export function Hero() {
             </Link>
 
             <Link
-              href="/contact"
+              href="/tentang-kami#contact-showroom"
               className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base backdrop-blur-md border border-white/20 transition-all duration-200"
             >
               <span>Visit Us</span>

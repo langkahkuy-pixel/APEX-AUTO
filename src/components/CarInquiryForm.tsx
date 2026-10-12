@@ -6,13 +6,14 @@ import { Send, CheckCircle2, Phone, User, AlertCircle } from 'lucide-react';
 
 interface CarInquiryFormProps {
   car: Car;
+  initialMessage?: string;
 }
 
-export function CarInquiryForm({ car }: CarInquiryFormProps) {
+export function CarInquiryForm({ car, initialMessage }: CarInquiryFormProps) {
   const [fullName, setFullName] = useState('');
   const [contact, setContact] = useState('');
   const [message, setMessage] = useState(
-    `Hello Apex Auto, I would like to inquire about the availability of the ${car.brand} ${car.model} (${car.year}) and explore financing/trade-in options.`
+    initialMessage || `Hello Apex Auto, I would like to inquire about the availability of the ${car.brand} ${car.model} (${car.year}) and explore financing/trade-in options.`
   );
   const [errors, setErrors] = useState<{ fullName?: string; contact?: string; message?: string }>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -75,9 +76,9 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
         : `INQ-${Math.floor(100000 + Math.random() * 900000)}`;
       setInquiryRef(generatedId);
       setStatus('success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error');
-      setSubmissionError(err.message || 'Something went wrong. Please try again.');
+      setSubmissionError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     }
   };
 
@@ -140,7 +141,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Full Name */}
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+            <label htmlFor="inquiry-fullname" className="block text-xs font-medium text-zinc-500 mb-1.5">
               Full Name
             </label>
             <div className="relative">
@@ -170,7 +171,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Contact */}
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+            <label htmlFor="inquiry-contact" className="block text-xs font-medium text-zinc-500 mb-1.5">
               WhatsApp / Email
             </label>
             <div className="relative">
@@ -200,7 +201,7 @@ export function CarInquiryForm({ car }: CarInquiryFormProps) {
 
           {/* Message */}
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1.5">
+            <label htmlFor="inquiry-message" className="block text-xs font-medium text-zinc-500 mb-1.5">
               Your Message
             </label>
             <textarea
