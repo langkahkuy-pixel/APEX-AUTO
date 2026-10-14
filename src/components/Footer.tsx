@@ -78,7 +78,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
               Apex Auto
             </Link>
             <p className={`text-xs mt-1 max-w-sm ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>
-              Showroom mobil premium bekas pilihan di Medan. Melayani pembelian tunai, kredit, dan tukar tambah.
+              Showroom mobil premium bekas pilihan di Medan. Temukan mobil Anda dengan pilihan pembelian tunai atau kredit.
             </p>
           </div>
 

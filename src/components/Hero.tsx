@@ -1,14 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface SlideImage {
   id: number;
@@ -38,68 +33,15 @@ const AUTOPLAY_INTERVAL_MS = 4000;
 
 export function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const touchStartXRef = useRef<number | null>(null);
-  const touchEndXRef = useRef<number | null>(null);
-
-  const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
-  }, []);
-
-  const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
-  }, []);
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
 
   // Continuous autoplay every 4 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      nextSlide();
+      setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
     }, AUTOPLAY_INTERVAL_MS);
 
     return () => clearInterval(timer);
-  }, [nextSlide]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
-        prevSlide();
-      } else if (e.key === 'ArrowRight') {
-        nextSlide();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextSlide, prevSlide]);
-
-  // Touch handlers for mobile swiping
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
-    touchEndXRef.current = null;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndXRef.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartXRef.current === null || touchEndXRef.current === null) return;
-    const distance = touchStartXRef.current - touchEndXRef.current;
-    const minSwipeDistance = 50;
-
-    if (distance > minSwipeDistance) {
-      nextSlide();
-    } else if (distance < -minSwipeDistance) {
-      prevSlide();
-    }
-
-    touchStartXRef.current = null;
-    touchEndXRef.current = null;
-  };
+  }, []);
 
   return (
     <section
@@ -107,9 +49,6 @@ export function Hero() {
       aria-roledescription="carousel"
       aria-label="Banner mobil pilihan Apex Auto"
       className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden bg-zinc-950 select-none"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
       {/* ── Background Slides (Image Carousel Layer) ── */}
       <div className="absolute inset-0 z-0">
@@ -140,65 +79,37 @@ export function Hero() {
                 />
               </div>
 
-              {/* Multi-tier gradient overlay for readability & luxury depth */}
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/45 to-zinc-950/60" />
-              <div className="absolute inset-0 bg-radial-[at_center] from-transparent via-black/20 to-black/60" />
+              {/* Keep the car visible while giving the lower copy enough contrast. */}
+              <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/15 to-zinc-950/25" />
+              <div className="absolute inset-0 bg-linear-to-r from-zinc-950/25 via-transparent to-transparent" />
             </div>
           );
         })}
       </div>
 
-      {/* ── Slide Navigation Arrows (Desktop & Tablet) ── */}
-      <div className="absolute inset-y-0 left-0 right-0 z-20 pointer-events-none flex items-center justify-between px-4 sm:px-8">
-        <button
-          type="button"
-          onClick={prevSlide}
-          aria-label="Slide sebelumnya"
-          className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
-        >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-0.5 transition-transform" />
-        </button>
-        <button
-          type="button"
-          onClick={nextSlide}
-          aria-label="Slide berikutnya"
-          className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
-        >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-0.5 transition-transform" />
-        </button>
-      </div>
-
       {/* ── Hero Foreground Content (Static Text & CTAs) ── */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24 pt-28">
-        <div className="max-w-3xl">
-          {/* Badge / Tagline */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-amber-400 mb-5 shadow-sm">
-            <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Showroom Medan</span>
-            <span className="w-1 h-1 rounded-full bg-amber-400" />
-            <span className="text-white/80 font-normal hidden sm:inline">
-              Kualitas Terjamin
-            </span>
-          </div>
-
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pb-16 pt-28">
+        <div className="max-w-md lg:max-w-lg">
           {/* Static Heading */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white leading-[1.05]">
-            Mobil Premium{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
-              Pilihan Anda
+          <h1 className="tracking-[-0.035em]">
+            <span className="block text-[1.875rem] font-medium leading-[1.2] text-white sm:text-[2.5rem] lg:text-[2.75rem]">
+              Mobil Berkelas
+            </span>
+            <span className="mt-1 block text-[2.5rem] font-semibold leading-[1.12] text-amber-300 sm:text-[3.25rem] lg:text-[3.5rem]">
+              Untuk Anda
             </span>
           </h1>
 
           {/* Static Subtitle */}
-          <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mt-5 leading-relaxed max-w-2xl font-light">
-            Mobil pilihan. Harga jelas dalam rupiah. Siap tunai, kredit, dan tukar tambah.
+          <p className="mt-4 max-w-[27rem] text-sm font-normal leading-7 text-zinc-200 sm:text-[0.9375rem]">
+            Dari sedan elegan hingga SUV premium, temukan mobil yang paling pas untuk Anda.
           </p>
 
           {/* Action CTAs */}
-          <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3.5">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               href="/inventory"
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+              className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
             >
               <span>Lihat Mobil</span>
               <ArrowRight className="w-4 h-4" />
@@ -206,36 +117,13 @@ export function Hero() {
 
             <Link
               href="/tentang-kami#contact-showroom"
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base backdrop-blur-md border border-white/20 transition-all duration-200"
+              className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-white/30 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
             >
               <span>Kunjungi Kami</span>
             </Link>
           </div>
         </div>
 
-        {/* ── Slide Indicators ── */}
-        <div className="mt-12 sm:mt-16 pt-6 flex items-center">
-          {/* Interactive Indicator Dots */}
-          <div className="flex items-center gap-2.5">
-            {SLIDES.map((slide, index) => {
-              const isActive = index === currentIndex;
-              return (
-                <button
-                  key={slide.id}
-                  type="button"
-                  onClick={() => goToSlide(index)}
-                  aria-label={`Buka slide ${index + 1}`}
-                  className={`h-2.5 rounded-full transition-all duration-500 cursor-pointer ${
-                    isActive
-                      ? 'w-10 sm:w-12 bg-amber-500 shadow-md shadow-amber-500/40'
-                      : 'w-2.5 sm:w-3 bg-white/30 hover:bg-white/60'
-                  }`}
-                />
-              );
-            })}
-          </div>
-
-        </div>
       </div>
     </section>
   );

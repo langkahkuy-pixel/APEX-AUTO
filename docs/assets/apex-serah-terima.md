@@ -1,0 +1,9 @@
+# Gambar panduan pembelian Apex
+
+- Aset: `public/picture/apex-serah-terima.webp` (1536 × 1024, sekitar 239 KB).
+- Dibuat menggunakan alat bawaan `image_gen`, lalu dienkode ke WebP untuk web.
+- Ilustrasi pemasaran untuk demo; bukan dokumentasi pelanggan atau showroom sebenarnya.
+
+## Prompt final
+
+Create one premium editorial automotive lifestyle photograph for an Indonesian luxury used-car showroom website's 'how to buy a car' section. Landscape 3:2 image. In a sophisticated contemporary showroom in Medan, Indonesia with floor-to-ceiling glass and tropical trees visible outside, a friendly Indonesian male sales consultant wearing a neat charcoal polo shirt hands a simple black car key to an Indonesian woman buyer in an elegant ivory linen blouse, with her Indonesian male partner next to her. Natural candid expressions, relaxed genuine smiles, realistic hands and anatomy. People are in the upper middle-right area, medium-wide framing showing them from knees up, next to the front three-quarter view of a beautiful pearl silver contemporary premium sedan occupying lower-left and center foreground. Unbranded car, no visible logos, right hand drive context. Architectural columns, polished concrete floor, restrained warm wood details, bright soft daylight, atmospheric shadows, subtle amber sunlight highlights, natural photographic texture, realistic commercial editorial photography, sophisticated quiet premium mood, neutral charcoal silver white palette with understated warm light. No lettering, no text, no watermarks, no sales signage, no giant ceremonial keys, no ribbons, no mechanical workshop, no repair activity. Composition must remain intelligible when cropped to a vertical 4:5 web panel; put car and people mostly in the central 70 percent. This is a demo marketing illustration, not an actual business documentary. Save a high quality image suitable for website use.

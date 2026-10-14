@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
-import { HomeServicesSection } from '@/components/HomeServicesSection';
+import { BuyingStepsSection } from '@/components/BuyingStepsSection';
 import { FeaturedCarsSection } from '@/components/FeaturedCarsSection';
 import { Footer } from '@/components/Footer';
 
@@ -9,7 +9,7 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col bg-[#FAFAFA] text-zinc-900">
       <Navbar />
       <Hero />
-      <HomeServicesSection />
+      <BuyingStepsSection />
       <FeaturedCarsSection />
       <Footer />
     </main>
