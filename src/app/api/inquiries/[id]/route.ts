@@ -12,7 +12,7 @@ export async function GET(
 
     if (!found) {
       return NextResponse.json(
-        { success: false, error: 'Inquiry not found.' },
+        { success: false, error: "Pertanyaan tidak ditemukan." },
         { status: 404 }
       );
     }
@@ -24,7 +24,7 @@ export async function GET(
   } catch (error) {
     console.error('Error in GET /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to retrieve inquiry.' },
+      { success: false, error: "Gagal memuat pertanyaan." },
       { status: 500 }
     );
   }
@@ -41,7 +41,7 @@ export async function PATCH(
 
     if (!status) {
       return NextResponse.json(
-        { success: false, error: 'Status is required.' },
+        { success: false, error: "Status wajib diisi." },
         { status: 400 }
       );
     }
@@ -49,19 +49,19 @@ export async function PATCH(
     const success = await updateSqliteInquiryStatus(id, status, notes);
     if (!success) {
       return NextResponse.json(
-        { success: false, error: 'Inquiry not found.' },
+        { success: false, error: "Pertanyaan tidak ditemukan." },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: `Inquiry status updated to ${status}.`,
+      message: `Status pertanyaan diubah menjadi ${status}.`,
     });
   } catch (error) {
     console.error('Error in PATCH /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update inquiry status.' },
+      { success: false, error: "Gagal memperbarui status pertanyaan." },
       { status: 500 }
     );
   }
@@ -77,13 +77,13 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: `Inquiry ${id} deleted.`,
+      message: `Pertanyaan ${id} deleted.`,
       deleted: success,
     });
   } catch (error) {
     console.error('Error in DELETE /api/inquiries/[id]:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete inquiry.' },
+      { success: false, error: "Gagal menghapus pertanyaan." },
       { status: 500 }
     );
   }

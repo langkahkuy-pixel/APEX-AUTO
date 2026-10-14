@@ -50,9 +50,9 @@ export async function PATCH(
     }
 
     const statusLabels: Record<string, string> = {
-      available: 'Tersedia (Ready Stock)',
-      reserved: 'Dipesan (Reserved)',
-      sold: 'Terjual (Sold Out)',
+      available: 'Tersedia',
+      reserved: 'Dipesan',
+      sold: 'Terjual',
     };
 
     return NextResponse.json({

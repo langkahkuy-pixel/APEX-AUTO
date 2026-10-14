@@ -11,11 +11,11 @@ async function seed() {
     const [owner] = await db
       .insert(users)
       .values({
-        full_name: 'Showroom Principal',
-        email: 'owner@apexautosg.com',
+        full_name: 'Admin Apex Medan',
+        email: 'admin@apexauto.id',
         password_hash: 'scrypt_hashed_password',
         role: 'owner',
-        phone: '+6581234567',
+        phone: '+6281200000000',
       })
       .onConflictDoNothing()
       .returning();
@@ -39,10 +39,14 @@ async function seed() {
           status: mockCar.status,
           location: mockCar.location,
           is_featured: mockCar.is_featured,
-          depreciation_sgd: mockCar.depreciation_sgd ? mockCar.depreciation_sgd.toString() : null,
-          coe_expiry: mockCar.coe_expiry || null,
+          annual_tax_idr: mockCar.annual_tax_idr ? mockCar.annual_tax_idr.toString() : null,
+          tax_expiry: mockCar.tax_expiry || null,
+          plate_number: mockCar.plate_number || null,
+          document_status: mockCar.document_status || null,
+          owners: mockCar.owners || null,
+          currency: 'IDR',
           engine_capacity_cc: mockCar.engine_capacity_cc || null,
-          monthly_est_sgd: mockCar.monthly_est_sgd ? mockCar.monthly_est_sgd.toString() : null,
+          monthly_est_idr: mockCar.monthly_est_idr ? mockCar.monthly_est_idr.toString() : null,
           created_by: owner ? owner.id : null,
         })
         .returning();
@@ -68,7 +72,7 @@ async function seed() {
           title: mockPromo.title,
           tagline: mockPromo.tagline,
           badge: mockPromo.badge,
-          discount_sgd: mockPromo.discount_sgd ? mockPromo.discount_sgd.toString() : null,
+          discount_idr: mockPromo.discount_idr ? mockPromo.discount_idr.toString() : null,
           description: mockPromo.description,
           benefits: JSON.stringify(mockPromo.benefits),
           terms_conditions: JSON.stringify(mockPromo.terms_conditions),

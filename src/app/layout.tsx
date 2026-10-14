@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -9,21 +9,22 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Apex Auto — Premier Luxury & Pre-Owned Car Showroom',
+  title: "Apex Auto Medan | Showroom Mobil Premium Bekas",
   description:
-    'Explore our curated luxury and certified pre-owned car collection. Transparent SGD Nett pricing, 100-point inspection certification, and verified COE details at our Leng Kee Flagship showroom.',
+    "Temukan mobil premium bekas pilihan di Apex Auto Medan. Harga rupiah, pemeriksaan kondisi, STNK/BPKB, tunai, kredit bank/leasing, dan tukar tambah.",
   keywords: [
-    'luxury car showroom',
-    'certified pre-owned cars',
-    'COE car dealer',
-    'Leng Kee showroom',
+    "showroom mobil premium Medan",
+    "mobil bekas pilihan",
+    "jual beli mobil bekas",
+    "showroom mobil Medan",
     'Apex Auto',
-    'SGD Nett pricing',
+    "harga mobil rupiah",
   ],
   openGraph: {
-    title: 'Apex Auto — Premier Luxury & Pre-Owned Car Showroom',
+    locale: 'id_ID',
+    title: "Apex Auto Medan | Showroom Mobil Premium Bekas",
     description:
-      'Curated pre-owned prestige cars with transparent SGD Nett pricing and official showroom warranty.',
+      "Mobil premium bekas pilihan dengan harga rupiah yang jelas, kelengkapan dokumen, serta pilihan tunai, kredit, dan tukar tambah.",
     type: 'website',
   },
 };
@@ -36,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${jakarta.variable} scroll-smooth`}>
+    <html lang="id" className={`${jakarta.variable} scroll-smooth`}>
       <body className="bg-[#FAFAFA] text-zinc-900 min-h-screen flex flex-col font-sans antialiased">
         {children}
         <WhatsAppButton variant="floating" />

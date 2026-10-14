@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronRight } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/inventory', label: 'Inventory' },
-  { href: '/tentang-kami', label: 'About Us' },
+  { href: '/', label: "Beranda" },
+  { href: '/inventory', label: "Pilihan Mobil" },
+  { href: '/tentang-kami', label: "Tentang Kami" },
 ];
 
 export function Navbar() {

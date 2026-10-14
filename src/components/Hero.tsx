@@ -20,17 +20,17 @@ const SLIDES: SlideImage[] = [
   {
     id: 1,
     image: '/picture/Gemini_Generated_Image_91pk1h91pk1h91pk.jpg',
-    alt: 'Luxury sports car parked at scenic coastal lookout at sunset',
+    alt: "Mobil sport premium di tepi pantai saat senja",
   },
   {
     id: 2,
     image: '/picture/Gemini_Generated_Image_jo6xjhjo6xjhjo6x.jpg',
-    alt: 'Driver cockpit view cruising along winding coastal road at golden hour',
+    alt: "Pemandangan dari kabin mobil di jalan pesisir",
   },
   {
     id: 3,
     image: '/picture/Gemini_Generated_Image_yj6i3dyj6i3dyj6i (1).jpg',
-    alt: 'Orange convertible cruising on coastal highway during golden hour',
+    alt: "Mobil cabriolet oranye di jalan pesisir saat senja",
   },
 ];
 
@@ -105,7 +105,7 @@ export function Hero() {
     <section
       role="region"
       aria-roledescription="carousel"
-      aria-label="Apex Auto Featured Banner Carousel"
+      aria-label="Banner mobil pilihan Apex Auto"
       className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden bg-zinc-950 select-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -153,7 +153,7 @@ export function Hero() {
         <button
           type="button"
           onClick={prevSlide}
-          aria-label="Previous slide"
+          aria-label="Slide sebelumnya"
           className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-0.5 transition-transform" />
@@ -161,7 +161,7 @@ export function Hero() {
         <button
           type="button"
           onClick={nextSlide}
-          aria-label="Next slide"
+          aria-label="Slide berikutnya"
           className="pointer-events-auto w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-0.5 transition-transform" />
@@ -174,24 +174,24 @@ export function Hero() {
           {/* Badge / Tagline */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-amber-400 mb-5 shadow-sm">
             <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Flagship Showroom</span>
+            <span>Showroom Medan</span>
             <span className="w-1 h-1 rounded-full bg-amber-400" />
             <span className="text-white/80 font-normal hidden sm:inline">
-              Certified Quality
+              Kualitas Terjamin
             </span>
           </div>
 
           {/* Static Heading */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white leading-[1.05]">
-            Luxury{' '}
+            Mobil Premium{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
-              Redefined
+              Pilihan Anda
             </span>
           </h1>
 
           {/* Static Subtitle */}
           <p className="text-sm sm:text-base lg:text-lg text-zinc-300 mt-5 leading-relaxed max-w-2xl font-light">
-            Certified prestige cars. SGD Nett pricing. Zero hidden fees.
+            Mobil pilihan. Harga jelas dalam rupiah. Siap tunai, kredit, dan tukar tambah.
           </p>
 
           {/* Action CTAs */}
@@ -200,7 +200,7 @@ export function Hero() {
               href="/inventory"
               className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>View Cars</span>
+              <span>Lihat Mobil</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -208,13 +208,13 @@ export function Hero() {
               href="/tentang-kami#contact-showroom"
               className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base backdrop-blur-md border border-white/20 transition-all duration-200"
             >
-              <span>Visit Us</span>
+              <span>Kunjungi Kami</span>
             </Link>
           </div>
         </div>
 
-        {/* ── Bottom Controls: Dots Indicator & Counter (Pause/Play button removed) ── */}
-        <div className="mt-12 sm:mt-16 pt-6 border-t border-white/10 flex items-center justify-between gap-4">
+        {/* ── Slide Indicators ── */}
+        <div className="mt-12 sm:mt-16 pt-6 flex items-center">
           {/* Interactive Indicator Dots */}
           <div className="flex items-center gap-2.5">
             {SLIDES.map((slide, index) => {
@@ -224,7 +224,7 @@ export function Hero() {
                   key={slide.id}
                   type="button"
                   onClick={() => goToSlide(index)}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={`Buka slide ${index + 1}`}
                   className={`h-2.5 rounded-full transition-all duration-500 cursor-pointer ${
                     isActive
                       ? 'w-10 sm:w-12 bg-amber-500 shadow-md shadow-amber-500/40'
@@ -235,14 +235,6 @@ export function Hero() {
             })}
           </div>
 
-          {/* Slide counter */}
-          <div className="flex items-center gap-4 text-xs font-medium text-white/70">
-            <span className="tracking-widest font-mono text-zinc-400">
-              <span className="text-white font-bold">0{currentIndex + 1}</span>
-              <span className="mx-1">/</span>
-              <span>0{SLIDES.length}</span>
-            </span>
-          </div>
         </div>
       </div>
     </section>

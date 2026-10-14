@@ -38,9 +38,9 @@ export default function LoginPage() {
 
   // Mock accounts database
   const DEMO_OWNER = {
-    email: 'owner@apexautosg.com',
+    email: 'admin@apexauto.id',
     password: 'password123',
-    name: 'Alvin Tan (Showroom Principal)',
+    name: 'Admin Apex Medan',
     role: 'owner',
   };
 
@@ -49,12 +49,12 @@ export default function LoginPage() {
     setError(null);
 
     if (!email.trim()) {
-      setError('Please enter your showroom account email.');
+      setError("Masukkan email akun showroom.");
       return;
     }
 
     if (!password) {
-      setError('Please enter your password.');
+      setError("Masukkan kata sandi Anda.");
       return;
     }
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
       if (!response.ok || !data.success) {
         setIsLoading(false);
-        setError(data.error || 'Invalid credentials. Please verify your email and password.');
+        setError(data.error || "Email atau kata sandi tidak sesuai. Periksa kembali data Anda.");
         return;
       }
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
       }, 500);
     } catch (err) {
       setIsLoading(false);
-      setError('Connection error. Please try again.');
+      setError("Koneksi bermasalah. Silakan coba lagi.");
     }
   };
 
@@ -114,7 +114,7 @@ export default function LoginPage() {
           href="/"
           className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800"
         >
-          <span>← Back to Showroom</span>
+          <span>← Kembali ke Showroom</span>
         </Link>
       </div>
 
@@ -127,19 +127,19 @@ export default function LoginPage() {
             </div>
             <div className="text-left">
               <div className="font-extrabold tracking-wider text-xl text-white flex items-center gap-1.5">
-                APEX AUTO <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">SG</span>
+                APEX AUTO <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">ID</span>
               </div>
               <div className="text-[10px] text-slate-400 tracking-widest uppercase">
-                Owner Management Portal
+                Portal Kelola Pemilik
               </div>
             </div>
           </Link>
 
           <h1 className="text-2xl font-bold text-white tracking-tight">
-            Showroom Portal Login
+            Masuk ke Portal Showroom
           </h1>
           <p className="text-xs text-slate-400 mt-1.5">
-            Authorized access for Apex Auto principals &amp; certified advisors
+            Akses untuk pemilik dan staf Apex Auto
           </p>
         </div>
 
@@ -150,9 +150,9 @@ export default function LoginPage() {
               <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30 shadow-lg">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-white">Login Successful!</h3>
+              <h3 className="text-lg font-bold text-white">Berhasil Masuk!</h3>
               <p className="text-xs text-slate-300">
-                Welcome back, <strong className="text-white">{DEMO_OWNER.name}</strong>. Redirecting to your dashboard...
+                Selamat datang, <strong className="text-white">{DEMO_OWNER.name}</strong>. Membuka panel Anda...
               </p>
               <div className="pt-2">
                 <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -164,7 +164,7 @@ export default function LoginPage() {
               {logoutNotice && (
                 <div className="bg-emerald-500/15 border border-emerald-500/40 rounded-xl p-3.5 flex items-start gap-2.5 text-emerald-300 animate-in fade-in">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs">Your showroom management session has been securely ended.</p>
+                  <p className="text-xs">Anda telah keluar dari sesi kelola showroom.</p>
                 </div>
               )}
 
@@ -179,7 +179,7 @@ export default function LoginPage() {
               {/* Email Input */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Showroom Account Email
+                  Email Akun Showroom
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -200,13 +200,13 @@ export default function LoginPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-semibold text-slate-300">
-                    Password
+                    Kata Sandi
                   </label>
                   <Link
                     href="/forgot-password"
                     className="text-[11px] text-amber-400 hover:text-amber-300 transition-colors"
                   >
-                    Forgot password?
+                    Lupa kata sandi?
                   </Link>
                 </div>
                 <div className="relative">
@@ -241,12 +241,12 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                    <span>Verifying Access...</span>
+                    <span>Memeriksa Akses...</span>
                   </>
                 ) : (
                   <>
                     <KeyRound className="w-4 h-4" />
-                    <span>Sign In to Showroom Account</span>
+                    <span>Masuk ke Akun Showroom</span>
                   </>
                 )}
               </button>
@@ -257,19 +257,19 @@ export default function LoginPage() {
                   <div className="flex items-center justify-between text-[11px] text-slate-400">
                     <span className="flex items-center gap-1 font-semibold text-slate-300">
                       <UserCheck className="w-3.5 h-3.5 text-amber-400" />
-                      Showroom Demo Account:
+                      Akun Demo Showroom:
                     </span>
                     <button
                       type="button"
                       onClick={fillDemoAccount}
                       className="text-amber-400 hover:text-amber-300 text-[10px] font-bold underline cursor-pointer"
                     >
-                      Auto Fill
+                      Isi Otomatis
                     </button>
                   </div>
                   <div className="text-[11px] text-slate-400 font-mono space-y-0.5">
-                    <div>Email: <span className="text-slate-200">owner@apexautosg.com</span></div>
-                    <div>Password: <span className="text-slate-200">password123</span></div>
+                    <div>Email: <span className="text-slate-200">admin@apexauto.id</span></div>
+                    <div>Kata Sandi: <span className="text-slate-200">password123</span></div>
                   </div>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export default function LoginPage() {
           <div className="pt-2 border-t border-slate-800 text-center">
             <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              256-bit SSL Encrypted Security System
+              Verifikasi Akun Showroom
             </span>
           </div>
         </div>

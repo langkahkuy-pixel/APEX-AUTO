@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About Us — Apex Auto | Leng Kee Flagship Showroom',
+  title: "Tentang Kami | Apex Auto Medan",
   description:
-    'Discover Apex Auto, Singapore\'s luxury automobile showroom. Learn about our certified inspections, visit 24 Leng Kee Road, or send an inquiry and schedule a private test drive.',
+    "Kenali Apex Auto, showroom mobil premium bekas di Medan. Pelajari pemeriksaan unit, pilihan tunai/kredit dan tukar tambah, lalu jadwalkan kunjungan ke showroom.",
 };
 
 export default function AboutLayout({ children }: { children: React.ReactNode }) {

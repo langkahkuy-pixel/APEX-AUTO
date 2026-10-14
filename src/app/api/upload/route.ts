@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        { success: false, error: 'No image file uploaded.' },
+        { success: false, error: "Belum ada foto yang diunggah." },
         { status: 400 }
       );
     }
@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Image uploaded successfully.',
+      message: "Foto berhasil diunggah.",
       url: publicUrl,
       fileName,
     });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to upload image file.' },
+      { success: false, error: "Foto gagal diunggah." },
       { status: 500 }
     );
   }

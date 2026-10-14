@@ -10,10 +10,12 @@ export type BodyType =
   | 'Convertible'
   | 'Station Wagon'
   | 'MPV'
-  | 'Sports';
+  | 'Sport'
+  | 'Cabriolet'
+  | 'Wagon';
 
-export type FuelType = 'Petrol' | 'Diesel' | 'Hybrid' | 'Electric';
-export type Transmission = 'Automatic' | 'Manual';
+export type FuelType = 'Bensin' | 'Diesel' | 'Hibrida' | 'Listrik';
+export type Transmission = 'Otomatis' | 'Manual';
 
 export interface CarImage {
   id: string;
@@ -28,7 +30,8 @@ export interface Car {
   brand: string;
   model: string;
   year: number;
-  price: number; // SGD
+  price: number; // Harga tunai dalam rupiah.
+  currency?: 'IDR';
   body_type: string;
   transmission: Transmission | string;
   fuel_type: FuelType | string;
@@ -42,10 +45,13 @@ export interface Car {
   created_at: string;
   updated_at?: string;
   images: CarImage[];
-  depreciation_sgd?: number; // estimasi depresiasi tahunan SGD
-  coe_expiry?: string;
+  annual_tax_idr?: number;
+  tax_expiry?: string;
+  plate_number?: string;
+  document_status?: string;
+  owners?: number;
   engine_capacity_cc?: number;
-  monthly_est_sgd?: number;
+  monthly_est_idr?: number;
 }
 
 export interface FilterState {

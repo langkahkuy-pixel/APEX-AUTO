@@ -1,1146 +1,260 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import AdminRouteGuard from '@/components/AdminRouteGuard';
+import { formatRupiah, formatDate, localizeStatus, SHOWROOM } from '@/lib/locale';
 import AdminCarFormModal from '@/components/admin/AdminCarFormModal';
-import AdminPromoFormModal from '@/components/admin/AdminPromoFormModal';
 import AdminInquiryList from '@/components/admin/AdminInquiryList';
 import QuickStatusChanger from '@/components/admin/QuickStatusChanger';
-import { MOCK_CARS } from '@/data/mock-cars';
-import { MOCK_PROMOS } from '@/data/mock-promos';
-import { MOCK_INQUIRIES, AdminInquiry } from '@/data/mock-inquiries';
-import { Car as CarType, CarStatus } from '@/types/car';
-import { PromoItem } from '@/types/promo';
-import {
-  Car,
-  Users,
-  MessageSquare,
-  TrendingUp,
-  LogOut,
-  Plus,
-  ArrowUpRight,
-  ShieldCheck,
-  Building2,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Sparkles,
-  ExternalLink,
-  Tag,
-  MapPin,
-  Phone,
-  Search,
-  Filter,
-  Eye,
-  SlidersHorizontal,
-  ChevronRight,
-  Send,
-  AlertCircle,
-  FileText,
-  BadgeCheck,
-  Pencil,
-  Check,
-  Trash2,
-  RotateCw,
-} from 'lucide-react';
+import type { AdminInquiry } from '@/data/mock-inquiries';
+import type { Car, CarStatus } from '@/types/car';
+import { ArrowRight, ArrowUpRight, Building2, Car as CarIcon, Check, CheckCircle2, ChevronRight, Clock, ExternalLink, LayoutDashboard, Loader2, LogOut, MapPin, MessageSquare, Pencil, Phone, Plus, RotateCw, Search, Trash2, X, type LucideIcon } from 'lucide-react';
 
-type AdminTab = 'overview' | 'inventory' | 'promos' | 'inquiries' | 'branches';
-
-const SHOWROOM_BRANCHES = [
-  {
-    id: 'branch-1',
-    name: 'Apex Auto Flagship @ Leng Kee',
-    address: '24 Leng Kee Road, Singapore 159096',
-    zone: 'South / Central Prime Hub',
-    phone: '+65 6789 0123',
-    whatsapp: '+65 8123 4567',
-    hours: 'Mon - Sun: 09:00 - 19:00 SGT',
-    unitsCount: 14,
-    status: 'Fully Operational',
-  },
-];
+const TABS = [
+  { id: 'overview', label: 'Ringkasan', icon: LayoutDashboard },
+  { id: 'inventory', label: 'Koleksi Mobil', icon: CarIcon },
+  { id: 'inquiries', label: 'Pertanyaan Pelanggan', icon: MessageSquare },
+  { id: 'branches', label: 'Lokasi Showroom', icon: Building2 },
+] as const;
+type AdminTab = typeof TABS[number]['id'];
+const button = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-wait disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
+const primaryButton = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 disabled:cursor-wait disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
+const input = 'min-h-10 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100';
 
 function AdminDashboardContent() {
   const { user, logout } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  // Navigation tab state
-  const initialTab = (searchParams.get('tab') as AdminTab) || 'overview';
-  const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
-  // Cars inventory state
-  const [carsList, setCarsList] = useState<CarType[]>(MOCK_CARS);
-  const [isLoadingCars, setIsLoadingCars] = useState(true);
-  const [selectedCarForEdit, setSelectedCarForEdit] = useState<CarType | null>(null);
-  const [carToDelete, setCarToDelete] = useState<CarType | null>(null);
-  const [isDeletingCar, setIsDeletingCar] = useState(false);
-  const [formModalMode, setFormModalMode] = useState<'create' | 'edit'>('create');
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [toastNotice, setToastNotice] = useState<string | null>(null);
-
-  // Search and filters for inventory tab
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'reserved' | 'sold'>('all');
-
-  // Promos management state
-  const [promosList, setPromosList] = useState<PromoItem[]>(MOCK_PROMOS);
-  const [isLoadingPromos, setIsLoadingPromos] = useState(true);
-  const [selectedPromoForEdit, setSelectedPromoForEdit] = useState<PromoItem | null>(null);
-  const [promoModalMode, setPromoModalMode] = useState<'create' | 'edit'>('create');
-  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
-
-  // Inquiries state
-  const [inquiriesList, setInquiriesList] = useState<AdminInquiry[]>(MOCK_INQUIRIES);
-  const [isLoadingInquiries, setIsLoadingInquiries] = useState(true);
-
-  // Fetch functions connecting to SQLite backend API
-  const fetchCars = async () => {
-    try {
-      setIsLoadingCars(true);
-      const res = await fetch('/api/cars');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data)) {
-        setCarsList(data.data);
-      }
-    } catch (err) {
-      console.error('Error fetching cars:', err);
-    } finally {
-      setIsLoadingCars(false);
-    }
-  };
-
-  const fetchPromos = async () => {
-    try {
-      setIsLoadingPromos(true);
-      const res = await fetch('/api/promos');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data)) {
-        setPromosList(data.data);
-      }
-    } catch (err) {
-      console.error('Error fetching promos:', err);
-    } finally {
-      setIsLoadingPromos(false);
-    }
-  };
-
-  const fetchInquiries = async () => {
-    try {
-      setIsLoadingInquiries(true);
-      const res = await fetch('/api/inquiries');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data)) {
-        setInquiriesList(data.data);
-      }
-    } catch (err) {
-      console.error('Error fetching inquiries:', err);
-    } finally {
-      setIsLoadingInquiries(false);
-    }
-  };
+  const requestedTab = searchParams.get('tab');
+  const activeTab: AdminTab = TABS.find(tab => tab.id === requestedTab)?.id || 'overview';
+  const [cars, setCars] = useState<Car[]>([]);
+  const [inquiries, setInquiries] = useState<AdminInquiry[]>([]);
+  const [loadingCars, setLoadingCars] = useState(true);
+  const [loadingInquiries, setLoadingInquiries] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<CarStatus | 'all'>('all');
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [carToDelete, setCarToDelete] = useState<Car | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
-    fetchCars();
-    fetchPromos();
-    fetchInquiries();
+    if (requestedTab && !TABS.some(tab => tab.id === requestedTab)) {
+      router.replace('/admin?tab=overview', { scroll: false });
+    }
+  }, [requestedTab, router]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      const results = await Promise.allSettled([readList<Car>('/api/cars'), readList<AdminInquiry>('/api/inquiries')]);
+      if (!mounted) return;
+      if (results[0].status === 'fulfilled') setCars(results[0].value);
+      if (results[1].status === 'fulfilled') setInquiries(results[1].value);
+      if (results.some(result => result.status === 'rejected')) setLoadError('Sebagian data belum dapat dimuat. Silakan muat ulang.');
+      setLoadingCars(false);
+      setLoadingInquiries(false);
+    }
+    void load();
+    return () => { mounted = false; };
   }, []);
 
-  // Update tab in URL query params
-  const handleTabChange = (tab: AdminTab) => {
-    setActiveTab(tab);
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', tab);
-    window.history.pushState({}, '', url.toString());
-  };
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(''), 5000);
+    return () => clearTimeout(timer);
+  }, [notice]);
 
-  // Stats calculation
-  const totalCars = carsList.length;
-  const availableCars = carsList.filter((c) => c.status === 'available').length;
-  const reservedCars = carsList.filter((c) => c.status === 'reserved').length;
-  const soldCars = carsList.filter((c) => c.status === 'sold').length;
-  const totalValuationSGD = carsList.reduce((acc, c) => acc + (c.price || 0), 0);
-  const newInquiriesCount = inquiriesList.filter((i) => i.status === 'new').length;
+  async function refreshCars() {
+    setLoadingCars(true);
+    try { setCars(await readList<Car>('/api/cars')); setLoadError(''); }
+    catch { setLoadError('Koleksi mobil belum dapat dimuat. Silakan coba lagi.'); }
+    finally { setLoadingCars(false); }
+  }
+  async function refreshInquiries() {
+    setLoadingInquiries(true);
+    try { setInquiries(await readList<AdminInquiry>('/api/inquiries')); setLoadError(''); }
+    catch { setLoadError('Pertanyaan pelanggan belum dapat dimuat. Silakan coba lagi.'); }
+    finally { setLoadingInquiries(false); }
+  }
+  function navigate(tab: AdminTab) { router.push(`/admin?tab=${tab}`, { scroll: false }); }
+  function addCar() { setEditingCar(null); setFormOpen(true); }
+  function editCar(car: Car) { setEditingCar(car); setFormOpen(true); }
 
-  // Filtered inventory
-  const filteredCars = carsList.filter((car) => {
-    const matchSearch =
-      car.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchStatus = statusFilter === 'all' || car.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
-
-  const handleOpenCreateCar = () => {
-    setSelectedCarForEdit(null);
-    setFormModalMode('create');
-    setIsFormModalOpen(true);
-  };
-
-  const handleOpenEditCar = (car: CarType) => {
-    setSelectedCarForEdit(car);
-    setFormModalMode('edit');
-    setIsFormModalOpen(true);
-  };
-
-  const handleSaveCar = async (savedCar: CarType) => {
+  async function saveCar(car: Car) {
+    const response = await fetch(editingCar ? `/api/cars/${car.id}` : '/api/cars', {
+      method: editingCar ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(car),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Data mobil gagal disimpan.');
+    setCars(previous => editingCar ? previous.map(item => item.id === car.id ? data.data : item) : [data.data, ...previous]);
+    setFormOpen(false);
+    setNotice(editingCar ? 'Perubahan mobil berhasil disimpan.' : 'Mobil baru berhasil ditambahkan ke katalog.');
+  }
+  async function changeCarStatus(id: string, status: CarStatus) {
     try {
-      if (formModalMode === 'create') {
-        const res = await fetch('/api/cars', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(savedCar),
-        });
-        const data = await res.json();
-        if (data.success && data.data) {
-          setCarsList((prev) => [data.data, ...prev]);
-          setToastNotice(`New vehicle "${savedCar.brand} ${savedCar.model}" added to inventory.`);
-        } else {
-          setToastNotice(data.error || 'Failed to add vehicle.');
-        }
-      } else {
-        const res = await fetch(`/api/cars/${savedCar.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(savedCar),
-        });
-        const data = await res.json();
-        if (data.success && data.data) {
-          setCarsList((prev) =>
-            prev.map((c) => (c.id === savedCar.id ? data.data : c))
-          );
-          setToastNotice(`Vehicle details for "${savedCar.brand} ${savedCar.model}" updated.`);
-        } else {
-          setToastNotice(data.error || 'Failed to update vehicle.');
-        }
-      }
-      setIsFormModalOpen(false);
-      setTimeout(() => setToastNotice(null), 4000);
-    } catch (e) {
-      console.error('Failed to save car:', e);
-      setToastNotice('Network or server error while saving vehicle.');
-    }
-  };
-
-  const handleQuickStatusChange = async (carId: string, newStatus: CarStatus) => {
-    // Optimistic UI update
-    setCarsList((prev) =>
-      prev.map((c) => (c.id === carId ? { ...c, status: newStatus } : c))
-    );
-    try {
-      await fetch(`/api/cars/${carId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      setToastNotice(`Vehicle status updated to ${newStatus.toUpperCase()}`);
-    } catch (e) {
-      console.error('Error updating status:', e);
-    }
-    setTimeout(() => setToastNotice(null), 3000);
-  };
-
-  const confirmDeleteCar = async () => {
+      const response = await fetch(`/api/cars/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Status mobil gagal diperbarui.');
+      setCars(previous => previous.map(car => car.id === id ? { ...car, status } : car));
+      setNotice(`Status mobil diperbarui menjadi ${localizeStatus(status).toLowerCase()}.`);
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Koneksi bermasalah. Silakan coba lagi.'); }
+  }
+  async function deleteCar() {
     if (!carToDelete) return;
-    setIsDeletingCar(true);
+    setDeleting(true);
     try {
-      const res = await fetch(`/api/cars/${carToDelete.id}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) {
-        setCarsList((prev) => prev.filter((c) => c.id !== carToDelete.id));
-        setToastNotice(`Vehicle "${carToDelete.brand} ${carToDelete.model}" removed from inventory.`);
-      } else {
-        setToastNotice(data.error || 'Failed to remove vehicle.');
-      }
+      const response = await fetch(`/api/cars/${carToDelete.id}`, { method: 'DELETE' });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Mobil gagal dihapus.');
+      setCars(previous => previous.filter(car => car.id !== carToDelete.id));
       setCarToDelete(null);
-      setTimeout(() => setToastNotice(null), 4000);
-    } catch (e) {
-      console.error('Error deleting car:', e);
-      setToastNotice('Network error while removing vehicle.');
-    } finally {
-      setIsDeletingCar(false);
-    }
-  };
-
-  const handleOpenCreatePromo = () => {
-    setSelectedPromoForEdit(null);
-    setPromoModalMode('create');
-    setIsPromoModalOpen(true);
-  };
-
-  const handleOpenEditPromo = (promo: PromoItem) => {
-    setSelectedPromoForEdit(promo);
-    setPromoModalMode('edit');
-    setIsPromoModalOpen(true);
-  };
-
-  const handleSavePromo = async (savedPromo: PromoItem) => {
+      setNotice('Mobil berhasil dihapus dari katalog.');
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Koneksi bermasalah. Silakan coba lagi.'); }
+    finally { setDeleting(false); }
+  }
+  async function changeInquiryStatus(id: string, status: AdminInquiry['status']) {
     try {
-      if (promoModalMode === 'create') {
-        const res = await fetch('/api/promos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(savedPromo),
-        });
-        const data = await res.json();
-        if (data.success && data.data) {
-          setPromosList((prev) => [data.data, ...prev]);
-          setToastNotice(`Promotional campaign "${savedPromo.title}" added.`);
-        }
-      } else {
-        const res = await fetch(`/api/promos/${savedPromo.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(savedPromo),
-        });
-        const data = await res.json();
-        if (data.success && data.data) {
-          setPromosList((prev) =>
-            prev.map((p) => (p.id === savedPromo.id ? data.data : p))
-          );
-          setToastNotice(`Promotional campaign "${savedPromo.title}" updated.`);
-        }
-      }
-      setIsPromoModalOpen(false);
-      setTimeout(() => setToastNotice(null), 4000);
-    } catch (e) {
-      console.error('Error saving promo:', e);
-    }
-  };
+      const response = await fetch(`/api/inquiries/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Status pertanyaan gagal diperbarui.');
+      setInquiries(previous => previous.map(item => item.id === id ? { ...item, status } : item));
+      setNotice('Status pertanyaan berhasil diperbarui.');
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Koneksi bermasalah. Silakan coba lagi.'); }
+  }
 
-  const handleDeletePromo = async (promoId: string) => {
-    try {
-      await fetch(`/api/promos/${promoId}`, { method: 'DELETE' });
-      setPromosList((prev) => prev.filter((p) => p.id !== promoId));
-      setToastNotice('Promotional campaign removed from the system.');
-      setTimeout(() => setToastNotice(null), 3000);
-    } catch (e) {
-      console.error('Error deleting promo:', e);
-    }
-  };
+  const available = cars.filter(car => car.status === 'available').length;
+  const reserved = cars.filter(car => car.status === 'reserved').length;
+  const sold = cars.filter(car => car.status === 'sold').length;
+  const newInquiries = inquiries.filter(inquiry => inquiry.status === 'new').length;
+  const valuation = cars.reduce((sum, car) => sum + car.price, 0);
+  const filteredCars = cars.filter(car => {
+    const search = query.trim().toLowerCase();
+    return `${car.brand} ${car.model} ${car.location} ${car.plate_number || ''}`.toLowerCase().includes(search)
+      && (statusFilter === 'all' || car.status === statusFilter);
+  });
+  const recentInquiries = [...inquiries].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 4);
+  const currentLabel = TABS.find(tab => tab.id === activeTab)!.label;
 
-  const handleInquiryStatusChange = async (id: string, newStatus: AdminInquiry['status']) => {
-    setInquiriesList((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
-    );
-    try {
-      await fetch(`/api/inquiries/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      setToastNotice(`Inquiry status updated to ${newStatus.toUpperCase()}`);
-    } catch (e) {
-      console.error('Error updating inquiry status:', e);
-    }
-    setTimeout(() => setToastNotice(null), 3000);
-  };
+  function navigation(mobile = false) {
+    return <nav aria-label={mobile ? 'Navigasi CMS mobile' : 'Navigasi CMS'} className={mobile ? 'flex gap-1 overflow-x-auto px-4 py-3' : 'space-y-1.5'}>
+      {TABS.map(({ id, label, icon: Icon }) => <Link key={id} href={`/admin?tab=${id}`} aria-current={activeTab === id ? 'page' : undefined}
+        className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-amber-500 ${mobile ? 'shrink-0 whitespace-nowrap' : ''} ${activeTab === id ? 'bg-amber-50 text-amber-900' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'}`}>
+        <Icon className={`h-[18px] w-[18px] shrink-0 ${activeTab === id ? 'text-amber-600' : ''}`} />{label}
+        {id === 'inventory' && <span className={`ml-auto rounded-md px-1.5 py-0.5 text-[11px] tabular-nums ${activeTab === id ? 'bg-amber-100 text-amber-800' : 'bg-zinc-100 text-zinc-500'}`}>{cars.length}</span>}
+        {id === 'inquiries' && newInquiries > 0 && <span className="ml-auto rounded-md bg-amber-100 px-1.5 py-0.5 text-[11px] text-amber-800">{newInquiries}</span>}
+      </Link>)}
+    </nav>;
+  }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans">
-      {/* 1. TOP HEADER BRAND & USER STATUS */}
-      <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
-                <Car className="w-5 h-5 stroke-[2.5]" />
-              </div>
-              <div>
-                <div className="font-extrabold text-sm sm:text-base text-white flex items-center gap-1.5">
-                  APEX AUTO{' '}
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">
-                    CMS
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-400">Showroom Management System</div>
-              </div>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="hidden md:flex items-center gap-2 text-xs text-slate-300 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-medium">{user?.name || 'Alvin Tan (Owner)'}</span>
-              <span className="text-[10px] font-mono uppercase text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">
-                {user?.role || 'owner'}
-              </span>
-            </div>
-
-            <Link
-              href="/"
-              target="_blank"
-              className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 transition-colors"
-            >
-              <span>View Website</span>
-              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setShowLogoutConfirm(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-semibold border border-rose-500/30 transition-all cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </button>
-          </div>
+    <div className="min-h-[100dvh] bg-[#f8f9fb] text-zinc-900">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white lg:flex">
+        <Link href="/admin" className="flex items-center gap-3 px-6 py-7">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-900 text-amber-400"><CarIcon className="h-5 w-5" /></span>
+          <span><span className="block text-sm font-extrabold tracking-wide">APEX AUTO</span><span className="mt-0.5 block text-xs text-zinc-400">Manajemen showroom</span></span>
+        </Link>
+        <div className="px-4 pt-5"><p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Ruang kerja</p>{navigation()}</div>
+        <div className="mt-auto border-t border-zinc-100 px-5 py-5">
+          <Link href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm text-zinc-500 hover:text-zinc-900"><ExternalLink className="h-4 w-4" />Lihat Situs<ArrowUpRight className="ml-auto h-4 w-4" /></Link>
+          <button onClick={() => setShowLogout(true)} className="mt-2 flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm text-zinc-500 hover:bg-zinc-50 hover:text-red-600"><LogOut className="h-4 w-4" />Keluar</button>
+          <div className="mt-5 flex items-center gap-3 border-t border-zinc-100 pt-5"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold">{(user?.name || 'Admin').slice(0, 2).toUpperCase()}</span><div className="min-w-0"><p className="truncate text-xs font-semibold">{user?.name || 'Admin Apex Medan'}</p><p className="mt-1 text-[11px] text-zinc-400">{user?.role === 'owner' ? 'Pemilik showroom' : 'Staf penjualan'}</p></div></div>
         </div>
-      </header>
-
-      {/* 2. NAVIGATION BAR KELOLA SHOWROOM */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4 sm:px-8 py-2 sticky top-[57px] z-30 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <button
-            type="button"
-            onClick={() => handleTabChange('overview')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'overview'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>Dashboard Overview</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('inventory')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'inventory'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <Car className="w-4 h-4" />
-            <span>Inventory ({totalCars})</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === 'inventory' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              {availableCars} Available
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('promos')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'promos'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <Tag className="w-4 h-4" />
-            <span>Promotions</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === 'promos' ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              {promosList.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('inquiries')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'inquiries'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>Inquiries / Leads</span>
-            {newInquiriesCount > 0 && (
-              <span
-                className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  activeTab === 'inquiries'
-                    ? 'bg-rose-950 text-rose-300'
-                    : 'bg-rose-500 text-white animate-pulse'
-                }`}
-              >
-                {newInquiriesCount} new
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('branches')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'branches'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>Showroom Hubs</span>
-          </button>
-        </div>
-      </nav>
-
-      {/* 3. MAIN TAB CONTENT */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 space-y-8">
-        {/* ========================================================= */}
-        {/* TAB 1: OVERVIEW */}
-        {/* ========================================================= */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 animate-in fade-in">
-            {/* Welcome Banner */}
-            <div className="bg-gradient-to-r from-amber-500/15 via-slate-900 to-slate-900 border border-amber-500/30 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-xl">
-              <div className="max-w-2xl space-y-2 relative z-10">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Business & Operations Overview</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                  Apex Auto Showroom Command Centre
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Welcome back, <strong className="text-white">{user?.name || 'Owner'}</strong>. Showroom inventory, COE records, promotion campaigns, and visitor inquiries are synchronized live via SQLite.
-                </p>
-              </div>
-            </div>
-
-            {/* 4 Metric Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-amber-500/40 transition-colors">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Total Inventory</span>
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                    <Car className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-black text-white">{totalCars}</div>
-                <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                  <span className="text-emerald-400 font-bold">{availableCars} Available</span>
-                  <span>•</span>
-                  <span>{reservedCars + soldCars} Reserved/Sold</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-emerald-500/40 transition-colors">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Available Units</span>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-black text-emerald-400">{availableCars}</div>
-                <div className="text-[11px] text-slate-400">
-                  Ready for client test drives & viewings
-                </div>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-blue-500/40 transition-colors">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Reserved / Sold Units</span>
-                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                    <Tag className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-black text-white">
-                  {reservedCars} <span className="text-sm font-normal text-slate-400">res. / {soldCars} sold</span>
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  Pending COE transfers and deliveries
-                </div>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 hover:border-rose-500/40 transition-colors">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs font-medium">Visitor Inquiries / Leads</span>
-                  <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
-                    <MessageSquare className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-black text-white">{inquiriesList.length}</div>
-                <div className="text-[11px] text-slate-400">
-                  <span className="text-rose-400 font-bold">{newInquiriesCount} new messages</span> requiring sales followup
-                </div>
-              </div>
-            </div>
-
-            {/* Overview Quick Actions & Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-amber-400" />
-                    Recent Leads & Inquiries
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('inquiries')}
-                    className="text-xs text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
-                  >
-                    View All ({inquiriesList.length}) →
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {inquiriesList.slice(0, 4).map((inq) => (
-                    <div
-                      key={inq.id}
-                      className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-white">{inq.customerName}</span>
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            {new Date(inq.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                          <span
-                            className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
-                              inq.status === 'new'
-                                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                            }`}
-                          >
-                            {inq.status}
-                          </span>
-                        </div>
-                        <p className="text-xs text-amber-400/90 font-medium">{inq.carName}</p>
-                        <p className="text-[11px] text-slate-400 line-clamp-1">{inq.message}</p>
-                      </div>
-                      <a
-                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(inq.customerName)},%20this%20is%20Apex%20Auto%20following%20up%20on%20your%20inquiry%20regarding%20the%20${encodeURIComponent(inq.carName)}.`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => handleInquiryStatusChange(inq.id, 'contacted')}
-                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors whitespace-nowrap cursor-pointer"
-                      >
-                        <Send className="w-3 h-3" />
-                        <span>Reply WhatsApp</span>
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Showroom Status Card */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    Database & Real-Time Sync
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Embedded SQLite engine is active. Any vehicle, promo, or status change writes directly to disk and updates the live site instantly.
-                  </p>
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Database Engine:</span>
-                    <span className="text-emerald-400 font-bold">SQLite (Monolithic Local)</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Total Portfolio Value:</span>
-                    <span className="text-white font-mono font-bold">S${totalValuationSGD.toLocaleString('en-US')}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b border-slate-800">
-                    <span className="text-slate-400">Active Promotions:</span>
-                    <span className="text-amber-400 font-medium">{promosList.length} Campaign Banners</span>
-                  </div>
-                  <div className="flex justify-between py-2">
-                    <span className="text-slate-400">Showroom Location:</span>
-                    <span className="text-white font-medium">Leng Kee Flagship (24 Leng Kee Rd)</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('inventory')}
-                  className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
-                >
-                  <Car className="w-4 h-4" />
-                  <span>Open Car Inventory</span>
-                </button>
-              </div>
-            </div>
+      </aside>
+      <div className="min-w-0 lg:ml-64">
+        <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white">
+          <div className="flex h-[76px] items-center justify-between gap-3 px-5 sm:px-8 xl:px-10">
+            <div className="flex items-center gap-2 text-xs text-zinc-400 sm:text-sm"><span className="hidden sm:inline">Ruang kerja</span><ChevronRight className="hidden h-3.5 w-3.5 sm:block" /><span className="font-medium text-zinc-700">{currentLabel}</span></div>
+            <div className="flex items-center gap-3"><span className="hidden items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs text-zinc-500 sm:inline-flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />Showroom Medan</span><Link href="/" target="_blank" rel="noopener noreferrer" className={`${button} lg:hidden`} aria-label="Lihat Situs"><ExternalLink className="h-4 w-4" /></Link><button onClick={() => setShowLogout(true)} className="rounded-lg p-2 text-zinc-500 lg:hidden" aria-label="Keluar"><LogOut className="h-4 w-4" /></button><span className="hidden rounded-md bg-zinc-100 px-2 py-1 text-[10px] font-semibold tracking-wider text-zinc-500 sm:inline">CMS</span></div>
           </div>
-        )}
+          <div className="border-t border-zinc-100 lg:hidden">{navigation(true)}</div>
+        </header>
 
-        {/* ========================================================= */}
-        {/* TAB 2: INVENTORY (CRUD) */}
-        {/* ========================================================= */}
-        {activeTab === 'inventory' && (
-          <div className="space-y-6 animate-in fade-in">
-            {/* Action Bar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
-              <div>
-                <h2 className="text-xl font-bold text-white">Car Inventory Management</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Create, update, filter, or remove vehicles from the public showroom catalog.
-                </p>
+        <main className="mx-auto max-w-[1600px] space-y-7 px-5 py-8 sm:px-8 xl:px-10 xl:py-10">
+          {loadError && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{loadError}<button onClick={() => { void refreshCars(); void refreshInquiries(); }} className="font-semibold underline">Muat ulang</button></div>}
+          {activeTab === 'overview' && <>
+            <PageHeading eyebrow="Aktivitas showroom" title="Ringkasan Showroom" description={`Selamat datang, ${user?.name || 'Admin'}. Pantau koleksi mobil dan tindak lanjut pelanggan Anda.`} action={<button onClick={addCar} className={primaryButton}><Plus className="h-4 w-4" />Tambah Mobil</button>} />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <Metric label="Total mobil" value={loadingCars ? '—' : cars.length} detail="Unit dalam koleksi showroom" icon={CarIcon} />
+              <Metric label="Mobil tersedia" value={loadingCars ? '—' : available} detail="Siap dilihat calon pembeli" icon={CheckCircle2} />
+              <Metric label="Dipesan / terjual" value={loadingCars ? '—' : `${reserved} / ${sold}`} detail="Proses pembelian dan serah terima" icon={Check} />
+              <Metric label="Pertanyaan baru" value={loadingInquiries ? '—' : newInquiries} detail={`${inquiries.length} total pertanyaan pelanggan`} icon={MessageSquare} />
+            </div>
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+              <section className="overflow-hidden rounded-xl border border-zinc-200 bg-white"><div className="flex items-center justify-between gap-3 border-b border-zinc-100 px-6 py-5"><h2 className="text-base font-semibold">Pertanyaan Terbaru</h2><button onClick={() => navigate('inquiries')} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-900">Lihat semua<ArrowRight className="h-3.5 w-3.5" /></button></div>
+                {loadingInquiries ? <EmptyState loading title="Memuat pertanyaan pelanggan..." /> : recentInquiries.length ? <div className="divide-y divide-zinc-100">{recentInquiries.map(inquiry => <button key={inquiry.id} onClick={() => navigate('inquiries')} className="flex w-full items-start gap-4 px-6 py-5 text-left hover:bg-zinc-50"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-500">{inquiry.customerName.slice(0, 1)}</span><div className="min-w-0 flex-1"><div className="flex flex-wrap justify-between gap-2"><h3 className="text-sm font-semibold">{inquiry.customerName}</h3><span className="text-[11px] text-zinc-400">{formatDate(inquiry.createdAt)}</span></div><p className="mt-1 truncate text-xs text-zinc-500">{inquiry.carName}</p><p className="mt-2 line-clamp-1 text-xs text-zinc-400">{inquiry.message}</p></div><ChevronRight className="mt-2 h-4 w-4 shrink-0 text-zinc-400" /></button>)}</div> : <EmptyState title="Belum ada pertanyaan pelanggan" description="Pertanyaan yang masuk akan muncul di sini." />}
+              </section>
+              <section className="flex flex-col rounded-xl border border-zinc-200 bg-white p-6"><p className="text-xs font-medium text-zinc-500">Total nilai koleksi</p><p className="mt-4 break-words text-2xl font-semibold tracking-tight tabular-nums xl:text-3xl">{loadingCars ? '—' : formatRupiah(valuation)}</p><p className="mt-2 text-xs leading-6 text-zinc-400">Akumulasi harga tunai seluruh unit di katalog.</p><div className="mt-7 space-y-4 border-t border-zinc-100 pt-5"><SummaryLine label="Tersedia" value={`${available} unit`} /><SummaryLine label="Dipesan" value={`${reserved} unit`} /><SummaryLine label="Terjual" value={`${sold} unit`} /></div><button onClick={() => navigate('inventory')} className={`${button} mt-7 w-full`}>Kelola Koleksi Mobil<ArrowRight className="h-4 w-4" /></button></section>
+            </div>
+          </>}
+
+          {activeTab === 'inventory' && <>
+            <PageHeading eyebrow="Inventaris" title="Kelola Koleksi Mobil" description="Semua unit, detail kendaraan, dan status penjualan dalam satu tempat." action={<button onClick={addCar} className={primaryButton}><Plus className="h-4 w-4" />Tambah Mobil</button>} />
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-zinc-500"><span><strong className="font-semibold text-zinc-900">{cars.length}</strong> total unit</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{available} tersedia</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />{reserved} dipesan</span><span>{sold} terjual</span></div>
+            <section className="rounded-xl border border-zinc-200 bg-white">
+              <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 p-4 sm:p-5"><div className="relative min-w-0 flex-1 basis-56"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-zinc-400" /><input aria-label="Cari mobil" placeholder="Cari merek, model, atau nomor polisi..." value={query} onChange={event => setQuery(event.target.value)} className={`${input} w-full pl-9`} /></div><select aria-label="Filter status mobil" value={statusFilter} onChange={event => setStatusFilter(event.target.value as CarStatus | 'all')} className={`${input} flex-1 sm:flex-none`}><option value="all">Semua Status</option><option value="available">Tersedia</option><option value="reserved">Dipesan</option><option value="sold">Terjual</option></select><button onClick={refreshCars} disabled={loadingCars} aria-label="Muat ulang koleksi mobil" className={`${button} px-3`}><RotateCw className={`h-4 w-4 ${loadingCars ? 'animate-spin' : ''}`} /></button></div>
+              <div className="overflow-x-auto rounded-b-xl">
+                <table className="w-full min-w-[940px] text-left text-sm"><thead className="bg-zinc-50 text-[11px] font-medium uppercase tracking-wider text-zinc-400"><tr><th className="px-5 py-4 font-medium">Mobil</th><th className="px-4 py-4 font-medium">Spesifikasi</th><th className="px-4 py-4 font-medium">Harga tunai</th><th className="px-4 py-4 font-medium">Status unit</th><th className="px-5 py-4 text-right font-medium">Tindakan</th></tr></thead><tbody className="divide-y divide-zinc-100">
+                  {loadingCars ? <tr><td colSpan={5}><EmptyState loading title="Memuat koleksi mobil..." /></td></tr> : filteredCars.map(car => <tr key={car.id} className="group hover:bg-zinc-50/70"><td className="px-5 py-5"><div className="flex max-w-[400px] items-center gap-4"><CarThumbnail car={car} /><div className="min-w-0"><p className="text-sm font-semibold leading-5">{car.brand} {car.model}</p><p className="mt-1.5 text-xs text-zinc-400">{car.plate_number || 'Nomor polisi belum diisi'} · {car.color}</p></div></div></td><td className="px-4 py-5"><p className="text-xs font-medium">{car.year} · {car.body_type}</p><p className="mt-1.5 text-xs text-zinc-400">{car.mileage_km.toLocaleString('id-ID')} km · {car.fuel_type}</p></td><td className="whitespace-nowrap px-4 py-5"><p className="text-sm font-semibold tabular-nums">{formatRupiah(car.price)}</p><p className="mt-1.5 text-[11px] text-zinc-400">{car.annual_tax_idr ? `Pajak ${formatRupiah(car.annual_tax_idr)} /tahun` : 'Pajak belum diisi'}</p></td><td className="px-4 py-5"><QuickStatusChanger carId={car.id} currentStatus={car.status} carName={`${car.brand} ${car.model}`} onStatusChange={changeCarStatus} /></td><td className="px-5 py-5"><div className="flex justify-end gap-1"><button onClick={() => editCar(car)} aria-label={`Ubah ${car.brand} ${car.model}`} title="Ubah data mobil" className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"><Pencil className="h-4 w-4" /></button><Link href={`/mobil/${car.id}`} target="_blank" rel="noopener noreferrer" aria-label={`Lihat ${car.brand} ${car.model}`} title="Lihat halaman detail mobil" className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"><ArrowUpRight className="h-4 w-4" /></Link><button onClick={() => setCarToDelete(car)} aria-label={`Hapus ${car.brand} ${car.model}`} title="Hapus mobil" className="rounded-lg p-2 text-zinc-400 hover:bg-red-50 hover:text-red-600"><Trash2 className="h-4 w-4" /></button></div></td></tr>)}
+                  {!loadingCars && !filteredCars.length && <tr><td colSpan={5}><EmptyState title={query || statusFilter !== 'all' ? 'Tidak ada mobil yang sesuai' : 'Koleksi mobil masih kosong'} description={query || statusFilter !== 'all' ? 'Coba kata pencarian atau status yang berbeda.' : 'Tambahkan unit pertama ke katalog showroom.'} /></td></tr>}
+                </tbody></table>
               </div>
+              <div className="border-t border-zinc-100 px-5 py-4 text-xs text-zinc-400">Menampilkan {filteredCars.length} dari {cars.length} mobil</div>
+            </section>
+          </>}
 
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="relative">
-                  <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search brand, model, hub..."
-                    className="pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors w-52 sm:w-60"
-                  />
-                </div>
+          {activeTab === 'inquiries' && <>
+            <PageHeading eyebrow="Pelanggan" title="Pertanyaan Pelanggan" description="Kelola pesan masuk dan tindak lanjut calon pembeli." action={<button onClick={refreshInquiries} disabled={loadingInquiries} className={button}><RotateCw className={`h-4 w-4 ${loadingInquiries ? 'animate-spin' : ''}`} />Muat Ulang</button>} />
+            {loadingInquiries ? <div className="rounded-xl border border-zinc-200 bg-white"><EmptyState loading title="Memuat pertanyaan pelanggan..." /></div> : <AdminInquiryList inquiries={inquiries} onStatusChange={changeInquiryStatus} />}
+          </>}
 
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as any)}
-                  className="py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="available">Available ({availableCars})</option>
-                  <option value="reserved">Reserved ({reservedCars})</option>
-                  <option value="sold">Sold ({soldCars})</option>
-                </select>
+          {activeTab === 'branches' && <>
+            <PageHeading eyebrow="Showroom" title="Lokasi dan Layanan" description="Informasi showroom dan kontak pelanggan Apex Auto di Medan." />
+            <section className="max-w-3xl overflow-hidden rounded-xl border border-zinc-200 bg-white"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 px-6 py-6"><div className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-xl bg-amber-50 text-amber-700"><Building2 className="h-5 w-5" /></span><div><h2 className="text-base font-semibold">{SHOWROOM.name}</h2><p className="mt-1 text-xs text-zinc-400">Showroom utama</p></div></div><span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">{cars.length} unit dalam koleksi</span></div><div className="space-y-6 px-6 py-7"><InfoLine icon={MapPin} label="Alamat" value={SHOWROOM.address} /><InfoLine icon={Clock} label="Jam operasional" value={SHOWROOM.hours} /><InfoLine icon={Phone} label="Telepon / WhatsApp" value={SHOWROOM.phone} /><a href={SHOWROOM.mapUrl} target="_blank" rel="noopener noreferrer" className={button}>Buka Peta<ArrowUpRight className="h-4 w-4" /></a></div></section>
+          </>}
+          <p className="pt-2 text-[11px] text-zinc-400">Apex Auto Medan<span className="mx-2 text-zinc-300">/</span>Manajemen showroom</p>
+        </main>
+      </div>
 
-                <button
-                  type="button"
-                  onClick={fetchCars}
-                  title="Reload inventory from database"
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
-                >
-                  <RotateCw className={`w-4 h-4 ${isLoadingCars ? 'animate-spin' : ''}`} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleOpenCreateCar}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Car</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Toast notice banner */}
-            {toastNotice && (
-              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3 text-emerald-400 text-xs animate-in fade-in">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-semibold">{toastNotice}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setToastNotice(null)}
-                  className="text-emerald-400/80 hover:text-emerald-300 font-bold"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-
-            {/* Inventory Table */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
-                    <tr>
-                      <th className="py-3.5 px-4 font-semibold">Vehicle</th>
-                      <th className="py-3.5 px-4 font-semibold">Body & Fuel</th>
-                      <th className="py-3.5 px-4 font-semibold">Year & Mileage</th>
-                      <th className="py-3.5 px-4 font-semibold">Price (SGD Nett)</th>
-                      <th className="py-3.5 px-4 font-semibold">Location</th>
-                      <th className="py-3.5 px-4 font-semibold">Unit Status</th>
-                      <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {filteredCars.length > 0 ? (
-                      filteredCars.map((car) => (
-                        <tr key={car.id} className="hover:bg-slate-800/40 transition-colors">
-                          <td className="py-3.5 px-4 text-white font-bold">
-                            <div className="flex items-center gap-3">
-                              <div className="w-12 h-9 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-slate-800">
-                                <img
-                                  src={car.images?.[0]?.url || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=300'}
-                                  alt={`${car.brand} ${car.model}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div>
-                                <div className="text-white text-sm">
-                                  {car.brand} {car.model}
-                                </div>
-                                <div className="text-[10px] text-slate-400 font-mono font-normal">
-                                  {car.transmission} • {car.color}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <div className="text-white font-semibold">{car.body_type}</div>
-                            <div className="text-[10px] text-slate-400">{car.fuel_type}</div>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <div className="text-white font-semibold">{car.year}</div>
-                            <div className="text-[10px] text-slate-400">
-                              {car.mileage_km.toLocaleString('en-US')} km
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4 text-amber-400 font-bold">
-                            <div>S${car.price.toLocaleString('en-US')}</div>
-                            {car.depreciation_sgd && (
-                              <div className="text-[10px] text-slate-400 font-normal">
-                                Depr: S${car.depreciation_sgd.toLocaleString('en-US')}/yr
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-400">
-                            <span className="line-clamp-1">{car.location}</span>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <QuickStatusChanger
-                              carId={car.id}
-                              currentStatus={car.status}
-                              carName={`${car.brand} ${car.model}`}
-                              onStatusChange={handleQuickStatusChange}
-                            />
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            <div className="inline-flex items-center justify-end gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => handleOpenEditCar(car)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
-                                title="Edit vehicle details"
-                              >
-                                <Pencil className="w-3 h-3" />
-                                <span>Edit</span>
-                              </button>
-                              <Link
-                                href={`/mobil/${car.id}`}
-                                target="_blank"
-                                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
-                                title="View public detail page"
-                              >
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                              </Link>
-                              <button
-                                type="button"
-                                onClick={() => setCarToDelete(car)}
-                                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
-                                title="Delete vehicle"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={7} className="text-center py-12 text-slate-500 text-xs">
-                          {isLoadingCars
-                            ? 'Loading vehicle catalog from database...'
-                            : 'No vehicles found matching your criteria.'}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 3: PROMOTIONS (CRUD) */}
-        {/* ========================================================= */}
-        {activeTab === 'promos' && (
-          <div className="space-y-6 animate-in fade-in">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
-              <div>
-                <h2 className="text-xl font-bold text-white">Homepage Promotional Banners</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Manage promotional incentives, savings nominals, and terms & conditions displayed dynamically on the homepage.
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleOpenCreatePromo}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Create Promo Banner</span>
-                </button>
-                <Link
-                  href="/#promo"
-                  target="_blank"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition-all"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Preview on Homepage</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {promosList.map((promo) => (
-                <div
-                  key={promo.id}
-                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors shadow-lg"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                        {promo.badge}
-                      </span>
-                      <span className="text-xs text-slate-400 font-mono">{promo.valid_until}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="text-base font-bold text-white leading-snug">{promo.title}</h3>
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">{promo.description}</p>
-                    </div>
-
-                    {promo.discount_sgd && (
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Savings Nominal</span>
-                        <span className="text-lg font-black text-amber-400 font-mono">
-                          S${promo.discount_sgd.toLocaleString('en-US')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEditPromo(promo)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition-colors cursor-pointer"
-                    >
-                      <Pencil className="w-3 h-3" />
-                      <span>Edit Promo</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeletePromo(promo.id)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span>Remove</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 4: INQUIRIES / LEADS */}
-        {/* ========================================================= */}
-        {activeTab === 'inquiries' && (
-          <div className="space-y-6 animate-in fade-in">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
-              <div>
-                <h2 className="text-xl font-bold text-white">Visitor Inquiries & Sales Leads</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Incoming leads submitted via the public contact forms and vehicle inquiry buttons.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={fetchInquiries}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <RotateCw className={`w-3.5 h-3.5 ${isLoadingInquiries ? 'animate-spin' : ''}`} />
-                <span>Refresh Leads</span>
-              </button>
-            </div>
-
-            <AdminInquiryList
-              inquiries={inquiriesList}
-              onStatusChange={handleInquiryStatusChange}
-            />
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 5: BRANCHES */}
-        {/* ========================================================= */}
-        {activeTab === 'branches' && (
-          <div className="space-y-6 animate-in fade-in">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6">
-              <h2 className="text-xl font-bold text-white">Showroom Hubs & Service Centres</h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Apex Auto Singapore physical customer experience locations.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {SHOWROOM_BRANCHES.map((branch) => (
-                <div
-                  key={branch.id}
-                  className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                      <Building2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-white">{branch.name}</h3>
-                      <span className="text-[10px] text-amber-400 font-mono">{branch.zone}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-xs text-slate-400">
-                    <p>{branch.address}</p>
-                    <p className="font-mono">{branch.hours}</p>
-                    <p className="text-white font-medium">{branch.phone}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* Car Create & Edit Form Modal Dialog */}
-      <AdminCarFormModal
-        isOpen={isFormModalOpen}
-        mode={formModalMode}
-        initialCar={selectedCarForEdit}
-        onClose={() => setIsFormModalOpen(false)}
-        onSave={handleSaveCar}
-      />
-
-      {/* Promo Create & Edit Form Modal Dialog */}
-      <AdminPromoFormModal
-        isOpen={isPromoModalOpen}
-        mode={promoModalMode}
-        initialPromo={selectedPromoForEdit}
-        onClose={() => setIsPromoModalOpen(false)}
-        onSave={handleSavePromo}
-      />
-
-      {/* Confirmation Modal for Deleting Car */}
-      {carToDelete && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
-          onClick={() => setCarToDelete(null)}
-        >
-          <div
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl animate-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
-            </div>
-
-            <div className="text-center space-y-1.5">
-              <h3 className="text-lg font-bold text-white">Remove Vehicle from Inventory?</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Are you sure you want to delete <strong className="text-white">{carToDelete.brand} {carToDelete.model}</strong>? This action will remove the car and its image gallery from the database and public catalog.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <button
-                type="button"
-                disabled={isDeletingCar}
-                onClick={() => setCarToDelete(null)}
-                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={isDeletingCar}
-                onClick={confirmDeleteCar}
-                className="py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-900/30 transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                {isDeletingCar ? (
-                  <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Deleting...</span>
-                  </>
-                ) : (
-                  <span>Delete Vehicle</span>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Confirmation Modal for Logout */}
-      {showLogoutConfirm && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
-          onClick={() => setShowLogoutConfirm(false)}
-        >
-          <div
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-2xl animate-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
-              <LogOut className="w-6 h-6" />
-            </div>
-
-            <div className="text-center space-y-1.5">
-              <h3 className="text-lg font-bold text-white">Sign out of Portal?</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Your current session will end and you will be returned to the login portal.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowLogoutConfirm(false)}
-                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowLogoutConfirm(false);
-                  logout();
-                }}
-                className="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-900/30 transition-all cursor-pointer"
-              >
-                Yes, Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {notice && <div role="status" className="fixed bottom-5 left-5 right-5 z-[70] flex items-start justify-between gap-4 rounded-xl border border-zinc-200 bg-white px-5 py-4 text-sm text-zinc-800 shadow-lg sm:left-auto sm:max-w-md"><p>{notice}</p><button onClick={() => setNotice('')} aria-label="Tutup pemberitahuan" className="text-zinc-400 hover:text-zinc-800"><X className="h-4 w-4" /></button></div>}
+      {formOpen && <AdminCarFormModal key={editingCar?.id || 'new'} isOpen mode={editingCar ? 'edit' : 'create'} initialCar={editingCar} onClose={() => setFormOpen(false)} onSave={saveCar} />}
+      {carToDelete && <ConfirmDialog title="Hapus Mobil dari Katalog?" description={`${carToDelete.brand} ${carToDelete.model} beserta galeri fotonya akan dihapus. Anda yakin ingin melanjutkan?`} confirmLabel="Hapus Mobil" destructive busy={deleting} onClose={() => setCarToDelete(null)} onConfirm={deleteCar} />}
+      {showLogout && <ConfirmDialog title="Keluar dari Portal?" description="Sesi Anda akan berakhir. Anda dapat masuk kembali kapan saja." confirmLabel="Ya, Keluar" onClose={() => setShowLogout(false)} onConfirm={() => { setShowLogout(false); logout(); }} />}
     </div>
   );
 }
 
+async function readList<T>(url: string): Promise<T[]> {
+  const response = await fetch(url);
+  const data = await response.json();
+  if (!response.ok || !data.success || !Array.isArray(data.data)) throw new Error('Data tidak dapat dimuat.');
+  return data.data;
+}
+function PageHeading({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
+  return <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="mb-2 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400">{eyebrow}</p><h1 className="text-2xl font-semibold tracking-tight sm:text-[28px]">{title}</h1><p className="mt-2 text-sm leading-6 text-zinc-500">{description}</p></div>{action}</div>;
+}
+function Metric({ label, value, detail, icon: Icon }: { label: string; value: string | number; detail: string; icon: LucideIcon }) {
+  return <div className="rounded-xl border border-zinc-200 bg-white p-5"><div className="flex items-center justify-between gap-2"><p className="text-xs text-zinc-500">{label}</p><Icon className="h-[18px] w-[18px] text-zinc-400" /></div><p className="mt-5 text-3xl font-semibold tracking-tight tabular-nums">{value}</p><p className="mt-2 text-[11px] leading-5 text-zinc-400">{detail}</p></div>;
+}
+function SummaryLine({ label, value }: { label: string; value: string }) { return <div className="flex items-center justify-between text-sm"><span className="text-zinc-500">{label}</span><span className="font-medium tabular-nums">{value}</span></div>; }
+function InfoLine({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) { return <div className="flex gap-4"><Icon className="mt-0.5 h-[18px] w-[18px] shrink-0 text-zinc-400" /><div><p className="text-xs text-zinc-400">{label}</p><p className="mt-1.5 text-sm leading-6 text-zinc-700">{value}</p></div></div>; }
+function EmptyState({ title, description, loading }: { title: string; description?: string; loading?: boolean }) { return <div className="flex min-h-48 flex-col items-center justify-center gap-3 px-6 py-10 text-center">{loading ? <Loader2 className="h-6 w-6 animate-spin text-zinc-400" /> : <CarIcon className="h-7 w-7 text-zinc-300" />}<p className="text-sm font-medium text-zinc-600">{title}</p>{description && <p className="text-xs text-zinc-400">{description}</p>}</div>; }
+function CarThumbnail({ car }: { car: Car }) {
+  const [failedSource, setFailedSource] = useState('');
+  const [loadedSource, setLoadedSource] = useState('');
+  const photo = car.images.find(image => image.is_main) || car.images[0];
+  return <div className="relative grid h-14 w-20 shrink-0 place-items-center overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">{(!photo || loadedSource !== photo.url) && <CarIcon className="h-6 w-6 text-zinc-300" />}{photo && failedSource !== photo.url && <Image unoptimized src={photo.url} alt={`${car.brand} ${car.model}`} fill sizes="80px" className={`object-cover ${loadedSource === photo.url ? 'opacity-100' : 'opacity-0'}`} onLoad={() => setLoadedSource(photo.url)} onError={() => setFailedSource(photo.url)} />}</div>;
+}
+function ConfirmDialog({ title, description, confirmLabel, onClose, onConfirm, busy = false, destructive = false }: { title: string; description: string; confirmLabel: string; onClose: () => void; onConfirm: () => void; busy?: boolean; destructive?: boolean }) {
+  const dialogId = destructive ? 'delete-car-heading' : 'logout-heading';
+  return <div role="dialog" aria-modal="true" aria-labelledby={dialogId} className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/35 p-5 backdrop-blur-sm" onClick={() => { if (!busy) onClose(); }} onKeyDown={event => { if (event.key === 'Escape' && !busy) onClose(); }}><div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-7 shadow-xl" onClick={event => event.stopPropagation()}><h2 id={dialogId} className="text-xl font-semibold">{title}</h2><p className="mt-3 text-sm leading-6 text-zinc-500">{description}</p><div className="mt-7 flex justify-end gap-3"><button autoFocus disabled={busy} onClick={onClose} className={button}>Batal</button><button disabled={busy} onClick={onConfirm} className={destructive ? `${primaryButton} bg-red-600 hover:bg-red-700` : primaryButton}>{busy ? 'Menghapus...' : confirmLabel}</button></div></div></div>;
+}
 export default function AdminDashboardPage() {
-  return (
-    <AdminRouteGuard>
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center text-xs">
-            Loading Showroom Management Portal...
-          </div>
-        }
-      >
-        <AdminDashboardContent />
-      </Suspense>
-    </AdminRouteGuard>
-  );
+  return <Suspense fallback={<div className="grid min-h-[100dvh] place-items-center bg-white text-sm text-zinc-500">Memuat ruang kerja showroom...</div>}><AdminDashboardContent /></Suspense>;
 }

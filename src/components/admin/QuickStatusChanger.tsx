@@ -1,154 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
-import { CarStatus } from '@/types/car';
-import { CheckCircle2, Clock, Check, ChevronDown, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import type { CarStatus } from '@/types/car';
 
 interface QuickStatusChangerProps {
   carId: string;
   currentStatus: CarStatus;
   carName: string;
-  onStatusChange: (carId: string, newStatus: CarStatus) => void;
+  onStatusChange: (carId: string, newStatus: CarStatus) => void | Promise<void>;
   size?: 'sm' | 'md';
 }
-
-const STATUS_OPTIONS: {
-  value: CarStatus;
-  label: string;
-  shortLabel: string;
-  description: string;
-  badgeClass: string;
-  activeBorder: string;
-}[] = [
-  {
-    value: 'available',
-    label: 'Available (Ready Stock)',
-    shortLabel: 'Available',
-    description: 'Unit ready for showroom display, test drive & direct transaction.',
-    badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
-    activeBorder: 'border-emerald-500',
-  },
-  {
-    value: 'reserved',
-    label: 'Reserved (Booking Deposit)',
-    shortLabel: 'Reserved',
-    description: 'Unit has received a holding deposit / reservation fee.',
-    badgeClass: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-    activeBorder: 'border-amber-500',
-  },
-  {
-    value: 'sold',
-    label: 'Sold (Delivered / COE Transferred)',
-    shortLabel: 'Sold',
-    description: 'Unit has been fully transacted and delivered (COE transferred).',
-    badgeClass: 'bg-slate-800 text-slate-400 border-slate-700',
-    activeBorder: 'border-slate-600',
-  },
-];
-
-export default function QuickStatusChanger({
-  carId,
-  currentStatus,
-  carName,
-  onStatusChange,
-  size = 'sm',
-}: QuickStatusChangerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  const currentOption =
-    STATUS_OPTIONS.find((opt) => opt.value === currentStatus) || STATUS_OPTIONS[0];
-
-  const handleSelect = (newStatus: CarStatus) => {
-    if (newStatus === currentStatus) {
-      setIsOpen(false);
-      return;
-    }
-
-    setIsUpdating(true);
-    setTimeout(() => {
-      onStatusChange(carId, newStatus);
-      setIsUpdating(false);
-      setIsOpen(false);
-    }, 250);
-  };
-
+const statusStyle: Record<CarStatus, string> = {
+  available: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  reserved: 'border-amber-200 bg-amber-50 text-amber-800',
+  sold: 'border-zinc-200 bg-zinc-100 text-zinc-500',
+};
+export default function QuickStatusChanger({ carId, currentStatus, carName, onStatusChange, size = 'sm' }: QuickStatusChangerProps) {
+  const [updating, setUpdating] = useState(false);
+  async function changeStatus(status: CarStatus) {
+    setUpdating(true);
+    try { await onStatusChange(carId, status); }
+    finally { setUpdating(false); }
+  }
   return (
-    <div className="relative inline-block text-left">
-      {/* Trigger Button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        disabled={isUpdating}
-        className={`inline-flex items-center gap-1.5 rounded-xl font-bold uppercase tracking-wider border transition-all cursor-pointer ${
-          currentOption.badgeClass
-        } ${
-          size === 'sm' ? 'px-2.5 py-1 text-[10px]' : 'px-3.5 py-1.5 text-xs'
-        } ${isUpdating ? 'opacity-50 animate-pulse' : 'hover:scale-105 shadow-sm'}`}
-      >
-        <span
-          className={`w-1.5 h-1.5 rounded-full ${
-            currentStatus === 'available'
-              ? 'bg-emerald-400 animate-pulse'
-              : currentStatus === 'reserved'
-              ? 'bg-amber-400'
-              : 'bg-slate-400'
-          }`}
-        />
-        <span>{isUpdating ? 'Updating...' : currentOption.shortLabel}</span>
-        <ChevronDown className={`w-3 h-3 opacity-70 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
-
-      {/* Popover Menu */}
-      {isOpen && (
-        <>
-          <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-64 z-40 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl p-2 space-y-1.5 animate-in fade-in zoom-in-95">
-            <div className="px-2 py-1 border-b border-slate-800 text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-              Quick Status Update
-            </div>
-
-            {STATUS_OPTIONS.map((opt) => {
-              const isSelected = opt.value === currentStatus;
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => handleSelect(opt.value)}
-                  className={`w-full text-left p-2 rounded-xl transition-all flex items-start gap-2.5 cursor-pointer ${
-                    isSelected
-                      ? 'bg-slate-800 border border-slate-700'
-                      : 'hover:bg-slate-800/60'
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ${
-                      isSelected ? 'bg-amber-500 text-slate-950' : 'border border-slate-700'
-                    }`}
-                  >
-                    {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                  </div>
-                  <div className="space-y-0.5 flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-slate-300'}`}>
-                        {opt.label.split(' ')[0]}
-                      </span>
-                      <span
-                        className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono uppercase font-bold ${opt.badgeClass}`}
-                      >
-                        {opt.value}
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-400 leading-tight">
-                      {opt.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+    <div className="relative inline-flex">
+      <select aria-label={`Status ${carName}`} value={currentStatus} disabled={updating} onChange={event => void changeStatus(event.target.value as CarStatus)}
+        className={`appearance-none rounded-full border py-1.5 pl-3 pr-8 font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-wait disabled:opacity-50 ${statusStyle[currentStatus]} ${size === 'sm' ? 'text-[11px]' : 'text-xs'}`}>
+        <option value="available" className="bg-white text-zinc-800">Tersedia</option>
+        <option value="reserved" className="bg-white text-zinc-800">Dipesan</option>
+        <option value="sold" className="bg-white text-zinc-800">Terjual</option>
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-current opacity-60" />
     </div>
   );
 }

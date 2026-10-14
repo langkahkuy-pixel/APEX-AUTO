@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to retrieve promotional campaigns.',
+        error: "Gagal memuat promo.",
       },
       { status: 500 }
     );
@@ -46,15 +46,15 @@ export async function POST(request: NextRequest) {
     const {
       title,
       tagline = '',
-      badge = 'SPECIAL PROMOTION',
-      discount_sgd,
+      badge = "PROMO KHUSUS",
+      discount_idr,
       description = '',
       benefits = [],
       terms_conditions = [],
-      valid_until = 'Ongoing',
+      valid_until = "Masih berlaku",
       image_url,
       highlight_color = 'amber',
-      cta_text = 'Claim via WhatsApp',
+      cta_text = "Tanya Promo via WhatsApp",
       cta_whatsapp_text,
       is_featured = false,
     } = body;
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Promotion title is required.',
+          error: "Judul promo wajib diisi.",
         },
         { status: 400 }
       );
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       title: title.trim(),
       tagline: tagline.trim(),
       badge: badge.trim(),
-      discount_sgd: discount_sgd ? Number(discount_sgd) : undefined,
+      discount_idr: discount_idr ? Number(discount_idr) : undefined,
       description: description.trim(),
       benefits: Array.isArray(benefits) ? benefits : [benefits].filter(Boolean),
       terms_conditions: Array.isArray(terms_conditions) ? terms_conditions : [terms_conditions].filter(Boolean),
@@ -85,14 +85,14 @@ export async function POST(request: NextRequest) {
       cta_text,
       cta_whatsapp_text:
         cta_whatsapp_text ||
-        `Hello Apex Auto, I would like to inquire about the ${title} promotion.`,
+        `Halo Apex Auto Medan, saya ingin informasi promo ${title} promotion.`,
       is_featured: Boolean(is_featured),
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: `Promotion "${createdPromo.title}" successfully created.`,
+        message: `Promo "${createdPromo.title}" berhasil dibuat.`,
         data: createdPromo,
       },
       { status: 201 }
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to create promotion.',
+        error: "Gagal membuat promo.",
       },
       { status: 500 }
     );

@@ -4,7 +4,7 @@ export interface PromoItem {
   title: string;
   tagline: string;
   badge: string;
-  discount_sgd?: number;
+  discount_idr?: number;
   description: string;
   benefits: string[];
   terms_conditions: string[];

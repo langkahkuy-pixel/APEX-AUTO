@@ -1,5 +1,8 @@
 'use client';
 
+import { formatRupiah } from '@/lib/locale';
+
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -36,7 +39,7 @@ function FeaturedCard({ car }: { car: Car }) {
           </h3>
         </div>
         <p className="text-base font-semibold text-zinc-900 tabular-nums whitespace-nowrap">
-          S${car.price.toLocaleString('en-SG')}
+          {formatRupiah(car.price)}
         </p>
       </div>
     </Link>
@@ -72,13 +75,13 @@ export function FeaturedCarsSection() {
         {/* Section Header — minimal */}
         <div className="flex items-end justify-between mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-            Featured
+            Pilihan Unggulan
           </h2>
           <Link
             href="/inventory"
             className="group flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors"
           >
-            View all
+            Lihat semua
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>

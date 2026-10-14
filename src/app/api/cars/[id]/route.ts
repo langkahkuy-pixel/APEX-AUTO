@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { localizeStatus } from '@/lib/locale';
 import { getSqliteCarById, updateSqliteCar, deleteSqliteCar } from '@/db/sqlite';
 import { MOCK_CARS } from '@/data/mock-cars';
 
@@ -18,7 +19,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Vehicle not found in showroom inventory.',
+          error: "Mobil tidak ditemukan di katalog.",
         },
         { status: 404 }
       );
@@ -41,7 +42,7 @@ export async function GET(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to retrieve vehicle details.',
+        error: "Gagal memuat detail mobil.",
       },
       { status: 500 }
     );
@@ -64,7 +65,7 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          error: `Vehicle with id ${id} not found to update.`,
+          error: `Mobil dengan kode ${id} tidak ditemukan untuk diperbarui.`,
         },
         { status: 404 }
       );
@@ -72,7 +73,7 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: `Vehicle details for "${updatedCar.brand} ${updatedCar.model}" successfully updated.`,
+      message: `Data mobil "${updatedCar.brand} ${updatedCar.model}" berhasil diperbarui.`,
       data: updatedCar,
     });
   } catch (error) {
@@ -80,7 +81,7 @@ export async function PUT(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update vehicle record.',
+        error: "Gagal memperbarui data mobil.",
       },
       { status: 500 }
     );
@@ -103,7 +104,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          error: `Vehicle with id ${id} not found.`,
+          error: `Mobil dengan kode ${id} tidak ditemukan.`,
         },
         { status: 404 }
       );
@@ -111,7 +112,7 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      message: `Vehicle status for "${updatedCar.brand} ${updatedCar.model}" updated to ${(updatedCar.status).toUpperCase()}.`,
+      message: `Status mobil "${updatedCar.brand} ${updatedCar.model}" diubah menjadi ${localizeStatus(updatedCar.status)}.`,
       data: updatedCar,
     });
   } catch (error) {
@@ -119,7 +120,7 @@ export async function PATCH(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update vehicle status.',
+        error: "Gagal memperbarui status mobil.",
       },
       { status: 500 }
     );

@@ -1,5 +1,7 @@
 'use client';
 
+import { whatsappUrl } from '@/lib/locale';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
@@ -28,56 +30,56 @@ const INSPECTION_PHASES = [
   {
     num: '01',
     id: 'exterior',
-    title: 'Exterior & Frame',
+    title: "Bodi & Rangka",
     icon: Search,
-    desc: 'Laser chassis scan, panel alignment, and digital paint depth gauge check for 100% accident-free integrity.',
+    desc: "Pemeriksaan rangka, keselarasan panel, dan ketebalan cat untuk mengetahui kondisi bodi serta indikasi perbaikan sebelumnya.",
     points: [
-      'Digital paint depth gauge check',
-      'Laser chassis & unibody alignment scan',
+      "Pemeriksaan ketebalan cat",
+      "Pemeriksaan keselarasan rangka dan bodi",
     ],
   },
   {
     num: '02',
     id: 'drivetrain',
-    title: 'Engine & Gearbox',
+    title: "Mesin & Transmisi",
     icon: Gauge,
-    desc: 'Full OBD-II ECU computerized diagnosis, cylinder compression testing, and transmission calibration.',
+    desc: "Diagnostik OBD, pemeriksaan mesin, kebocoran, dan kerja transmisi untuk memastikan kondisi unit sebelum serah terima.",
     points: [
-      'Full-system OBD-II ECU diagnostic scan',
-      'Transmission calibration & compression test',
+      "Diagnostik sistem ECU dan OBD",
+      "Pemeriksaan transmisi dan kompresi mesin",
     ],
   },
   {
     num: '03',
     id: 'cabin',
-    title: 'Cabin & Electronics',
+    title: "Kabin & Elektronik",
     icon: Sparkles,
-    desc: 'Complete audit of interior upholstery, digital displays, climate control, and radar ADAS safety systems.',
+    desc: "Pemeriksaan jok, layar, AC, kelistrikan, kamera, dan fitur keselamatan yang tersedia pada setiap unit.",
     points: [
-      'Radar cruise & lane assist calibration',
-      '360° camera array & climate control test',
+      "Pemeriksaan fitur bantuan pengemudi",
+      "Pemeriksaan kamera dan pendingin kabin",
     ],
   },
   {
     num: '04',
     id: 'undercarriage',
-    title: 'Undercarriage & Safety',
+    title: "Kaki-kaki & Keselamatan",
     icon: ShieldCheck,
-    desc: 'Hydraulic lift inspection of air suspension, control arm bushings, brake rotors, and certified flood-free check.',
+    desc: "Pemeriksaan suspensi, bushing, rem, bagian bawah kendaraan, serta indikasi bekas banjir dan benturan.",
     points: [
-      'Air suspension & damper inspection',
-      'Brake rotor thickness & pad life check',
+      "Pemeriksaan suspensi dan peredam",
+      "Pemeriksaan cakram dan kampas rem",
     ],
   },
   {
     num: '05',
     id: 'documentation',
-    title: 'Legal & Documentation',
+    title: "Dokumen & Pajak",
     icon: FileCheck2,
-    desc: 'Official LTA ownership verification, remaining COE tenure check, and authentic agent service logbooks.',
+    desc: "Pemeriksaan kecocokan nomor rangka dan mesin dengan STNK/BPKB, status pajak kendaraan, serta catatan servis sebelum transaksi.",
     points: [
-      'Official LTA title & ownership check',
-      'Official Apex Auto Certificate issuance',
+      "Pencocokan STNK, BPKB, nomor rangka dan mesin",
+      "Pemeriksaan pajak dan riwayat servis",
     ],
   },
 ];
@@ -86,46 +88,46 @@ const INSPECTION_PHASES = [
 const CORE_VALUES = [
   {
     icon: Scale,
-    title: 'Transparent SGD Nett',
-    desc: 'All prices quoted in clear SGD Nett with GST included, clear COE depreciation, and zero surprise fees.',
-    tag: 'Zero Surcharges',
+    title: "Harga Rupiah yang Jelas",
+    desc: "Harga tunai, komponen total DP, angsuran, asuransi, dan biaya administrasi dijelaskan sebelum pembeli menyetujui transaksi.",
+    tag: "Biaya Dijelaskan di Awal",
   },
   {
     icon: FileCheck2,
-    title: 'Verified History',
-    desc: 'Fully authenticated with official LTA title records, verified mileage, and authorized agent service logs.',
-    tag: 'LTA Verified',
+    title: "Riwayat Kendaraan",
+    desc: "Riwayat servis, kilometer, dan kelengkapan dokumen ditinjau agar Anda dapat mengambil keputusan dengan informasi yang jelas.",
+    tag: "STNK & BPKB",
   },
   {
     icon: HeartHandshake,
-    title: 'Consultative Advisory',
-    desc: 'Dedicated non-commissioned luxury specialists focused on finding the right model and optimal financing.',
-    tag: 'Client-Centric',
+    title: "Konsultasi Pembelian",
+    desc: "Tim kami membantu memilih mobil sesuai kebutuhan, menghitung rencana pembayaran, dan mendampingi pengajuan kredit atau tukar tambah.",
+    tag: "Mengutamakan Pembeli",
   },
   {
     icon: Award,
-    title: 'Certified Standards',
-    desc: 'Only motorcars passing our exhaustive 100-point inspection qualify for our showroom floor.',
-    tag: 'Top Selection',
+    title: "Pemeriksaan Menyeluruh",
+    desc: "Setiap unit diperiksa sebelum ditawarkan dan hasilnya dapat dikonsultasikan bersama tim showroom.",
+    tag: "Mobil Pilihan",
   },
 ];
 
 /* ───── Banking Partners (Concise & Clear) ───── */
 const BANK_PARTNERS = [
   {
-    name: 'DBS Bank',
-    rate: 'From 1.88% p.a.',
-    desc: 'Preferential rates with rapid 24-hour in-principle financing approval.',
+    name: "Kredit melalui Bank",
+    rate: "Simulasi sesuai profil",
+    desc: "Konsultasikan kebutuhan DP dan angsuran. Dokumen pengajuan dapat mencakup KTP, KK, NPWP, serta bukti penghasilan sesuai ketentuan bank.",
   },
   {
-    name: 'OCBC Bank',
-    rate: 'Up to 7-Year Tenure',
-    desc: 'Tailored balloon schemes with flexible financing terms for prestige marques.',
+    name: "Pembiayaan Leasing",
+    rate: "Pilihan tenor bertahap",
+    desc: "Pilih tenor sesuai kebutuhan. Survei, bunga, asuransi, dan persetujuan mengikuti kebijakan perusahaan pembiayaan.",
   },
   {
-    name: 'UOB Bank',
-    rate: 'Green Financing',
-    desc: 'Special interest incentives for electric and hybrid luxury vehicles.',
+    name: "Pembelian Tunai",
+    rate: "Negosiasi langsung",
+    desc: "Sepakati harga dan rincian biaya, periksa unit serta dokumen, kemudian lakukan pembayaran dan serah terima melalui showroom.",
   },
 ];
 
@@ -145,22 +147,22 @@ export default function AboutPage() {
           {/* Breadcrumb Navigation */}
           <nav className="inline-flex items-center gap-2 text-xs text-zinc-400 mb-4">
             <Link href="/" className="hover:text-zinc-900 transition-colors">
-              Home
+              Beranda
             </Link>
             <ChevronRight className="w-3 h-3 text-zinc-400" />
-            <span className="text-zinc-800 font-medium">About Us</span>
+            <span className="text-zinc-800 font-medium">Tentang Kami</span>
           </nav>
 
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>About Apex Auto</span>
+              <span>Tentang Apex Auto</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 tracking-tight leading-[1.15]">
-              Singapore&apos;s Premier Luxury Automobile Showroom
+              Showroom Mobil Premium Pilihan di Medan
             </h1>
             <p className="text-sm sm:text-base text-zinc-500 mt-4 leading-relaxed max-w-2xl">
-              Leng Kee Road&apos;s trusted luxury dealership since 2010. Clear SGD Nett pricing, certified 100-point inspections, and zero hidden fees.
+              Apex Auto membantu Anda menemukan mobil premium bekas dengan kondisi, dokumen, dan harga yang jelas. Tersedia pilihan tunai, kredit, serta tukar tambah.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -168,7 +170,7 @@ export default function AboutPage() {
                 href="/inventory"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5"
               >
-                <span>Browse Inventory</span>
+                <span>Lihat Pilihan Mobil</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
@@ -176,16 +178,16 @@ export default function AboutPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
                 <Building2 className="w-4 h-4 text-amber-600" />
-                <span>Visit Showroom</span>
+                <span>Kunjungi Showroom</span>
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles"
+                href={whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang pilihan mobil")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-sm transition-colors"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
-                <span>WhatsApp Us</span>
+                <span>Hubungi WhatsApp</span>
               </a>
             </div>
           </div>
@@ -201,36 +203,36 @@ export default function AboutPage() {
                 500<span className="text-amber-500">+</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Cars Delivered
+                Mobil Diserahkan
               </p>
-              <p className="text-xs text-zinc-400 mt-1">Certified luxury vehicles</p>
+              <p className="text-xs text-zinc-400 mt-1">Mobil premium pilihan</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
                 15<span className="text-amber-500">+</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Years Experience
+                Tahun Pengalaman
               </p>
-              <p className="text-xs text-zinc-400 mt-1">Trusted since 2010</p>
+              <p className="text-xs text-zinc-400 mt-1">Melayani sejak 2010</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums flex items-center gap-1">
                 4.9<span className="text-amber-500 text-2xl">★</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Client Rating
+                Penilaian Pelanggan
               </p>
-              <p className="text-xs text-zinc-400 mt-1">350+ verified reviews</p>
+              <p className="text-xs text-zinc-400 mt-1">Pengalaman pelanggan showroom</p>
             </div>
             <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs">
               <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tabular-nums">
-                1 <span className="text-amber-500 text-lg font-bold">Flagship</span>
+                1 <span className="text-amber-500 text-lg font-bold">Utama</span>
               </div>
               <p className="text-xs font-bold text-zinc-900 uppercase tracking-wider mt-2">
-                Showroom Hub
+                Showroom
               </p>
-              <p className="text-xs text-zinc-400 mt-1">24 Leng Kee Road</p>
+              <p className="text-xs text-zinc-400 mt-1">Medan, Sumatera Utara</p>
             </div>
           </div>
         </div>
@@ -241,13 +243,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Our Philosophy
+              Prinsip Kami
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Integrity First, Complete Transparency
+              Jujur dari Awal sampai Serah Terima
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              No hidden markups, no sales pressure. Just certified luxury cars and straightforward pricing.
+              Kondisi unit, harga, dan rincian biaya dibahas dengan jelas. Anda mendapat ruang untuk memeriksa kendaraan dan mempertimbangkan pilihan.
             </p>
           </div>
 
@@ -258,13 +260,13 @@ export default function AboutPage() {
                 <Eye className="w-5 h-5" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-zinc-900 mb-2">
-                Our Vision
+                Visi Kami
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-                To be Singapore&apos;s most trusted luxury dealership through radical pricing clarity and client-first care.
+                Menjadi showroom mobil premium pilihan di Medan yang dipercaya karena transparansi kondisi kendaraan dan pelayanan yang mengutamakan pembeli.
               </p>
               <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
-                {['Accredited Dealer', 'SGD Nett Pricing', 'Client-First'].map((pill) => (
+                {["Showroom Mobil Pilihan", "Harga Rupiah", "Mengutamakan Pembeli"].map((pill) => (
                   <span
                     key={pill}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
@@ -281,13 +283,13 @@ export default function AboutPage() {
                 <Target className="w-5 h-5" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-zinc-900 mb-2">
-                Our Mission
+                Misi Kami
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-                To deliver certified prestige vehicles backed by strict 100-point inspections, clear COE depreciation, and preferred bank financing.
+                Menyediakan mobil premium yang diperiksa menyeluruh, didukung informasi STNK/BPKB dan pajak, serta pilihan pembayaran yang sesuai kebutuhan pembeli.
               </p>
               <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-100">
-                {['100-Point Inspected', 'Grade-A Standard', 'Preferred Bank Rates'].map((pill) => (
+                {["Pemeriksaan 100 Titik", "Kondisi Diperiksa", "Pilihan Kredit"].map((pill) => (
                   <span
                     key={pill}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 font-medium"
@@ -335,13 +337,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Quality Assurance
+              Pemeriksaan Kondisi
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              100-Point Certified Inspection
+              Pemeriksaan 100 Titik
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Every vehicle undergoes rigorous 5-stage certification by experienced technicians before entering our showroom.
+              Pemeriksaan dilakukan dalam lima kelompok sebelum unit ditawarkan, dari kondisi bodi hingga dokumen kendaraan.
             </p>
           </div>
 
@@ -400,20 +402,20 @@ export default function AboutPage() {
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-bold text-zinc-900">
-                  12 to 24 Months Warranty &amp; Accident-Free Guarantee
+                  Periksa Kondisi dan Ketentuan Garansi
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-600 mt-1 max-w-xl leading-relaxed">
-                  Comprehensive coverage for engine and gearbox. Guaranteed 100% accident-free and flood-free.
+                  Kondisi mesin, transmisi, dan indikasi banjir atau kecelakaan diperiksa. Cakupan garansi setiap unit dijelaskan sebelum pembelian.
                 </p>
               </div>
             </div>
             <a
-              href="https://wa.me/6581234567?text=Hello%20Apex%20Auto,%20I%20would%20like%20details%20on%20warranty%20and%20inspection"
+              href={whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang garansi dan pemeriksaan unit")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all shadow-xs shrink-0"
             >
-              <span>Inquire on Warranty</span>
+              <span>Tanya Garansi</span>
               <ArrowRight className="w-4 h-4" />
             </a>
           </div>
@@ -427,13 +429,13 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-3">
-              Financing
+              Kredit
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              Bank Financing Partners
+              Pilihan Cara Pembayaran
             </h2>
             <p className="text-sm text-zinc-500 mt-3 leading-relaxed">
-              Direct partnerships with Singapore&apos;s leading banks for competitive interest rates and 24-hour approval.
+              Sesuaikan pembelian dengan kebutuhan Anda. Tim kami menjelaskan harga tunai, pengajuan kredit bank/leasing, DP, tenor, dan proses serah terima.
             </p>
           </div>
 
@@ -462,20 +464,20 @@ export default function AboutPage() {
           <div className="rounded-3xl bg-gradient-to-b from-white to-zinc-50 border border-zinc-200 p-8 sm:p-12 text-center shadow-xs">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 mb-3">
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Ready to Drive?</span>
+              <span>Siap Punya Mobil Pilihan?</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight mb-2">
-              Find Your Next Prestige Automobile
+              Temukan Mobil untuk Perjalanan Berikutnya
             </h3>
             <p className="text-sm text-zinc-500 max-w-lg mx-auto mb-8 leading-relaxed">
-              Explore our verified showroom inventory or reserve a private VIP consultation with our automotive specialists.
+              Lihat koleksi kami atau jadwalkan kunjungan untuk memeriksa unit, berdiskusi tentang harga, dan menyusun rencana pembelian.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/inventory"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5"
               >
-                <span>Explore Inventory</span>
+                <span>Lihat Pilihan Mobil</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
@@ -483,16 +485,16 @@ export default function AboutPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-50 text-zinc-800 font-semibold text-sm border border-zinc-200 shadow-xs transition-colors"
               >
                 <Building2 className="w-4 h-4 text-amber-600" />
-                <span>Visit Showroom</span>
+                <span>Kunjungi Showroom</span>
               </Link>
               <a
-                href="https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles"
+                href={whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang pilihan mobil")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold text-sm transition-colors"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
-                <span>WhatsApp Us</span>
+                <span>Hubungi WhatsApp</span>
               </a>
             </div>
           </div>

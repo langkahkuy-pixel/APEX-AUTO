@@ -7,26 +7,26 @@ import { Car as CarIcon, Wrench, ArrowLeftRight, ArrowRight } from 'lucide-react
 const SERVICES = [
   {
     icon: CarIcon,
-    title: 'Luxury Car Sales',
+    title: "Jual Beli Mobil Premium",
     description:
-      'Explore our curated collection of prestige and certified pre-owned vehicles. Every unit passes a 100-point inspection with transparent SGD Nett pricing.',
-    cta: 'View Inventory',
+      "Temukan mobil premium bekas pilihan dengan pemeriksaan kondisi, riwayat servis, dan kelengkapan dokumen. Harga tunai dan opsi kredit dijelaskan sejak awal.",
+    cta: "Lihat Pilihan Mobil",
     href: '/inventory',
   },
   {
     icon: Wrench,
-    title: 'Vehicle Service',
+    title: "Perawatan Kendaraan",
     description:
-      'Expert periodic maintenance, advanced diagnostics, and premium detailing — all performed by factory-trained technicians using genuine OEM parts.',
-    cta: 'Enquire About Service',
+      "Konsultasikan servis berkala, pemeriksaan mesin, dan detailing agar mobil Anda tetap nyaman digunakan setiap hari.",
+    cta: "Konsultasi Servis",
     href: '/tentang-kami#contact-showroom',
   },
   {
     icon: ArrowLeftRight,
-    title: 'Trade-In & Consignment',
+    title: "Tukar Tambah & Titip Jual",
     description:
-      'Get an instant on-site valuation with an additional S$5,000 trade-in bonus. Zero admin fees, same-day driveaway, and transparent appraisal within 30 minutes.',
-    cta: 'Get Valuation',
+      "Bawa mobil lama Anda untuk penilaian kondisi dan harga. Selisih nilai bisa digunakan untuk pembelian berikutnya, atau titip jual melalui showroom kami.",
+    cta: "Minta Penilaian",
     href: '/tentang-kami#contact-showroom',
   },
 ];
@@ -38,13 +38,13 @@ export function HomeServicesSection() {
         {/* Section Header */}
         <div className="max-w-2xl mb-12 sm:mb-16">
           <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">
-            Our Services
+            Layanan Kami
           </p>
           <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-            Everything You Need, Under One Roof
+            Dari Memilih Mobil sampai Serah Terima
           </h2>
           <p className="text-sm text-zinc-500 mt-3 leading-relaxed max-w-lg">
-            From sourcing your dream car to securing the best financing and hassle-free trade-ins — Apex Auto delivers a complete ownership experience.
+            Kami membantu Anda memilih unit, bernegosiasi, menyiapkan pengajuan kredit, dan memahami dokumen kendaraan sebelum serah terima.
           </p>
         </div>
 

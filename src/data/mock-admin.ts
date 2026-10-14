@@ -22,16 +22,16 @@ export interface ShowroomBranch {
 export const MOCK_BRANCHES: ShowroomBranch[] = [
   {
     id: 'branch-leng-kee',
-    name: 'Apex Auto Flagship @ Leng Kee',
-    address: '24 Leng Kee Road, Singapore',
-    postalCode: '159096',
-    zone: 'South / Central Prime Automotive Belt',
-    phone: '+65 6789 0123',
-    whatsapp: '+6581234567',
-    operatingHours: 'Mon - Sun: 09:00 - 19:00 SGT',
+    name: "Apex Auto Medan",
+    address: "Jl. Ring Road No. 88, Medan, Sumatera Utara",
+    postalCode: '20122',
+    zone: "Medan, Sumatera Utara",
+    phone: '+62 812-0000-0000',
+    whatsapp: '+6281200000000',
+    operatingHours: "Senin–Sabtu 09.00–18.00 WIB · Minggu 10.00–16.00 WIB",
     displayUnitsCount: 14,
-    picName: 'Marcus Tan',
-    picPhone: '+6581234567',
+    picName: 'Budi Santoso',
+    picPhone: '+6281200000000',
     status: 'active',
   },
 ];
@@ -41,7 +41,7 @@ export interface ShowroomOverviewStats {
   availableUnits: number;
   reservedUnits: number;
   soldUnits: number;
-  totalValuationSGD: number;
+  totalValuationIDR: number;
   activePromosCount: number;
   totalInquiriesCount: number;
   pendingInquiriesCount: number;
@@ -53,7 +53,7 @@ export function getShowroomOverviewStats(): ShowroomOverviewStats {
   const availableUnits = MOCK_CARS.filter((c) => c.status === 'available').length;
   const reservedUnits = MOCK_CARS.filter((c) => c.status === 'reserved').length;
   const soldUnits = MOCK_CARS.filter((c) => c.status === 'sold').length;
-  const totalValuationSGD = MOCK_CARS.reduce((acc, c) => acc + c.price, 0);
+  const totalValuationIDR = MOCK_CARS.reduce((acc, c) => acc + c.price, 0);
   const activePromosCount = MOCK_PROMOS.length;
   const totalInquiriesCount = MOCK_INQUIRIES.length;
   const pendingInquiriesCount = MOCK_INQUIRIES.filter((i) => i.status === 'new').length;
@@ -63,7 +63,7 @@ export function getShowroomOverviewStats(): ShowroomOverviewStats {
     availableUnits,
     reservedUnits,
     soldUnits,
-    totalValuationSGD,
+    totalValuationIDR,
     activePromosCount,
     totalInquiriesCount,
     pendingInquiriesCount,

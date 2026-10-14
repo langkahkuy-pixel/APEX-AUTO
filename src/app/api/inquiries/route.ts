@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to retrieve inquiries.',
+        error: "Gagal memuat pertanyaan pelanggan.",
       },
       { status: 500 }
     );
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       message,
       car_id,
       car_name,
-      car_price_sgd,
+      car_price_idr,
       interest,
       trade_in_car,
       loan_type,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Please enter your full name (minimum 2 characters).',
+          error: "Masukkan nama lengkap, minimal 2 karakter.",
         },
         { status: 400 }
       );
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Please provide a valid WhatsApp phone number or email address.',
+          error: "Masukkan nomor WhatsApp atau email yang valid.",
         },
         { status: 400 }
       );
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Message content is required (minimum 3 characters).',
+          error: "Pesan wajib diisi, minimal 3 karakter.",
         },
         { status: 400 }
       );
@@ -110,20 +110,20 @@ export async function POST(request: NextRequest) {
       contact: contact.trim(),
       email: email ? email.trim() : (contact.includes('@') ? contact.trim() : ''),
       car_id: car_id || undefined,
-      car_name: car_name || interest || 'Showroom Inquiry',
-      car_price_sgd: car_price_sgd ? Number(car_price_sgd) : undefined,
+      car_name: car_name || interest || "Pertanyaan Showroom",
+      car_price_idr: car_price_idr ? Number(car_price_idr) : undefined,
       message: message.trim(),
       interest: interest || car_name || undefined,
       trade_in_car: trade_in_car || undefined,
       loan_type: loan_type || 'bank_loan',
       preferred_contact: preferred_contact || 'whatsapp',
-      branch: branch || 'Apex Auto Flagship @ Leng Kee',
+      branch: branch || "Apex Auto Medan",
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Your inquiry has been successfully transmitted to the Apex Auto sales team.',
+        message: "Pertanyaan Anda berhasil dikirim ke tim penjualan Apex Auto.",
         data: createdInquiry,
         referenceId: createdInquiry.id,
       },
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to process inquiry submission.',
+        error: "Gagal mengirim pertanyaan.",
       },
       { status: 500 }
     );

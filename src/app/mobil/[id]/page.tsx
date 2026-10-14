@@ -1,3 +1,4 @@
+import { formatRupiah } from '@/lib/locale';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { MOCK_CARS } from '@/data/mock-cars';
@@ -38,13 +39,13 @@ export async function generateMetadata({
 
   if (!car) {
     return {
-      title: 'Vehicle Not Found — Apex Auto',
+      title: "Mobil Tidak Ditemukan | Apex Auto",
     };
   }
 
   return {
-    title: `${car.brand} ${car.model} (${car.year}) — SGD $${car.price.toLocaleString('en-US')} | Apex Auto`,
-    description: `Comprehensive technical specifications, photo gallery, and transparent SGD Nett pricing for the ${car.brand} ${car.model} (${car.year}). Certified showroom condition with verified COE details.`,
+    title: `${car.brand} ${car.model} (${car.year}) — ${formatRupiah(car.price)} | Apex Auto`,
+    description: `Spesifikasi, galeri foto, dan harga rupiah untuk ${car.brand} ${car.model} (${car.year}). Konsultasikan kondisi unit, dokumen STNK/BPKB, pajak, dan pilihan pembayaran.`,
   };
 }
 

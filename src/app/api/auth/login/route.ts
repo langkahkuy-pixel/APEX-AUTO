@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email is required',
+          error: "Email wajib diisi",
         },
         { status: 400 }
       );
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Password is required',
+          error: "Kata sandi wajib diisi",
         },
         { status: 400 }
       );
@@ -41,11 +41,11 @@ export async function POST(request: NextRequest) {
     // Fallback demo account
     const DEMO_OWNER = {
       id: 'usr-owner-001',
-      full_name: 'Alvin Tan (Showroom Principal)',
-      email: 'owner@apexautosg.com',
+      full_name: 'Admin Apex Medan',
+      email: 'admin@apexauto.id',
       password: 'password123',
       role: 'owner',
-      phone: '+6581234567',
+      phone: '+6281200000000',
     };
 
     let isValid = false;
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid email or password. Please use the showroom demo credentials (owner@apexautosg.com / password123).',
+          error: "Email atau kata sandi tidak sesuai. Gunakan akun demo yang tercantum di halaman masuk.",
         },
         { status: 401 }
       );
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         success: true,
-        message: 'Login successful, authentication session established',
+        message: "Berhasil masuk. Sesi telah dibuat.",
         user: authUser,
         token: sessionToken,
         expiresAt,
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'An internal system error occurred while processing login',
+        error: "Terjadi kesalahan saat masuk.",
       },
       { status: 500 }
     );

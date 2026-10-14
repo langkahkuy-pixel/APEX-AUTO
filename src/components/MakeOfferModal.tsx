@@ -1,5 +1,7 @@
 'use client';
 
+import { whatsappUrl } from '@/lib/locale';
+
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ArrowRight, Check, X } from 'lucide-react';
@@ -25,10 +27,10 @@ export function MakeOfferModal({ car, onClose }: { car: Car; onClose: () => void
   const [step, setStep] = useState(1);
   const [values, setValues] = useState<OfferValues>({
     offerAmount: String(car.price),
-    downPayment: String(Math.round(car.price * 0.4)),
+    downPayment: String(Math.round(car.price * 0.3)),
     tradeInValue: '0',
     payment: 'finance',
-    term: '60',
+    term: '48',
     name: '',
     email: '',
     phone: '',
@@ -77,7 +79,7 @@ export function MakeOfferModal({ car, onClose }: { car: Car; onClose: () => void
       setStep(2);
       return;
     }
-    const url = `https://wa.me/6581234567?text=${encodeURIComponent(buildOfferMessage(car, values))}`;
+    const url = whatsappUrl(buildOfferMessage(car, values));
     setDraftUrl(url);
     window.open(url, '_blank', 'noopener,noreferrer');
   }
@@ -95,53 +97,53 @@ export function MakeOfferModal({ car, onClose }: { car: Car; onClose: () => void
       <form noValidate onSubmit={submit} className="flex max-h-[90dvh] flex-col">
         <header className="relative shrink-0 border-b border-white/10 px-6 py-6 sm:px-9">
           <h2 ref={headingRef} tabIndex={-1} id="offer-heading" className="pr-8 text-2xl font-bold leading-tight outline-none sm:text-3xl">
-            Your offer for <span className="text-amber-400">{fullName}</span>
+            Penawaran Anda untuk <span className="text-amber-400">{fullName}</span>
           </h2>
           <p id="offer-description" className="mt-3 text-sm leading-relaxed text-white/65">
-            Prepare your offer for Apex Auto. All amounts are in Singapore dollars.
+            Ajukan penawaran kepada Apex Auto. Seluruh nominal dalam rupiah.
           </p>
-          <button type="button" onClick={onClose} aria-label="Close offer form" className={`absolute right-4 top-5 grid h-9 w-9 place-items-center text-white/60 transition hover:text-amber-400 ${focusStyle}`}>
+          <button type="button" onClick={onClose} aria-label="Tutup formulir penawaran" className={`absolute right-4 top-5 grid h-9 w-9 place-items-center text-white/60 transition hover:text-amber-400 ${focusStyle}`}>
             <X className="h-5 w-5" />
           </button>
-          {!draftUrl && <p className="mt-4 text-xs font-semibold text-white/45">Step {step} of 2 · {step === 1 ? 'Offer details' : 'Review & contact details'}</p>}
+          {!draftUrl && <p className="mt-4 text-xs font-semibold text-white/45">Langkah {step} dari 2 · {step === 1 ? "Detail penawaran" : "Ringkasan dan kontak"}</p>}
         </header>
 
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-9">
           {draftUrl ? (
             <div role="status" className="py-6 text-center">
               <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-amber-400/15 text-amber-400"><Check className="h-7 w-7" /></span>
-              <h3 className="mt-5 text-2xl font-bold">Your offer draft is ready</h3>
+              <h3 className="mt-5 text-2xl font-bold">Draf Penawaran Anda Siap</h3>
               <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/65">
-                Send the prepared message in WhatsApp to complete your enquiry. Your offer has not been sent yet.
+                Kirim pesan yang sudah disiapkan melalui WhatsApp untuk melanjutkan negosiasi. Penawaran belum terkirim sebelum Anda menekan kirim di WhatsApp.
               </p>
               <a href={draftUrl} target="_blank" rel="noopener noreferrer" className={`mt-6 inline-flex items-center gap-3 rounded-full bg-amber-400 px-6 py-3 font-semibold text-black transition hover:bg-amber-300 ${focusStyle}`}>
-                Open WhatsApp <ArrowRight className="h-5 w-5" />
+                Buka WhatsApp <ArrowRight className="h-5 w-5" />
               </a>
             </div>
           ) : step === 1 ? (
             <div className="space-y-7">
               <div className="grid gap-6 sm:grid-cols-3">
-                <AmountField label="Offer amount" name="offerAmount" value={values.offerAmount} onChange={value => update('offerAmount', value)} error={errors.offerAmount} />
-                {values.payment === 'finance' && <AmountField label="Cash down payment" name="downPayment" value={values.downPayment} onChange={value => update('downPayment', value)} error={errors.downPayment} />}
-                <AmountField label="Net trade-in value" name="tradeInValue" value={values.tradeInValue} onChange={value => update('tradeInValue', value)} error={errors.tradeInValue} />
+                <AmountField label="Harga penawaran" name="offerAmount" value={values.offerAmount} onChange={value => update('offerAmount', value)} error={errors.offerAmount} />
+                {values.payment === 'finance' && <AmountField label="Uang muka (DP)" name="downPayment" value={values.downPayment} onChange={value => update('downPayment', value)} error={errors.downPayment} />}
+                <AmountField label="Nilai bersih tukar tambah" name="tradeInValue" value={values.tradeInValue} onChange={value => update('tradeInValue', value)} error={errors.tradeInValue} />
               </div>
               <p className="text-xs leading-relaxed text-white/45">
-                Listed price: {formatOfferCurrency(car.price)}. Trade-in value should be after any outstanding loan and will be confirmed during appraisal.
+                Harga tunai: {formatOfferCurrency(car.price)}. Nilai tukar tambah dihitung setelah sisa kredit mobil lama dan dikonfirmasi setelah pemeriksaan unit.
               </p>
               <fieldset>
-                <legend className="mb-4 text-sm text-white/60">Payment preference</legend>
+                <legend className="mb-4 text-sm text-white/60">Metode pembayaran</legend>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {(['finance', 'cash'] as const).map(payment => (
                     <label key={payment} className="flex cursor-pointer items-center gap-3 text-base font-semibold">
                       <input type="radio" name="payment" value={payment} checked={values.payment === payment} onChange={() => update('payment', payment)} className="h-4 w-4 accent-amber-400" />
-                      {payment === 'finance' ? 'Financing' : 'Cash purchase'}
+                      {payment === 'finance' ? "Kredit" : "Tunai"}
                     </label>
                   ))}
                 </div>
               </fieldset>
               {values.payment === 'finance' && (
                 <fieldset>
-                  <legend className="mb-4 text-sm text-white/60">Preferred loan tenure (months)</legend>
+                  <legend className="mb-4 text-sm text-white/60">Pilihan tenor kredit (bulan)</legend>
                   <div className="flex flex-wrap gap-x-6 gap-y-4">
                     {OFFER_LOAN_TERMS.map(term => (
                       <label key={term} className="flex cursor-pointer items-center gap-2 text-base font-semibold">
@@ -153,45 +155,45 @@ export function MakeOfferModal({ car, onClose }: { car: Car; onClose: () => void
                 </fieldset>
               )}
               <div className="flex flex-wrap items-center justify-between gap-3 bg-white/5 px-5 py-4 text-sm">
-                <span className="text-white/60">{values.payment === 'finance' ? 'Requested financing' : 'Cash balance after trade-in'}</span>
+                <span className="text-white/60">{values.payment === 'finance' ? "Pokok pembiayaan yang diajukan" : "Sisa pembayaran setelah tukar tambah"}</span>
                 <strong className="text-lg text-amber-400">{formatOfferCurrency(totals.balance)}</strong>
               </div>
               <p className="text-xs leading-relaxed text-white/45">
-                Financing preferences are an enquiry, not a loan approval. Our team will confirm the valuation, available tenure, COE balance and lender terms.
+                Pengajuan kredit mengikuti survei dan persetujuan bank atau leasing. Total DP, tenor, angsuran, asuransi, dan biaya administrasi dikonfirmasi sebelum akad.
               </p>
             </div>
           ) : (
             <div className="space-y-7">
               {image && <div className="relative aspect-[16/5] overflow-hidden rounded-xl bg-zinc-900"><Image src={image.url} alt={`${car.year} ${fullName}`} fill sizes="(max-width: 768px) 100vw, 700px" className="object-cover" /></div>}
               <dl className="space-y-3 rounded-xl bg-white/10 px-5 py-5 text-sm">
-                <SummaryRow label="Listed price" value={formatOfferCurrency(car.price)} />
-                <SummaryRow label="Your offer" value={formatOfferCurrency(totals.offer)} highlight />
-                <SummaryRow label="Payment preference" value={values.payment === 'finance' ? 'Financing' : 'Cash purchase'} />
+                <SummaryRow label="Harga tunai" value={formatOfferCurrency(car.price)} />
+                <SummaryRow label="Penawaran Anda" value={formatOfferCurrency(totals.offer)} highlight />
+                <SummaryRow label="Metode pembayaran" value={values.payment === 'finance' ? "Kredit" : "Tunai"} />
                 {values.payment === 'finance' && <>
-                  <SummaryRow label="Cash down payment" value={formatOfferCurrency(totals.downPayment)} />
-                  <SummaryRow label="Preferred loan tenure" value={`${values.term} months`} />
+                  <SummaryRow label="Uang muka (DP)" value={formatOfferCurrency(totals.downPayment)} />
+                  <SummaryRow label="Tenor kredit" value={`${values.term} bulan`} />
                 </>}
-                <SummaryRow label="Estimated net trade-in" value={formatOfferCurrency(totals.tradeIn)} />
-                <SummaryRow label={values.payment === 'finance' ? 'Requested financing' : 'Cash balance after trade-in'} value={formatOfferCurrency(totals.balance)} />
+                <SummaryRow label="Nilai bersih tukar tambah" value={formatOfferCurrency(totals.tradeIn)} />
+                <SummaryRow label={values.payment === 'finance' ? "Pokok pembiayaan yang diajukan" : "Sisa pembayaran setelah tukar tambah"} value={formatOfferCurrency(totals.balance)} />
               </dl>
               <div className="grid gap-x-7 gap-y-5 sm:grid-cols-2">
-                <ContactField label="Full name *" name="name" value={values.name} onChange={value => update('name', value)} error={errors.name} autoComplete="name" maxLength={100} />
-                <ContactField label="Email (optional)" name="email" type="email" value={values.email} onChange={value => update('email', value)} error={errors.email} autoComplete="email" maxLength={150} />
-                <ContactField label="Singapore phone *" name="phone" type="tel" value={values.phone} onChange={value => update('phone', value)} error={errors.phone} autoComplete="tel-national" maxLength={20} prefix="+65" placeholder="9123 4567" />
+                <ContactField label="Nama lengkap *" name="name" value={values.name} onChange={value => update('name', value)} error={errors.name} autoComplete="name" maxLength={100} />
+                <ContactField label="Email (opsional)" name="email" type="email" value={values.email} onChange={value => update('email', value)} error={errors.email} autoComplete="email" maxLength={150} />
+                <ContactField label="Nomor WhatsApp *" name="phone" type="tel" value={values.phone} onChange={value => update('phone', value.replace(/^\+?62/, '').replace(/^0(?=8)/, ''))} error={errors.phone} autoComplete="tel-national" maxLength={20} prefix="+62" placeholder="812 0000 0000" />
               </div>
               <div>
-                <label htmlFor="offer-message" className="text-sm text-white/60">Message (optional)</label>
-                <textarea id="offer-message" name="message" rows={3} maxLength={1000} value={values.message} onChange={event => update('message', event.target.value)} placeholder="Tell us about your trade-in or ask a question..." className={`${inputStyle} mt-2 resize-y`} />
+                <label htmlFor="offer-message" className="text-sm text-white/60">Pesan (opsional)</label>
+                <textarea id="offer-message" name="message" rows={3} maxLength={1000} value={values.message} onChange={event => update('message', event.target.value)} placeholder="Ceritakan mobil yang ingin ditukar tambah atau sampaikan pertanyaan..." className={`${inputStyle} mt-2 resize-y`} />
               </div>
               <div>
                 <label htmlFor="offer-consent" className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-white/65">
                   <input id="offer-consent" type="checkbox" name="consent" checked={values.consent} onChange={event => update('consent', event.target.checked)} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'offer-consent-error' : undefined} className="mt-1 h-4 w-4 shrink-0 accent-amber-400" />
-                  I agree that Apex Auto may use the details provided to contact me about this offer via WhatsApp, phone or email.
+                  Saya setuju Apex Auto menggunakan data yang diberikan untuk menghubungi saya terkait penawaran ini melalui WhatsApp, telepon, atau email.
                 </label>
                 {errors.consent && <p id="offer-consent-error" role="alert" className="mt-2 text-xs text-red-300">{errors.consent}</p>}
               </div>
               <p className="text-xs leading-relaxed text-white/45">
-                Continue opens WhatsApp with your offer and contact details addressed to Apex Auto (+65 8123 4567). You send the message from WhatsApp.
+                Lanjutkan untuk membuka WhatsApp berisi penawaran dan kontak Anda kepada Apex Auto Medan. Pesan dikirim sendiri melalui WhatsApp.
               </p>
             </div>
           )}
@@ -199,11 +201,11 @@ export function MakeOfferModal({ car, onClose }: { car: Car; onClose: () => void
 
         <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-5 sm:px-9">
           {draftUrl ? (
-            <button type="button" onClick={onClose} className={`rounded-full border border-white/25 px-7 py-3 text-sm font-semibold hover:border-amber-400 ${focusStyle}`}>Done</button>
+            <button type="button" onClick={onClose} className={`rounded-full border border-white/25 px-7 py-3 text-sm font-semibold hover:border-amber-400 ${focusStyle}`}>Selesai</button>
           ) : <>
-            {step === 2 && <button type="button" onClick={() => { setErrors({}); setStep(1); }} className={`rounded-full border border-white/35 px-7 py-3 text-sm font-semibold transition hover:border-amber-400 hover:text-amber-400 ${focusStyle}`}>Back</button>}
+            {step === 2 && <button type="button" onClick={() => { setErrors({}); setStep(1); }} className={`rounded-full border border-white/35 px-7 py-3 text-sm font-semibold transition hover:border-amber-400 hover:text-amber-400 ${focusStyle}`}>Kembali</button>}
             <button type="submit" className={`ml-auto flex min-w-48 shrink-0 items-center justify-between gap-4 whitespace-nowrap rounded-full bg-amber-400 py-2 pl-7 pr-2 text-sm font-semibold text-black transition hover:bg-amber-300 ${focusStyle}`}>
-              {step === 1 ? 'Continue' : 'Continue to WhatsApp'}<span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-black text-amber-400"><ArrowRight className="h-5 w-5" /></span>
+              {step === 1 ? "Lanjutkan" : "Lanjut ke WhatsApp"}<span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-black text-amber-400"><ArrowRight className="h-5 w-5" /></span>
             </button>
           </>}
         </footer>
@@ -236,8 +238,8 @@ function AmountField({ label, name, value, onChange, error }: {
     <div>
       <label htmlFor={`offer-${name}`} className="text-sm text-white/60">{label}</label>
       <div className="relative mt-2">
-        <span className="pointer-events-none absolute left-0 top-3 text-base text-white/55">S$</span>
-        <input id={`offer-${name}`} name={name} type="number" min="0" step="0.01" inputMode="decimal" value={value} onChange={event => onChange(event.target.value)} aria-invalid={!!error} aria-describedby={error ? `offer-${name}-error` : undefined} className={`${inputStyle} pl-7`} />
+        <span className="pointer-events-none absolute left-0 top-3 text-base text-white/55">Rp</span>
+        <input id={`offer-${name}`} name={name} type="text" inputMode="numeric" value={value && /^\d+$/.test(value) ? Number(value).toLocaleString('id-ID') : value} onChange={event => onChange(event.target.value.replace(/\./g, ''))} aria-invalid={!!error} aria-describedby={error ? `offer-${name}-error` : undefined} className={`${inputStyle} pl-7`} />
       </div>
       {error && <p id={`offer-${name}-error`} role="alert" className="mt-2 text-xs text-red-300">{error}</p>}
     </div>

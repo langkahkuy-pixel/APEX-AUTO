@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       const dbCars = await db.select().from(cars);
       if (dbCars && dbCars.length > 0) {
         totalCars = dbCars.length;
-        availableCars = dbCars.filter((c) => c.status === 'tersedia').length;
+        availableCars = dbCars.filter((c) => c.status === 'available').length;
       }
 
       const dbInquiries = await db.select().from(inquiries);
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
           activePromos: totalPromos,
           totalInquiriesCount: totalInquiries,
           showroomStatus: 'OPERATIONAL',
-          currency: 'SGD',
+          currency: "IDR",
           lastUpdated: new Date().toISOString(),
         },
       },

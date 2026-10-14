@@ -31,20 +31,28 @@ export const cars = pgTable('cars', {
   brand: varchar('brand', { length: 100 }).notNull(), // e.g. Mercedes-Benz, Porsche, BMW
   model: varchar('model', { length: 100 }).notNull(), // e.g. E200 Avantgarde, Macan 2.0 PDK
   year: integer('year').notNull(),
-  price: numeric('price', { precision: 12, scale: 2 }).notNull(), // Harga dalam SGD
+  price: numeric('price', { precision: 15, scale: 2 }).notNull(), // Harga tunai rupiah; presisi arsip lama dipertahankan
   body_type: varchar('body_type', { length: 50 }).notNull(), // Sedan, SUV, Coupe, MPV, Hatchback
-  transmission: varchar('transmission', { length: 50 }).notNull(), // Automatic, Manual
-  fuel_type: varchar('fuel_type', { length: 50 }).notNull(), // Petrol, Diesel, Hybrid, Electric
+  transmission: varchar('transmission', { length: 50 }).notNull(), // Otomatis, Manual
+  fuel_type: varchar('fuel_type', { length: 50 }).notNull(), // Bensin, Diesel, Hibrida, Listrik
   mileage_km: integer('mileage_km').notNull().default(0),
   color: varchar('color', { length: 100 }).notNull(),
   description: text('description'),
   features: text('features'), // Fitur mobil (JSON atau comma-separated)
   status: varchar('status', { length: 50 }).notNull().default('available'), // 'available' | 'reserved' | 'sold'
-  location: varchar('location', { length: 255 }).notNull(), // Leng Kee Flagship
-  depreciation_sgd: numeric('depreciation_sgd', { precision: 12, scale: 2 }), // Estimasi depresiasi tahunan SGD
-  coe_expiry: varchar('coe_expiry', { length: 100 }), // Masa berlaku COE (e.g. 'Apr 2031 (7 tahun 2 bulan)')
+  location: varchar('location', { length: 255 }).notNull(), // Medan
+  annual_tax_idr: numeric('annual_tax_idr', { precision: 15, scale: 0 }), // Pajak tahunan dalam rupiah
+  tax_expiry: varchar('tax_expiry', { length: 100 }), // Jatuh tempo pajak kendaraan.
+  plate_number: varchar('plate_number', { length: 50 }),
+  document_status: varchar('document_status', { length: 255 }),
+  owners: integer('owners'),
+  currency: varchar('currency', { length: 3 }).default('IDR'),
   engine_capacity_cc: integer('engine_capacity_cc'), // Kapasitas mesin CC
-  monthly_est_sgd: numeric('monthly_est_sgd', { precision: 12, scale: 2 }), // Estimasi cicilan per bulan SGD
+  monthly_est_idr: numeric('monthly_est_idr', { precision: 15, scale: 0 }), // Estimasi angsuran per bulan dalam rupiah
+  // Kolom historis dipertahankan untuk pemulihan; tidak digunakan untuk data Indonesia.
+  depreciation_sgd: numeric('depreciation_sgd', { precision: 12, scale: 2 }),
+  coe_expiry: varchar('coe_expiry', { length: 100 }),
+  monthly_est_sgd: numeric('monthly_est_sgd', { precision: 12, scale: 2 }),
   created_by: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
   is_featured: boolean('is_featured').notNull().default(false),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -78,14 +86,15 @@ export const inquiries = pgTable('inquiries', {
   updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Tabel promos (Program Promo & Subsidi Showroom Singapura)
+// Tabel promos (Program Promo Showroom Indonesia)
 export const promos = pgTable('promos', {
   id: uuid('id').primaryKey().defaultRandom(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   title: varchar('title', { length: 255 }).notNull(),
   tagline: text('tagline').notNull(),
   badge: varchar('badge', { length: 100 }).notNull(),
-  discount_sgd: numeric('discount_sgd', { precision: 12, scale: 2 }),
+  discount_idr: numeric('discount_idr', { precision: 15, scale: 0 }),
+  discount_sgd: numeric('discount_sgd', { precision: 12, scale: 2 }), // Arsip nilai demo lama
   description: text('description').notNull(),
   benefits: text('benefits'), // JSON array string
   terms_conditions: text('terms_conditions'), // JSON array string

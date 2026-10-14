@@ -1,22 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Car, CarStatus, BodyType, FuelType, Transmission, CarImage } from '@/types/car';
+import React, { useState } from 'react';
+import { Car, CarStatus, BodyType, FuelType, Transmission } from '@/types/car';
 import AdminCarPhotoManager from './AdminCarPhotoManager';
 import {
   X,
   Save,
-  Plus,
-  Trash2,
   Car as CarIcon,
-  DollarSign,
-  Calendar,
-  MapPin,
+  Banknote,
   CheckCircle2,
   Sparkles,
   Image as ImageIcon,
-  ShieldCheck,
-  Zap,
 } from 'lucide-react';
 
 interface AdminCarFormModalProps {
@@ -24,7 +18,7 @@ interface AdminCarFormModalProps {
   mode: 'create' | 'edit';
   initialCar?: Car | null;
   onClose: () => void;
-  onSave: (carData: Car) => void;
+  onSave: (carData: Car) => void | Promise<void>;
 }
 
 const BODY_TYPES: BodyType[] = [
@@ -32,15 +26,15 @@ const BODY_TYPES: BodyType[] = [
   'SUV',
   'Coupe',
   'Hatchback',
-  'Convertible',
-  'Station Wagon',
+  "Cabriolet",
+  "Wagon",
   'MPV',
-  'Sports',
+  "Sport",
 ];
-const FUEL_TYPES: FuelType[] = ['Petrol', 'Hybrid', 'Electric', 'Diesel'];
-const TRANSMISSIONS: Transmission[] = ['Automatic', 'Manual'];
+const FUEL_TYPES: FuelType[] = ["Bensin", "Hibrida", "Listrik", 'Diesel'];
+const TRANSMISSIONS: Transmission[] = ["Otomatis", 'Manual'];
 const LOCATIONS = [
-  'Leng Kee Showroom (South/Central)',
+  "Medan, Sumatera Utara",
 ];
 
 const DEFAULT_PRESET_IMAGES = [
@@ -56,76 +50,21 @@ export default function AdminCarFormModal({
   onClose,
   onSave,
 }: AdminCarFormModalProps) {
-  const [formData, setFormData] = useState<Partial<Car>>({
-    brand: 'Porsche',
-    model: '',
-    year: new Date().getFullYear() - 1,
-    price: 250000,
-    depreciation_sgd: 22000,
-    coe_expiry: '10-Year COE (till 2033)',
-    engine_capacity_cc: 2981,
-    body_type: 'Coupe',
-    transmission: 'Automatic',
-    fuel_type: 'Petrol',
-    mileage_km: 15000,
-    color: 'Carrara White Metallic',
-    location: 'Leng Kee Showroom (South/Central)',
-    status: 'available',
-    is_featured: false,
-    description: 'Official showroom unit in pristine condition with 160-point STA Grade A certification.',
-    features: ['160-Point STA Certified', '12 Months Apex Warranty', 'Sunroof', 'Adaptive Cruise Control'],
-    images: [
-      {
-        id: 'img-main',
-        car_id: '',
-        url: DEFAULT_PRESET_IMAGES[0],
-        is_main: true,
-        sort_order: 0,
-      },
-    ],
+  const [formData, setFormData] = useState<Partial<Car>>(() => mode === 'edit' && initialCar ? { ...initialCar } : {
+    brand: 'Mercedes-Benz', model: '', year: 2023, price: 885000000,
+    annual_tax_idr: 12500000, tax_expiry: '2027-08-20', engine_capacity_cc: 1991,
+    body_type: 'Sedan', transmission: 'Otomatis', fuel_type: 'Bensin', mileage_km: 12000,
+    color: 'Hitam Metalik', location: 'Medan, Sumatera Utara', status: 'available', is_featured: false,
+    description: 'Unit terawat dengan catatan servis. Dokumen dan status pajak dapat diperiksa di showroom.',
+    features: ['Pemeriksaan Kondisi', 'Garansi sesuai unit', 'Keyless GO', 'Kamera 360 derajat'],
+    images: [{ id: 'img-main', car_id: '', url: DEFAULT_PRESET_IMAGES[0], is_main: true, sort_order: 0 }],
   });
-
   const [featureInput, setFeatureInput] = useState('');
-  const [imageUrlInput, setImageUrlInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successNotice, setSuccessNotice] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
-  useEffect(() => {
-    if (mode === 'edit' && initialCar) {
-      setFormData({ ...initialCar });
-    } else if (mode === 'create') {
-      setFormData({
-        id: `car-sg-${Date.now().toString().slice(-4)}`,
-        brand: 'Mercedes-Benz',
-        model: '',
-        year: 2023,
-        price: 268000,
-        depreciation_sgd: 23500,
-        coe_expiry: '10-Year COE (till 2033)',
-        engine_capacity_cc: 1991,
-        body_type: 'Sedan',
-        transmission: 'Automatic',
-        fuel_type: 'Hybrid',
-        mileage_km: 12000,
-        color: 'Obsidian Black Metallic',
-        location: 'Leng Kee Showroom (South/Central)',
-        status: 'available',
-        is_featured: true,
-        description: 'Pristine 1-owner unit with comprehensive agent service records (PML / C&C).',
-        features: ['160-Point STA Certified', '12 Months Apex Warranty', 'Keyless GO', '360 Camera'],
-        images: [
-          {
-            id: `img-${Date.now()}-1`,
-            car_id: '',
-            url: DEFAULT_PRESET_IMAGES[0],
-            is_main: true,
-            sort_order: 0,
-          },
-        ],
-      });
-    }
-    setSuccessNotice(false);
-  }, [mode, initialCar, isOpen]);
+
 
   if (!isOpen) return null;
 
@@ -143,110 +82,102 @@ export default function AdminCarFormModal({
     setFormData({ ...formData, features: current.filter((f) => f !== feat) });
   };
 
-  const handleAddImage = () => {
-    if (!imageUrlInput.trim()) return;
-    const current = formData.images || [];
-    const newImg = {
-      id: `img-${Date.now()}-${current.length}`,
-      car_id: formData.id || '',
-      url: imageUrlInput.trim(),
-      is_main: current.length === 0,
-      sort_order: current.length,
-    };
-    setFormData({ ...formData, images: [...current, newImg] });
-    setImageUrlInput('');
-  };
-
-  const handleRemoveImage = (imgId: string) => {
-    const current = formData.images || [];
-    setFormData({ ...formData, images: current.filter((img) => img.id !== imgId) });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSaveError('');
 
-    const generatedId = formData.id || `car-sg-${Date.now().toString().slice(-4)}`;
+    const generatedId = formData.id || `car-id-${Date.now().toString().slice(-4)}`;
     const finalCar: Car = {
       id: generatedId,
       brand: formData.brand || 'Mercedes-Benz',
       model: formData.model || 'C200 AMG Line',
       year: Number(formData.year) || 2023,
-      price: Number(formData.price) || 250000,
-      depreciation_sgd: Number(formData.depreciation_sgd) || 22000,
-      coe_expiry: formData.coe_expiry || '10-Year COE',
+      price: Number(formData.price) || 885000000,
+      currency: 'IDR',
+      annual_tax_idr: formData.annual_tax_idr ? Number(formData.annual_tax_idr) : undefined,
+      monthly_est_idr: formData.monthly_est_idr ? Number(formData.monthly_est_idr) : undefined,
+      plate_number: formData.plate_number || '',
+      document_status: formData.document_status || '',
+      owners: formData.owners ? Number(formData.owners) : undefined,
+      tax_expiry: formData.tax_expiry || "Belum diisi",
       engine_capacity_cc: Number(formData.engine_capacity_cc) || 1991,
       body_type: formData.body_type || 'Sedan',
-      transmission: formData.transmission || 'Automatic',
-      fuel_type: formData.fuel_type || 'Petrol',
+      transmission: formData.transmission || "Otomatis",
+      fuel_type: formData.fuel_type || "Bensin",
       mileage_km: Number(formData.mileage_km) || 10000,
-      color: formData.color || 'Obsidian Black',
-      location: formData.location || 'Leng Kee Showroom (South/Central)',
+      color: formData.color || "Hitam",
+      location: formData.location || "Medan, Sumatera Utara",
       status: (formData.status as CarStatus) || 'available',
       is_featured: Boolean(formData.is_featured),
-      description: formData.description || 'Premium luxury vehicle ready for immediate handover.',
-      features: formData.features && formData.features.length > 0 ? formData.features : ['160-Point STA Certified', '12 Months Apex Care Warranty'],
+      description: formData.description || "Mobil premium pilihan siap diperiksa di showroom.",
+      features: formData.features && formData.features.length > 0 ? formData.features : ["Pemeriksaan Kondisi", "Garansi sesuai ketentuan unit"],
       images: formData.images && formData.images.length > 0 ? formData.images : [{ id: 'img-1', car_id: generatedId, url: DEFAULT_PRESET_IMAGES[0], is_main: true, sort_order: 0 }],
       created_at: formData.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    setTimeout(() => {
-      onSave(finalCar);
-      setIsSubmitting(false);
+    try {
+      await onSave(finalCar);
       setSuccessNotice(true);
-      setTimeout(() => {
-        onClose();
-      }, 700);
-    }, 400);
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Data mobil gagal disimpan. Silakan coba lagi.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in"
-      onClick={onClose}
+      aria-labelledby="car-form-heading"
+      className="fixed inset-0 z-50 bg-zinc-950/35 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in"
+      onClick={() => { if (!isSubmitting) onClose(); }}
     >
       <div
-        className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
+        className="bg-white border border-zinc-200 rounded-xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+            <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 sm:flex">
               <CarIcon className="w-6 h-6 stroke-[2.5]" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>{mode === 'create' ? 'Add New Vehicle' : 'Edit Vehicle Details'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase font-mono">
+              <h2 id="car-form-heading" className="flex flex-wrap items-center gap-2 text-xl font-semibold text-zinc-900">
+                <span>{mode === 'create' ? "Tambah Mobil" : "Ubah Data Mobil"}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 uppercase font-mono">
                   {formData.brand}
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
-                Configure technical specifications, COE certification, and SGD Nett pricing
+              <p className="text-xs text-zinc-500">
+                Isi spesifikasi, dokumen, status pajak, dan harga tunai dalam rupiah
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            disabled={isSubmitting}
+            aria-label="Tutup formulir mobil"
+            className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
+        {saveError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{saveError}</p>}
         {/* Success Alert */}
         {successNotice && (
-          <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-emerald-400 text-xs animate-in fade-in">
+          <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2 text-emerald-700 text-xs animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
             <span>
               {mode === 'create'
-                ? 'New vehicle successfully added to showroom inventory!'
-                : 'Vehicle details successfully updated!'}
+                ? "Mobil berhasil ditambahkan ke koleksi showroom!"
+                : "Data mobil berhasil diperbarui!"}
             </span>
           </div>
         )}
@@ -254,42 +185,42 @@ export default function AdminCarFormModal({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* SECTION 1: IDENTITAS & SPESIFIKASI UTAMA */}
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <h3 className="text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
-              1. Vehicle Identity & Model
+              1. Identitas dan Model Mobil
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Make / Brand *
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Merek *
                 </label>
                 <input
                   type="text"
                   value={formData.brand || ''}
                   onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                  placeholder="e.g. Porsche, Mercedes-Benz, BMW"
+                  placeholder="Contoh: Porsche, Mercedes-Benz, BMW"
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Model & Variant *
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Model dan Varian *
                 </label>
                 <input
                   type="text"
                   value={formData.model || ''}
                   onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                  placeholder="e.g. 911 Carrera S, M4 Competition"
+                  placeholder="Contoh: 911 Carrera S, M4 Competition"
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Registration / Manufacture Year *
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Tahun Kendaraan *
                 </label>
                 <input
                   type="number"
@@ -298,20 +229,20 @@ export default function AdminCarFormModal({
                   min={2000}
                   max={2030}
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Body Type
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Jenis Bodi
                 </label>
                 <select
                   value={formData.body_type || 'Sedan'}
                   onChange={(e) => setFormData({ ...formData, body_type: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 >
                   {BODY_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -322,13 +253,13 @@ export default function AdminCarFormModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Transmission
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Transmisi
                 </label>
                 <select
-                  value={formData.transmission || 'Automatic'}
+                  value={formData.transmission || "Otomatis"}
                   onChange={(e) => setFormData({ ...formData, transmission: e.target.value as Transmission })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 >
                   {TRANSMISSIONS.map((t) => (
                     <option key={t} value={t}>
@@ -339,13 +270,13 @@ export default function AdminCarFormModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Fuel Type
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Bahan Bakar
                 </label>
                 <select
-                  value={formData.fuel_type || 'Petrol'}
+                  value={formData.fuel_type || "Bensin"}
                   onChange={(e) => setFormData({ ...formData, fuel_type: e.target.value as FuelType })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 >
                   {FUEL_TYPES.map((f) => (
                     <option key={f} value={f}>
@@ -356,34 +287,34 @@ export default function AdminCarFormModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Engine Capacity (cc)
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Kapasitas Mesin (cc)
                 </label>
                 <input
                   type="number"
                   value={formData.engine_capacity_cc || ''}
                   onChange={(e) => setFormData({ ...formData, engine_capacity_cc: Number(e.target.value) })}
                   placeholder="2981"
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
             </div>
           </div>
 
-          {/* SECTION 2: HARGA & REGULASI (COE & DEPRESIASI) */}
-          <div className="space-y-4 pt-2 border-t border-slate-800">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5" />
-              2. SGD Pricing & COE Specifications
+          {/* Harga, pajak, dan dokumen kendaraan */}
+          <div className="space-y-4 pt-2 border-t border-zinc-200">
+            <h3 className="text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Banknote className="w-3.5 h-3.5" />
+              2. Harga, Pajak, dan Dokumen
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  SGD Nett Price *
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Harga Tunai (Rp) *
                 </label>
                 <div className="relative">
-                  <span className="text-slate-500 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
-                    S$
+                  <span className="text-zinc-400 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
+                    Rp
                   </span>
                   <input
                     type="number"
@@ -391,78 +322,93 @@ export default function AdminCarFormModal({
                     onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
                     min={10000}
                     required
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-amber-400 font-bold focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-amber-700 font-semibold focus:outline-none focus:border-amber-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Estimated Depreciation (SGD/Year)
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Pajak Tahunan (Rp)
                 </label>
                 <div className="relative">
-                  <span className="text-slate-500 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
-                    S$
+                  <span className="text-zinc-400 text-xs font-mono absolute left-3.5 top-1/2 -translate-y-1/2">
+                    Rp
                   </span>
                   <input
                     type="number"
-                    value={formData.depreciation_sgd || ''}
-                    onChange={(e) => setFormData({ ...formData, depreciation_sgd: Number(e.target.value) })}
-                    placeholder="24000"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    value={formData.annual_tax_idr || ''}
+                    onChange={(e) => setFormData({ ...formData, annual_tax_idr: Number(e.target.value) })}
+                    placeholder="12500000"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  COE Expiry (LTA)
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Pajak Berlaku Sampai
                 </label>
                 <input
                   type="text"
-                  value={formData.coe_expiry || ''}
-                  onChange={(e) => setFormData({ ...formData, coe_expiry: e.target.value })}
-                  placeholder="10-Year COE (till 2033)"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  value={formData.tax_expiry || ''}
+                  onChange={(e) => setFormData({ ...formData, tax_expiry: e.target.value })}
+                  placeholder="Belum diisi"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <label className="block text-xs text-zinc-600">Nomor Polisi
+                <input value={formData.plate_number || ''} onChange={event => setFormData({ ...formData, plate_number: event.target.value })} placeholder="BK 1234 AP" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900" />
+              </label>
+              <label className="block text-xs text-zinc-600">Kelengkapan Dokumen
+                <input value={formData.document_status || ''} onChange={event => setFormData({ ...formData, document_status: event.target.value })} placeholder="STNK dan BPKB lengkap" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900" />
+              </label>
+              <label className="block text-xs text-zinc-600">Pemilik Sebelumnya
+                <input type="number" min="1" value={formData.owners || ''} onChange={event => setFormData({ ...formData, owners: Number(event.target.value) })} placeholder="1" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900" />
+              </label>
+              <label className="block text-xs text-zinc-600">Estimasi Angsuran Bulanan (Rp)
+                <input type="number" min="0" value={formData.monthly_est_idr || ''} onChange={event => setFormData({ ...formData, monthly_est_idr: Number(event.target.value) })} placeholder="15000000" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900" />
+              </label>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Mileage (KM)
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Kilometer
                 </label>
                 <input
                   type="number"
                   value={formData.mileage_km || ''}
                   onChange={(e) => setFormData({ ...formData, mileage_km: Number(e.target.value) })}
                   placeholder="14500"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Exterior Colour
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Warna Bodi
                 </label>
                 <input
                   type="text"
                   value={formData.color || ''}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  placeholder="Carrara White Metallic"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="Putih Metalik"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Showroom Hub Location
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Lokasi Showroom
                 </label>
                 <select
                   value={formData.location || LOCATIONS[0]}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 >
                   {LOCATIONS.map((loc) => (
                     <option key={loc} value={loc}>
@@ -475,45 +421,45 @@ export default function AdminCarFormModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Availability Status
+                <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                  Status Ketersediaan
                 </label>
                 <select
                   value={formData.status || 'available'}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as CarStatus })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-bold focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 font-semibold focus:outline-none focus:border-amber-500 transition-colors"
                 >
-                  <option value="available">Available (Ready Stock)</option>
-                  <option value="reserved">Reserved / Booking</option>
-                  <option value="sold">Sold (Closed)</option>
+                  <option value="available">Tersedia</option>
+                  <option value="reserved">Dipesan / Booking</option>
+                  <option value="sold">Terjual</option>
                 </select>
               </div>
 
               <div className="flex items-center gap-3 pt-6">
-                <label className="relative flex items-center gap-2 text-xs font-semibold text-slate-300 cursor-pointer">
+                <label className="relative flex items-center gap-2 text-xs font-semibold text-zinc-600 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={Boolean(formData.is_featured)}
                     onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
-                    className="w-4 h-4 rounded bg-slate-950 border-slate-800 text-amber-500 focus:ring-amber-500"
+                    className="w-4 h-4 rounded bg-zinc-50 border-zinc-200 text-amber-500 focus:ring-amber-500"
                   />
-                  <span>Feature as Spotlight Vehicle on Homepage</span>
+                  <span>Tampilkan sebagai mobil unggulan di beranda</span>
                 </label>
               </div>
             </div>
           </div>
 
           {/* SECTION 3: FITUR & FOTO */}
-          <div className="space-y-4 pt-2 border-t border-slate-800">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="space-y-4 pt-2 border-t border-zinc-200">
+            <h3 className="text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5" />
-              3. Key Features & Image Gallery
+              3. Fitur dan Galeri Foto
             </h3>
 
             {/* Fitur Tag */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Features & Accreditations (Type and press Enter or Add)
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Fitur Mobil (ketik lalu tekan Enter atau Tambah)
               </label>
               <div className="flex gap-2 mb-2">
                 <input
@@ -526,28 +472,28 @@ export default function AdminCarFormModal({
                       handleAddFeature();
                     }
                   }}
-                  placeholder="e.g. Burmester 3D Surround, LTA Certified, Panoramic Sunroof"
-                  className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500"
+                  placeholder="Contoh: Audio Burmester, STNK/BPKB lengkap, sunroof panoramik"
+                  className="flex-1 px-4 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddFeature}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-100 text-zinc-900 text-xs font-semibold cursor-pointer"
                 >
-                  Add
+                  Tambah
                 </button>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {formData.features?.map((f) => (
                   <span
                     key={f}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 border border-slate-800 text-[11px]"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-50 text-zinc-600 border border-zinc-200 text-[11px]"
                   >
                     <span>{f}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveFeature(f)}
-                      className="text-slate-500 hover:text-rose-400 font-bold ml-1 cursor-pointer"
+                      className="text-zinc-400 hover:text-rose-700 font-semibold ml-1 cursor-pointer"
                     >
                       ×
                     </button>
@@ -564,40 +510,41 @@ export default function AdminCarFormModal({
 
             {/* Deskripsi */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Description & Showroom Inspection Notes
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Deskripsi dan Catatan Pemeriksaan
               </label>
               <textarea
                 rows={3}
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Service history, single owner verification, inspection status..."
-                className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                placeholder="Riwayat servis, jumlah pemilik, kondisi mobil, dokumen..."
+                className="w-full p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+              disabled={isSubmitting}
+              className="py-2.5 px-5 rounded-xl bg-zinc-100 hover:bg-zinc-100 text-zinc-600 text-xs font-semibold transition-colors cursor-pointer"
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="py-2.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+              className="py-2.5 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-700 text-white font-semibold text-xs flex items-center gap-2 shadow-none  transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>
                 {isSubmitting
-                  ? 'Saving Vehicle...'
+                  ? "Menyimpan Mobil..."
                   : mode === 'create'
-                  ? 'Add Vehicle to Showroom'
-                  : 'Save Changes'}
+                  ? "Tambahkan Mobil"
+                  : "Simpan Perubahan"}
               </span>
             </button>
           </div>

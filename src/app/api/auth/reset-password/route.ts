@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'New password must be at least 6 characters long.',
+          error: "Kata sandi baru minimal 6 karakter.",
         },
         { status: 400 }
       );
@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Password confirmation does not match the new password.',
+          error: "Konfirmasi tidak sesuai dengan kata sandi baru.",
         },
         { status: 400 }
       );
     }
 
     // 2. Validasi Token / OTP
-    const cleanEmail = (email || 'owner@apexautosg.com').toLowerCase().trim();
+    const cleanEmail = (email || 'admin@apexauto.id').toLowerCase().trim();
     const cleanOtp = (otp || '').trim();
     const cleanToken = (reset_token || '').trim();
 
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Reset token or verification code is invalid or has expired.',
+          error: "Token atau kode verifikasi tidak valid atau sudah kedaluwarsa.",
         },
         { status: 400 }
       );
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Password updated securely. Please sign in using your new credentials.',
+        message: "Kata sandi berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.",
         email: cleanEmail,
         updated_at: new Date().toISOString(),
       },
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'An internal system error occurred while updating password.',
+        error: "Terjadi kesalahan saat memperbarui kata sandi.",
       },
       { status: 500 }
     );

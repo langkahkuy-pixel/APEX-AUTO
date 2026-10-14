@@ -15,14 +15,14 @@ export interface AuthValidationResult {
 }
 
 /**
- * Demo fallback accounts for Singapore Showroom Owner
+ * Akun cadangan untuk demo showroom Apex Auto Medan.
  */
 export const DEFAULT_DEMO_USER: AuthSessionUser = {
   id: 'usr-owner-001',
-  full_name: 'Alvin Tan (Showroom Principal)',
-  email: 'owner@apexautosg.com',
+  full_name: 'Admin Apex Medan',
+  email: 'admin@apexauto.id',
   role: 'owner',
-  phone: '+6581234567',
+  phone: '+6281200000000',
 };
 
 /**
@@ -80,7 +80,7 @@ export function getAuthSession(request: NextRequest): AuthValidationResult {
   return {
     isAuthenticated: false,
     user: null,
-    error: 'Authentication session required to access management portal routes',
+    error: 'Masuk ke akun showroom untuk mengakses portal kelola.',
   };
 }
 
@@ -99,7 +99,7 @@ export function requireAdminAuth(request: NextRequest): {
       response: NextResponse.json(
         {
           success: false,
-          error: session.error || 'Access denied: Showroom principal authentication required',
+          error: session.error || 'Akses ditolak. Akun pemilik showroom diperlukan.',
           code: 'UNAUTHORIZED',
         },
         {

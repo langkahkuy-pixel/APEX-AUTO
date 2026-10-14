@@ -5,9 +5,9 @@ import { Footer } from '@/components/Footer';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Inventory — Apex Auto | Browse Our Full Vehicle Collection',
+  title: "Pilihan Mobil | Apex Auto Medan",
   description:
-    'Browse the complete Apex Auto showroom inventory. Filter luxury and certified pre-owned vehicles by brand, body type, price, year, and location with transparent SGD Nett pricing.',
+    "Temukan mobil premium bekas pilihan Apex Auto Medan. Bandingkan harga rupiah, tahun, kilometer, dan spesifikasi. Tersedia pembelian tunai, kredit, dan tukar tambah.",
 };
 
 export default function InventoryPage() {
@@ -16,7 +16,7 @@ export default function InventoryPage() {
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="pt-16" />
-      <Suspense fallback={<div role="status" className="mx-auto w-full max-w-7xl flex-1 px-6 py-16 text-white/50">Loading inventory...</div>}>
+      <Suspense fallback={<div role="status" className="mx-auto w-full max-w-7xl flex-1 px-6 py-16 text-white/50">Memuat pilihan mobil...</div>}>
         <CatalogSection />
       </Suspense>
       <Footer theme="dark" />

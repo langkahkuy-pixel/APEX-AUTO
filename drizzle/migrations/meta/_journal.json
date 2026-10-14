@@ -36,6 +36,13 @@
       "when": 1788935982925,
       "tag": "0004_secret_shen",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791974788259,
+      "tag": "0005_indonesia_currency",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email is required for password recovery.',
+          error: "Email wajib diisi untuk pemulihan kata sandi.",
         },
         { status: 400 }
       );
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid email format. Please enter a valid email address.',
+          error: "Format email tidak valid. Masukkan email yang benar.",
         },
         { status: 400 }
       );
@@ -64,12 +64,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Demo owner email fallback
-    const isOwnerEmail = cleanEmail === 'owner@apexautosg.com' || cleanEmail.includes('owner') || foundInDb;
+    const isOwnerEmail = cleanEmail === 'admin@apexauto.id' || cleanEmail.includes('owner') || foundInDb;
 
     return NextResponse.json(
       {
         success: true,
-        message: `Recovery instructions and a 6-digit OTP code have been sent to ${cleanEmail}.`,
+        message: `Instruksi pemulihan dan kode OTP 6 digit dikirim ke ${cleanEmail}.`,
         data: {
           email: cleanEmail,
           otp_simulasi: generatedOtp,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'An internal system error occurred while processing password recovery.',
+        error: "Terjadi kesalahan saat memulihkan kata sandi.",
       },
       { status: 500 }
     );

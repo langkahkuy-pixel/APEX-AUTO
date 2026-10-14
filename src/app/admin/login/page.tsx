@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -9,12 +9,8 @@ import {
   Mail,
   Eye,
   EyeOff,
-  ShieldCheck,
   ArrowRight,
   AlertCircle,
-  CheckCircle2,
-  KeyRound,
-  Sparkles,
 } from 'lucide-react';
 
 function AdminLoginForm() {
@@ -30,9 +26,9 @@ function AdminLoginForm() {
   const [success, setSuccess] = useState(false);
 
   const DEMO_CREDENTIALS = {
-    email: 'owner@apexautosg.com',
+    email: 'admin@apexauto.id',
     password: 'password123',
-    role: 'Showroom Principal / Owner',
+    role: 'Pemilik Showroom',
   };
 
   const fillDemoAccount = () => {
@@ -46,12 +42,12 @@ function AdminLoginForm() {
     setError(null);
 
     if (!email.trim()) {
-      setError('Please enter your showroom account email.');
+      setError("Masukkan email akun showroom.");
       return;
     }
 
     if (!password) {
-      setError('Please enter your password.');
+      setError("Masukkan kata sandi Anda.");
       return;
     }
 
@@ -70,7 +66,7 @@ function AdminLoginForm() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.error || 'Invalid credentials. Please verify your email and password.');
+        setError(data.error || "Email atau kata sandi tidak sesuai. Periksa kembali data Anda.");
         setIsLoading(false);
         return;
       }
@@ -94,203 +90,32 @@ function AdminLoginForm() {
       }, 500);
     } catch (err) {
       console.error('Login error:', err);
-      setError('Network or server connection issue. Please try again.');
+      setError("Koneksi ke server bermasalah. Silakan coba lagi.");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 text-zinc-100 selection:bg-amber-500 selection:text-black">
-      {/* Background radial glow */}
-      <div className="fixed inset-0 pointer-events-none opacity-20">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-amber-500/20 blur-[140px] rounded-full" />
-      </div>
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        {/* Brand Logo */}
-        <div className="flex justify-center">
-          <Link
-            href="/"
-            className="group flex items-center gap-2.5 px-4 py-2 rounded-full border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md hover:border-amber-500/50 transition-all duration-300"
-          >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-zinc-950 font-bold text-base shadow-lg shadow-amber-500/20">
-              A
-            </div>
-            <span className="font-semibold text-lg tracking-tight text-white group-hover:text-amber-400 transition-colors">
-              Apex Auto
-            </span>
-            <span className="text-xs uppercase tracking-widest text-amber-400 font-mono bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full ml-1">
-              CMS
-            </span>
-          </Link>
-        </div>
-
-        <h1 className="mt-8 text-center text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Showroom Management Portal
-        </h1>
-        <p className="mt-2 text-center text-sm text-zinc-400">
-          Sign in to manage vehicle inventory, promotions, and inquiries
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
-          {/* Demo Account Quick-Fill Card */}
-          <div className="mb-6 p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 flex items-start justify-between gap-3">
-            <div className="text-xs">
-              <div className="flex items-center gap-1.5 text-amber-400 font-medium">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Demo Principal Credentials</span>
-              </div>
-              <p className="text-zinc-400 mt-1 font-mono text-[11px]">
-                owner@apexautosg.com • password123
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={fillDemoAccount}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-colors whitespace-nowrap"
-            >
-              Fill Credentials
-            </button>
-          </div>
-
-          {error && (
-            <div className="mb-6 p-4 rounded-xl border border-red-500/40 bg-red-500/10 flex items-start gap-3 text-red-300 text-sm">
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {success && (
-            <div className="mb-6 p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 flex items-center gap-3 text-emerald-300 text-sm">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              <span>Authentication approved. Entering CMS dashboard...</span>
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5"
-              >
-                Showroom Email
-              </label>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="owner@apexautosg.com"
-                  autoComplete="email"
-                  required
-                  className="block w-full pl-10 pr-4 py-2.5 text-sm bg-zinc-950/80 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 transition-all"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label
-                  htmlFor="password"
-                  className="block text-xs font-semibold uppercase tracking-wider text-zinc-400"
-                >
-                  Password
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-amber-400 hover:text-amber-300 transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative rounded-lg shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Lock className="h-4 w-4" />
-                </div>
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  autoComplete="current-password"
-                  required
-                  className="block w-full pl-10 pr-10 py-2.5 text-sm bg-zinc-950/80 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-zinc-500 hover:text-zinc-300"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || success}
-              className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-zinc-950 bg-amber-400 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 focus:ring-offset-zinc-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                  <span>Verifying Session...</span>
-                </>
-              ) : success ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Authenticated</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Sign In to CMS Portal</span>
-                  <ArrowRight className="w-4 h-4 ml-0.5" />
-                </>
-              )}
-            </button>
+    <main className="grid min-h-[100dvh] place-items-center bg-[#f8f9fb] px-5 py-12 text-zinc-900">
+      <div className="w-full max-w-[420px]">
+        <Link href="/" className="mb-8 flex items-center justify-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-900 text-amber-400"><Car className="h-5 w-5" /></span><span className="text-sm font-extrabold tracking-wide">APEX AUTO<span className="ml-2 rounded bg-zinc-200/60 px-1.5 py-1 text-[9px] font-medium text-zinc-500">CMS</span></span></Link>
+        <section className="rounded-2xl border border-zinc-200 bg-white p-7 sm:p-8">
+          <h1 className="text-2xl font-semibold tracking-tight">Masuk ke ruang kerja</h1>
+          <p className="mt-2 text-sm leading-6 text-zinc-500">Kelola koleksi mobil dan pelanggan Apex Auto Medan.</p>
+          <div className="mt-7 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3"><div className="flex items-center justify-between gap-2"><p className="text-xs font-semibold text-amber-900">Akun Admin Demo</p><button type="button" onClick={fillDemoAccount} className="text-xs font-semibold text-amber-800 underline underline-offset-2">Isi Akun Demo</button></div><p className="mt-2 break-words text-[11px] text-amber-800">admin@apexauto.id · password123</p></div>
+          {error && <div role="alert" className="mt-5 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs leading-5 text-red-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />{error}</div>}
+          {success && <p role="status" className="mt-5 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-700">Akses disetujui. Membuka panel admin...</p>}
+          <form onSubmit={handleLogin} className="mt-6 space-y-5">
+            <div><label htmlFor="email" className="mb-2 block text-xs font-medium text-zinc-600">Email Showroom</label><div className="relative"><Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-zinc-400" /><input id="email" type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="admin@apexauto.id" autoComplete="email" required className="h-11 w-full rounded-lg border border-zinc-200 bg-white pl-10 pr-3 text-sm outline-none placeholder:text-zinc-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100" /></div></div>
+            <div><div className="mb-2 flex items-center justify-between"><label htmlFor="password" className="text-xs font-medium text-zinc-600">Kata Sandi</label><Link href="/forgot-password" className="text-xs text-zinc-500 hover:text-zinc-900">Lupa kata sandi?</Link></div><div className="relative"><Lock className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-zinc-400" /><input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={event => setPassword(event.target.value)} placeholder="Masukkan kata sandi" autoComplete="current-password" required className="h-11 w-full rounded-lg border border-zinc-200 bg-white pl-10 pr-10 text-sm outline-none placeholder:text-zinc-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100" /><button type="button" aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'} onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-zinc-400 hover:text-zinc-700">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
+            <button type="submit" disabled={isLoading || success} className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 text-sm font-semibold text-white hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 disabled:cursor-wait disabled:opacity-50">{isLoading ? 'Memeriksa Sesi...' : success ? 'Akses Disetujui' : 'Masuk ke Panel Admin'}<ArrowRight className="h-4 w-4" /></button>
           </form>
-
-          <div className="mt-6 pt-6 border-t border-zinc-800/80 text-center">
-            <Link
-              href="/"
-              className="text-xs text-zinc-400 hover:text-zinc-200 transition-colors inline-flex items-center gap-1"
-            >
-              ← Back to Apex Auto public website
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-8 text-center text-xs text-zinc-400">
-          <p>Protected by Apex Auto Enterprise Session Authentication</p>
-          <p className="mt-1">Singapore Showroom Operating System • Confidential & Monolithic</p>
-        </div>
+        </section>
+        <div className="mt-6 text-center"><Link href="/" className="text-xs text-zinc-500 hover:text-zinc-900">Kembali ke Situs Apex Auto</Link><p className="mt-4 text-[11px] text-zinc-400">Portal internal pemilik dan staf showroom</p></div>
       </div>
-    </div>
+    </main>
   );
 }
-
 export default function AdminLoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-zinc-400">
-          <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      }
-    >
-      <AdminLoginForm />
-    </Suspense>
-  );
+  return <Suspense fallback={<div className="grid min-h-[100dvh] place-items-center bg-white text-sm text-zinc-500">Memuat halaman masuk...</div>}><AdminLoginForm /></Suspense>;
 }

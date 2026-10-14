@@ -5,9 +5,12 @@ import { MOCK_PROMOS } from '@/data/mock-promos';
 import { MOCK_INQUIRIES, AdminInquiry } from '@/data/mock-inquiries';
 import { Car, CarImage, CarStatus } from '@/types/car';
 import { PromoItem } from '@/types/promo';
+import { migrateIndonesiaDemo } from './indonesia-demo-migration';
+import { localizeVehicleValue } from '@/lib/locale';
 
 let clientInstance: Client | null = null;
 let isDbInitialized = false;
+let initializationPromise: Promise<Client> | null = null;
 
 export function getDbClient(): Client {
   if (!clientInstance) {
@@ -22,7 +25,18 @@ export function getDbClient(): Client {
 /**
  * Initializes tables and seeds initial showroom data if database is empty
  */
-export async function ensureDatabase(): Promise<Client> {
+export function ensureDatabase(): Promise<Client> {
+  if (isDbInitialized) return Promise.resolve(getDbClient());
+  if (!initializationPromise) {
+    initializationPromise = initializeDatabase().catch(error => {
+      initializationPromise = null;
+      throw error;
+    });
+  }
+  return initializationPromise;
+}
+
+async function initializeDatabase(): Promise<Client> {
   const db = getDbClient();
   if (isDbInitialized) return db;
 
@@ -58,10 +72,10 @@ export async function ensureDatabase(): Promise<Client> {
         features TEXT,
         status TEXT NOT NULL DEFAULT 'available',
         location TEXT NOT NULL,
-        depreciation_sgd REAL,
-        coe_expiry TEXT,
+        annual_tax_idr REAL,
+        tax_expiry TEXT,
         engine_capacity_cc INTEGER,
-        monthly_est_sgd REAL,
+        monthly_est_idr REAL,
         is_featured INTEGER NOT NULL DEFAULT 0,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
@@ -89,7 +103,7 @@ export async function ensureDatabase(): Promise<Client> {
         title TEXT NOT NULL,
         tagline TEXT NOT NULL,
         badge TEXT NOT NULL,
-        discount_sgd REAL,
+        discount_idr REAL,
         description TEXT NOT NULL,
         benefits TEXT,
         terms_conditions TEXT,
@@ -111,7 +125,7 @@ export async function ensureDatabase(): Promise<Client> {
         id TEXT PRIMARY KEY,
         car_id TEXT,
         car_name TEXT,
-        car_price_sgd REAL,
+        car_price_idr REAL,
         name TEXT NOT NULL,
         contact TEXT NOT NULL,
         email TEXT,
@@ -129,6 +143,8 @@ export async function ensureDatabase(): Promise<Client> {
       )
     `);
 
+    await migrateIndonesiaDemo(db);
+
     // Auto-seed initial admin user
     const usersCount = await db.execute('SELECT COUNT(*) as count FROM users');
     if (Number(usersCount.rows[0]?.count || 0) === 0) {
@@ -138,11 +154,11 @@ export async function ensureDatabase(): Promise<Client> {
               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           'usr-owner-001',
-          'Alvin Tan (Showroom Principal)',
-          'owner@apexautosg.com',
+          'Admin Apex Medan',
+          'admin@apexauto.id',
           'password123',
           'owner',
-          '+6581234567',
+          '+6281200000000',
           now,
           now,
         ],
@@ -166,8 +182,8 @@ export async function ensureDatabase(): Promise<Client> {
           sql: `INSERT INTO cars (
                   id, brand, model, year, price, body_type, transmission,
                   fuel_type, mileage_km, color, description, features,
-                  status, location, depreciation_sgd, coe_expiry,
-                  engine_capacity_cc, monthly_est_sgd, is_featured, created_at, updated_at
+                  status, location, annual_tax_idr, tax_expiry,
+                  engine_capacity_cc, monthly_est_idr, is_featured, created_at, updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           args: [
             car.id,
@@ -184,16 +200,17 @@ export async function ensureDatabase(): Promise<Client> {
             featuresJson,
             car.status,
             car.location,
-            car.depreciation_sgd ?? null,
-            car.coe_expiry ?? null,
+            car.annual_tax_idr ?? null,
+            car.tax_expiry ?? null,
             car.engine_capacity_cc ?? null,
-            car.monthly_est_sgd ?? null,
+            car.monthly_est_idr ?? null,
             car.is_featured ? 1 : 0,
             now,
             now,
           ],
         });
 
+        await db.execute({ sql: 'UPDATE cars SET plate_number = ?, document_status = ?, owners = ? WHERE id = ?', args: [car.plate_number || '', car.document_status || '', car.owners ?? null, car.id] });
         if (car.images && car.images.length > 0) {
           for (let i = 0; i < car.images.length; i++) {
             const img = car.images[i];
@@ -221,7 +238,7 @@ export async function ensureDatabase(): Promise<Client> {
       for (const p of MOCK_PROMOS) {
         await db.execute({
           sql: `INSERT INTO promos (
-                  id, slug, title, tagline, badge, discount_sgd, description,
+                  id, slug, title, tagline, badge, discount_idr, description,
                   benefits, terms_conditions, valid_until, image_url,
                   highlight_color, cta_text, cta_whatsapp_text, is_featured, is_active,
                   created_at, updated_at
@@ -232,7 +249,7 @@ export async function ensureDatabase(): Promise<Client> {
             p.title,
             p.tagline,
             p.badge,
-            p.discount_sgd ?? null,
+            p.discount_idr ?? null,
             p.description,
             JSON.stringify(p.benefits || []),
             JSON.stringify(p.terms_conditions || []),
@@ -256,7 +273,7 @@ export async function ensureDatabase(): Promise<Client> {
       for (const inq of MOCK_INQUIRIES) {
         await db.execute({
           sql: `INSERT INTO inquiries (
-                  id, car_id, car_name, car_price_sgd, name, contact, email,
+                  id, car_id, car_name, car_price_idr, name, contact, email,
                   interest, message, trade_in_car, loan_type, preferred_contact,
                   status, sales_assigned, branch, notes, created_at, updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -264,7 +281,7 @@ export async function ensureDatabase(): Promise<Client> {
             inq.id,
             inq.carId,
             inq.carName,
-            inq.carPriceSGD,
+            inq.carPriceIDR,
             inq.customerName,
             inq.phone,
             inq.email,
@@ -274,8 +291,8 @@ export async function ensureDatabase(): Promise<Client> {
             inq.loanType || 'bank_loan',
             inq.preferredContact || 'whatsapp',
             inq.status,
-            inq.salesAssigned || 'Marcus Tan',
-            inq.branch || 'Apex Auto Flagship @ Leng Kee',
+            inq.salesAssigned || 'Budi Santoso',
+            inq.branch || "Apex Auto Medan",
             null,
             inq.createdAt || new Date().toISOString(),
             inq.createdAt || new Date().toISOString(),
@@ -316,11 +333,12 @@ function rowToCar(row: Record<string, any>, images: CarImage[] = []): Car {
     model: String(row.model),
     year: Number(row.year),
     price: Number(row.price),
+    currency: 'IDR',
     body_type: String(row.body_type),
     transmission: String(row.transmission),
     fuel_type: String(row.fuel_type),
     mileage_km: Number(row.mileage_km),
-    color: String(row.color),
+    color: localizeVehicleValue(String(row.color)),
     description: row.description ? String(row.description) : '',
     features,
     status: row.status as CarStatus,
@@ -328,10 +346,13 @@ function rowToCar(row: Record<string, any>, images: CarImage[] = []): Car {
     is_featured: Boolean(row.is_featured),
     created_at: String(row.created_at),
     updated_at: row.updated_at ? String(row.updated_at) : undefined,
-    depreciation_sgd: row.depreciation_sgd !== null ? Number(row.depreciation_sgd) : undefined,
-    coe_expiry: row.coe_expiry ? String(row.coe_expiry) : undefined,
+    annual_tax_idr: row.annual_tax_idr !== null ? Number(row.annual_tax_idr) : undefined,
+    tax_expiry: row.tax_expiry ? String(row.tax_expiry) : undefined,
+    plate_number: row.plate_number ? String(row.plate_number) : undefined,
+    document_status: row.document_status ? String(row.document_status) : undefined,
+    owners: row.owners !== null && row.owners !== undefined ? Number(row.owners) : undefined,
     engine_capacity_cc: row.engine_capacity_cc !== null ? Number(row.engine_capacity_cc) : undefined,
-    monthly_est_sgd: row.monthly_est_sgd !== null ? Number(row.monthly_est_sgd) : undefined,
+    monthly_est_idr: row.monthly_est_idr !== null ? Number(row.monthly_est_idr) : undefined,
     images,
   };
 }
@@ -363,12 +384,12 @@ export async function getSqliteCars(options: {
     args.push(options.bodyType);
   }
 
-  if (options.priceRange === 'under-150k') {
-    sql += ' AND price < 150000';
-  } else if (options.priceRange === '150k-200k') {
-    sql += ' AND price >= 150000 AND price <= 200000';
-  } else if (options.priceRange === 'above-200k') {
-    sql += ' AND price > 200000';
+  if (options.priceRange === 'under-500m') {
+    sql += ' AND price < 500000000';
+  } else if (options.priceRange === '500m-1b') {
+    sql += ' AND price >= 500000000 AND price <= 1000000000';
+  } else if (options.priceRange === 'above-1b') {
+    sql += ' AND price > 1000000000';
   }
 
   if (options.minPrice !== null && options.minPrice !== undefined && !isNaN(options.minPrice)) {
@@ -468,15 +489,15 @@ export async function createSqliteCar(data: Partial<Car> & { images?: (string | 
   const featuresJson = JSON.stringify(features);
 
   const price = Number(data.price) || 0;
-  const depreciation = data.depreciation_sgd ? Number(data.depreciation_sgd) : Math.round(price * 0.09);
-  const monthlyEst = data.monthly_est_sgd ? Number(data.monthly_est_sgd) : Math.round(price / 84);
+  const depreciation = data.annual_tax_idr ? Number(data.annual_tax_idr) : null;
+  const monthlyEst = data.monthly_est_idr ? Number(data.monthly_est_idr) : null;
 
   await db.execute({
     sql: `INSERT INTO cars (
             id, brand, model, year, price, body_type, transmission,
             fuel_type, mileage_km, color, description, features,
-            status, location, depreciation_sgd, coe_expiry,
-            engine_capacity_cc, monthly_est_sgd, is_featured, created_at, updated_at
+            status, location, annual_tax_idr, tax_expiry,
+            engine_capacity_cc, monthly_est_idr, is_featured, created_at, updated_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       carId,
@@ -485,16 +506,16 @@ export async function createSqliteCar(data: Partial<Car> & { images?: (string | 
       Number(data.year) || new Date().getFullYear(),
       price,
       data.body_type || 'Sedan',
-      data.transmission || 'Automatic',
-      data.fuel_type || 'Petrol',
+      data.transmission || "Otomatis",
+      data.fuel_type || "Bensin",
       Number(data.mileage_km) || 0,
       data.color || 'Black',
       data.description || '',
       featuresJson,
       data.status || 'available',
-      data.location || 'Leng Kee Showroom, Singapore',
+      data.location || "Medan, Sumatera Utara",
       depreciation,
-      data.coe_expiry || '10-Year COE',
+      data.tax_expiry || "Belum diisi",
       data.engine_capacity_cc ? Number(data.engine_capacity_cc) : null,
       monthlyEst,
       data.is_featured ? 1 : 0,
@@ -529,6 +550,7 @@ export async function createSqliteCar(data: Partial<Car> & { images?: (string | 
     }
   }
 
+  await db.execute({ sql: 'UPDATE cars SET plate_number = ?, document_status = ?, owners = ?, currency = ? WHERE id = ?', args: [data.plate_number || '', data.document_status || '', data.owners ?? null, 'IDR', carId] });
   const createdCar = await getSqliteCarById(carId);
   return createdCar!;
 }
@@ -558,12 +580,15 @@ export async function updateSqliteCar(id: string, data: Partial<Car> & { images?
   }
   if (data.status !== undefined) { fields.push('status = ?'); args.push(data.status); }
   if (data.location !== undefined) { fields.push('location = ?'); args.push(data.location); }
-  if (data.depreciation_sgd !== undefined) { fields.push('depreciation_sgd = ?'); args.push(data.depreciation_sgd ? Number(data.depreciation_sgd) : null); }
-  if (data.coe_expiry !== undefined) { fields.push('coe_expiry = ?'); args.push(data.coe_expiry); }
+  if (data.annual_tax_idr !== undefined) { fields.push('annual_tax_idr = ?'); args.push(data.annual_tax_idr ? Number(data.annual_tax_idr) : null); }
+  if (data.tax_expiry !== undefined) { fields.push('tax_expiry = ?'); args.push(data.tax_expiry); }
   if (data.engine_capacity_cc !== undefined) { fields.push('engine_capacity_cc = ?'); args.push(data.engine_capacity_cc ? Number(data.engine_capacity_cc) : null); }
-  if (data.monthly_est_sgd !== undefined) { fields.push('monthly_est_sgd = ?'); args.push(data.monthly_est_sgd ? Number(data.monthly_est_sgd) : null); }
+  if (data.monthly_est_idr !== undefined) { fields.push('monthly_est_idr = ?'); args.push(data.monthly_est_idr ? Number(data.monthly_est_idr) : null); }
   if (data.is_featured !== undefined) { fields.push('is_featured = ?'); args.push(data.is_featured ? 1 : 0); }
 
+  if (data.plate_number !== undefined) { fields.push('plate_number = ?'); args.push(data.plate_number); }
+  if (data.document_status !== undefined) { fields.push('document_status = ?'); args.push(data.document_status); }
+  if (data.owners !== undefined) { fields.push('owners = ?'); args.push(Number(data.owners)); }
   fields.push('updated_at = ?');
   args.push(now);
 
@@ -628,7 +653,7 @@ function rowToPromo(row: Record<string, any>): PromoItem {
     title: String(row.title),
     tagline: String(row.tagline),
     badge: String(row.badge),
-    discount_sgd: row.discount_sgd !== null ? Number(row.discount_sgd) : undefined,
+    discount_idr: row.discount_idr !== null ? Number(row.discount_idr) : undefined,
     description: String(row.description),
     benefits,
     terms_conditions: terms,
@@ -655,7 +680,7 @@ export async function createSqlitePromo(data: Partial<PromoItem>): Promise<Promo
 
   await db.execute({
     sql: `INSERT INTO promos (
-            id, slug, title, tagline, badge, discount_sgd, description,
+            id, slug, title, tagline, badge, discount_idr, description,
             benefits, terms_conditions, valid_until, image_url,
             highlight_color, cta_text, cta_whatsapp_text, is_featured, is_active,
             created_at, updated_at
@@ -666,15 +691,15 @@ export async function createSqlitePromo(data: Partial<PromoItem>): Promise<Promo
       data.title || 'New Showroom Privilege',
       data.tagline || 'Special privilege program for Apex Auto clients',
       data.badge || 'PROMOTION',
-      data.discount_sgd !== undefined ? Number(data.discount_sgd) : null,
+      data.discount_idr !== undefined ? Number(data.discount_idr) : null,
       data.description || '',
       JSON.stringify(data.benefits || []),
       JSON.stringify(data.terms_conditions || []),
-      data.valid_until || 'Ongoing',
+      data.valid_until || "Masih berlaku",
       data.image_url || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80',
       data.highlight_color || 'amber',
-      data.cta_text || 'Claim via WhatsApp',
-      data.cta_whatsapp_text || 'Hello Apex Auto, I would like to inquire about this promotion.',
+      data.cta_text || "Tanya Promo via WhatsApp",
+      data.cta_whatsapp_text || "Halo Apex Auto, saya ingin mengetahui informasi promo ini.",
       data.is_featured ? 1 : 0,
       1,
       now,
@@ -695,7 +720,7 @@ export async function updateSqlitePromo(id: string, data: Partial<PromoItem>): P
   if (data.title !== undefined) { fields.push('title = ?'); args.push(data.title); }
   if (data.tagline !== undefined) { fields.push('tagline = ?'); args.push(data.tagline); }
   if (data.badge !== undefined) { fields.push('badge = ?'); args.push(data.badge); }
-  if (data.discount_sgd !== undefined) { fields.push('discount_sgd = ?'); args.push(data.discount_sgd !== null ? Number(data.discount_sgd) : null); }
+  if (data.discount_idr !== undefined) { fields.push('discount_idr = ?'); args.push(data.discount_idr !== null ? Number(data.discount_idr) : null); }
   if (data.description !== undefined) { fields.push('description = ?'); args.push(data.description); }
   if (data.benefits !== undefined) { fields.push('benefits = ?'); args.push(JSON.stringify(data.benefits)); }
   if (data.terms_conditions !== undefined) { fields.push('terms_conditions = ?'); args.push(JSON.stringify(data.terms_conditions)); }
@@ -737,16 +762,16 @@ function rowToInquiry(row: Record<string, any>): AdminInquiry {
     phone: String(row.contact),
     email: row.email ? String(row.email) : '',
     carId: row.car_id ? String(row.car_id) : 'general',
-    carName: row.car_name ? String(row.car_name) : (row.interest ? String(row.interest) : 'Showroom Inquiry'),
-    carPriceSGD: Number(row.car_price_sgd) || 0,
+    carName: row.car_name ? String(row.car_name) : (row.interest ? String(row.interest) : "Pertanyaan Showroom"),
+    carPriceIDR: Number(row.car_price_idr) || 0,
     message: String(row.message),
     tradeInCar: row.trade_in_car ? String(row.trade_in_car) : undefined,
     loanType: (row.loan_type as any) || 'bank_loan',
     preferredContact: (row.preferred_contact as any) || 'whatsapp',
     status: (row.status as any) || 'new',
     createdAt: String(row.created_at),
-    salesAssigned: row.sales_assigned ? String(row.sales_assigned) : 'Marcus Tan',
-    branch: row.branch ? String(row.branch) : 'Apex Auto Flagship @ Leng Kee',
+    salesAssigned: row.sales_assigned ? String(row.sales_assigned) : 'Budi Santoso',
+    branch: row.branch ? String(row.branch) : "Apex Auto Medan",
   };
 }
 
@@ -762,7 +787,7 @@ export async function createSqliteInquiry(data: {
   email?: string;
   car_id?: string;
   car_name?: string;
-  car_price_sgd?: number;
+  car_price_idr?: number;
   message: string;
   interest?: string;
   trade_in_car?: string;
@@ -776,7 +801,7 @@ export async function createSqliteInquiry(data: {
 
   await db.execute({
     sql: `INSERT INTO inquiries (
-            id, car_id, car_name, car_price_sgd, name, contact, email,
+            id, car_id, car_name, car_price_idr, name, contact, email,
             interest, message, trade_in_car, loan_type, preferred_contact,
             status, sales_assigned, branch, notes, created_at, updated_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -784,7 +809,7 @@ export async function createSqliteInquiry(data: {
       id,
       data.car_id || null,
       data.car_name || data.interest || 'General Inquiry',
-      data.car_price_sgd || 0,
+      data.car_price_idr || 0,
       data.name,
       data.contact,
       data.email || null,
@@ -794,8 +819,8 @@ export async function createSqliteInquiry(data: {
       data.loan_type || 'bank_loan',
       data.preferred_contact || 'whatsapp',
       'new',
-      'Marcus Tan (Senior Specialist)',
-      data.branch || 'Apex Auto Flagship @ Leng Kee',
+      'Budi (Konsultan Penjualan)',
+      data.branch || "Apex Auto Medan",
       null,
       now,
       now,
@@ -848,7 +873,7 @@ export async function getSqliteStats() {
   const availableCars = cars.filter((c) => c.status === 'available').length;
   const reservedCars = cars.filter((c) => c.status === 'reserved').length;
   const soldCars = cars.filter((c) => c.status === 'sold').length;
-  const totalValuationSGD = cars.reduce((acc, c) => acc + (c.price || 0), 0);
+  const totalValuationIDR = cars.reduce((acc, c) => acc + (c.price || 0), 0);
 
   const totalInquiries = inquiries.length;
   const newInquiries = inquiries.filter((i) => i.status === 'new').length;
@@ -858,7 +883,7 @@ export async function getSqliteStats() {
     availableCars,
     reservedCars,
     soldCars,
-    totalValuationSGD,
+    totalValuationIDR,
     totalInquiries,
     newInquiries,
   };

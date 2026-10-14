@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
 
   // Multi-step flow: 1 (Email), 2 (OTP), 3 (New Password), 4 (Success)
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [email, setEmail] = useState('owner@apexautosg.com');
+  const [email, setEmail] = useState('admin@apexauto.id');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim() || !emailRegex.test(email.trim())) {
-      setError('Please enter a valid showroom email address.');
+      setError("Masukkan email akun showroom yang valid.");
       return;
     }
 
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to send password reset request');
+        throw new Error(data.error || "Permintaan reset kata sandi gagal dikirim");
       }
       setStep(2);
     } catch (err: any) {
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     if (otp.trim() !== SIMULATED_OTP) {
-      setError(`Verification code does not match. Use simulated code: ${SIMULATED_OTP}`);
+      setError(`Kode verifikasi tidak sesuai. Gunakan kode demo: ${SIMULATED_OTP}`);
       return;
     }
 
@@ -87,12 +87,12 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters.');
+      setError("Kata sandi baru minimal 6 karakter.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Password confirmation does not match.');
+      setError("Konfirmasi kata sandi tidak sesuai.");
       return;
     }
 
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to reset password');
+        throw new Error(data.error || "Kata sandi gagal diatur ulang");
       }
       setStep(4);
     } catch (err: any) {
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
           href="/login"
           className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800"
         >
-          <span>← Back to Login</span>
+          <span>← Kembali ke Halaman Masuk</span>
         </Link>
       </div>
 
@@ -146,19 +146,19 @@ export default function ForgotPasswordPage() {
             </div>
             <div className="text-left">
               <div className="font-extrabold tracking-wider text-xl text-white flex items-center gap-1.5">
-                APEX AUTO <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">SG</span>
+                APEX AUTO <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold">ID</span>
               </div>
               <div className="text-[10px] text-slate-400 tracking-widest uppercase">
-                Showroom Password Recovery
+                Pemulihan Kata Sandi
               </div>
             </div>
           </Link>
 
           <h1 className="text-2xl font-bold text-white tracking-tight">
-            Password Recovery
+            Pemulihan Kata Sandi
           </h1>
           <p className="text-xs text-slate-400 mt-1.5">
-            Security verification workflow for showroom principals &amp; advisors
+            Verifikasi keamanan untuk pemilik dan staf showroom
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleRequestOtp} className="space-y-4 animate-in fade-in">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Registered Account Email
+                  Email Akun Terdaftar
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -201,7 +201,7 @@ export default function ForgotPasswordPage() {
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5">
-                  We will send a 6-digit verification code to your email address.
+                  Kode verifikasi 6 digit akan dikirim ke email Anda.
                 </p>
               </div>
 
@@ -211,10 +211,10 @@ export default function ForgotPasswordPage() {
                 className="w-full py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
               >
                 {isLoading ? (
-                  <span>Sending Code...</span>
+                  <span>Mengirim Kode...</span>
                 ) : (
                   <>
-                    <span>Send Verification Code</span>
+                    <span>Kirim Kode Verifikasi</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -230,18 +230,18 @@ export default function ForgotPasswordPage() {
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-amber-400 flex items-center gap-1.5">
                     <KeyRound className="w-3.5 h-3.5" />
-                    Simulated Incoming OTP Code:
+                    Kode OTP Demo:
                   </span>
                   <button
                     type="button"
                     onClick={() => setOtp(SIMULATED_OTP)}
                     className="text-amber-400 hover:text-amber-300 font-bold underline text-[10px]"
                   >
-                    Use Code
+                    Gunakan Kode
                   </button>
                 </div>
                 <p className="text-slate-300">
-                  Verification code dispatched to <strong className="text-white">{email}</strong>:
+                  Kode verifikasi dikirim ke <strong className="text-white">{email}</strong>:
                 </p>
                 <div className="text-center py-1 font-mono font-bold text-lg text-amber-300 tracking-widest bg-slate-950/70 rounded-xl border border-slate-800">
                   {SIMULATED_OTP}
@@ -250,7 +250,7 @@ export default function ForgotPasswordPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Enter 6-Digit Verification Code
+                  Masukkan Kode Verifikasi 6 Digit
                 </label>
                 <input
                   type="text"
@@ -271,14 +271,14 @@ export default function ForgotPasswordPage() {
                   onClick={() => setStep(1)}
                   className="w-1/3 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold text-xs transition-colors"
                 >
-                  Change Email
+                  Ubah Email
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="flex-1 py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
                 >
-                  {isLoading ? 'Verifying...' : 'Verify Code'}
+                  {isLoading ? "Memeriksa..." : "Verifikasi Kode"}
                 </button>
               </div>
             </form>
@@ -289,7 +289,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleResetPassword} className="space-y-4 animate-in fade-in">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  New Password
+                  Kata Sandi Baru
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -297,7 +297,7 @@ export default function ForgotPasswordPage() {
                     type={showPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Minimum 6 characters"
+                    placeholder="Minimal 6 karakter"
                     required
                     className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
                   />
@@ -314,7 +314,7 @@ export default function ForgotPasswordPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Confirm New Password
+                  Konfirmasi Kata Sandi Baru
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -322,7 +322,7 @@ export default function ForgotPasswordPage() {
                     type={showPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repeat new password"
+                    placeholder="Ulangi kata sandi baru"
                     required
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
                   />
@@ -334,7 +334,7 @@ export default function ForgotPasswordPage() {
                 disabled={isLoading}
                 className="w-full py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
               >
-                {isLoading ? 'Updating Password...' : 'Save New Password'}
+                {isLoading ? "Memperbarui Kata Sandi..." : "Simpan Kata Sandi Baru"}
               </button>
             </form>
           )}
@@ -345,9 +345,9 @@ export default function ForgotPasswordPage() {
               <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30 shadow-lg">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-white">Password Successfully Updated!</h3>
+              <h3 className="text-xl font-bold text-white">Kata Sandi Berhasil Diperbarui!</h3>
               <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
-                Your password for <strong className="text-white">{email}</strong> has been successfully updated. Please sign in using your new credentials.
+                Kata sandi untuk <strong className="text-white">{email}</strong> berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.
               </p>
               <div className="pt-3">
                 <Link
@@ -355,7 +355,7 @@ export default function ForgotPasswordPage() {
                   className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all"
                 >
                   <KeyRound className="w-4 h-4" />
-                  <span>Return to Sign In</span>
+                  <span>Kembali ke Halaman Masuk</span>
                 </Link>
               </div>
             </div>
@@ -365,7 +365,7 @@ export default function ForgotPasswordPage() {
           <div className="pt-2 border-t border-slate-800 text-center">
             <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              256-bit SSL Encrypted Security System
+              Verifikasi Akun Showroom
             </span>
           </div>
         </div>

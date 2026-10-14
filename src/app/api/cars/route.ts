@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || '';
     const sort = searchParams.get('sort') || 'newest';
 
-    if (priceRange === 'under-150k') {
-      maxPrice = 149999.99;
-    } else if (priceRange === '150k-200k') {
-      minPrice = 150000;
-      maxPrice = 200000;
-    } else if (priceRange === 'above-200k') {
-      minPrice = 200000.01;
+    if (priceRange === 'under-500m') {
+      maxPrice = 499999999;
+    } else if (priceRange === '500m-1b') {
+      minPrice = 500000000;
+      maxPrice = 1000000000;
+    } else if (priceRange === 'above-1b') {
+      minPrice = 1000000001;
     }
 
     let carsList;
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to process vehicle catalog search and filters',
+        error: "Gagal memuat pencarian dan filter mobil",
       },
       { status: 500 }
     );
@@ -83,18 +83,21 @@ export async function POST(request: NextRequest) {
       year,
       price,
       body_type,
-      transmission = 'Automatic',
-      fuel_type = 'Petrol',
+      transmission = "Otomatis",
+      fuel_type = "Bensin",
       mileage_km = 0,
       color,
       description = '',
       features = [],
       status = 'available',
-      location = 'Leng Kee Showroom, Singapore',
-      depreciation_sgd,
-      coe_expiry = '10-Year COE',
+      location = "Medan, Sumatera Utara",
+      annual_tax_idr,
+      tax_expiry = '',
+      plate_number = '',
+      document_status = '',
+      owners,
       engine_capacity_cc,
-      monthly_est_sgd,
+      monthly_est_idr,
       images = [],
       is_featured = false,
     } = body;
@@ -104,10 +107,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Required fields missing: brand, model, year, price, body_type, and color are required.',
+          error: "Merek, model, tahun, harga, jenis bodi, dan warna wajib diisi.",
         },
         { status: 400 }
       );
+    }
+
+    if (!Number.isSafeInteger(Number(price)) || Number(price) <= 0) {
+      return NextResponse.json({ success: false, error: 'Harga harus berupa nominal rupiah bulat yang lebih dari nol.' }, { status: 400 });
     }
 
     const defaultImages =
@@ -136,10 +143,13 @@ export async function POST(request: NextRequest) {
       features: Array.isArray(features) ? features : [features].filter(Boolean),
       status,
       location,
-      depreciation_sgd: depreciation_sgd ? Number(depreciation_sgd) : undefined,
-      coe_expiry,
+      annual_tax_idr: annual_tax_idr ? Number(annual_tax_idr) : undefined,
+      tax_expiry,
+      plate_number,
+      document_status,
+      owners: owners ? Number(owners) : undefined,
       engine_capacity_cc: engine_capacity_cc ? Number(engine_capacity_cc) : undefined,
-      monthly_est_sgd: monthly_est_sgd ? Number(monthly_est_sgd) : undefined,
+      monthly_est_idr: monthly_est_idr ? Number(monthly_est_idr) : undefined,
       is_featured: Boolean(is_featured),
       images: defaultImages,
     });
@@ -147,7 +157,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: `Unit "${createdCar.brand} ${createdCar.model}" successfully added to showroom inventory.`,
+        message: `Unit "${createdCar.brand} ${createdCar.model}" berhasil ditambahkan ke katalog.`,
         data: createdCar,
       },
       { status: 201 }
@@ -157,7 +167,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to create new vehicle record in inventory.',
+        error: "Gagal menambahkan mobil ke katalog.",
       },
       { status: 500 }
     );

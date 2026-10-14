@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Car, CarStatus } from '@/types/car';
-import { X, Save, Car as CarIcon, DollarSign, Calendar, MapPin, CheckCircle2, ShieldCheck, Tag } from 'lucide-react';
+import { X, Save, Car as CarIcon, Banknote, Calendar, MapPin, CheckCircle2, ShieldCheck, Tag } from 'lucide-react';
 
 interface AdminCarEditModalProps {
   car: Car | null;
@@ -41,7 +41,7 @@ export default function AdminCarEditModal({
         ...car,
         ...formData,
         price: Number(formData.price) || car.price,
-        depreciation_sgd: Number(formData.depreciation_sgd) || car.depreciation_sgd,
+        annual_tax_idr: Number(formData.annual_tax_idr) || car.annual_tax_idr,
         mileage_km: Number(formData.mileage_km) || car.mileage_km,
         year: Number(formData.year) || car.year,
         status: (formData.status as CarStatus) || car.status,
@@ -62,28 +62,28 @@ export default function AdminCarEditModal({
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
+        className="bg-white border border-zinc-200 rounded-xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200">
               <CarIcon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">
-                Edit Vehicle: {car.brand} {car.model}
+              <h2 className="text-lg font-semibold text-zinc-900">
+                Ubah Mobil: {car.brand} {car.model}
               </h2>
-              <div className="text-xs text-slate-400 font-mono">
-                Vehicle ID: {car.id} • Year {car.year}
+              <div className="text-xs text-zinc-500 font-mono">
+                Kode Mobil: {car.id} • Tahun {car.year}
               </div>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -91,141 +91,141 @@ export default function AdminCarEditModal({
 
         {/* Success Alert */}
         {successNotice && (
-          <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-emerald-400 text-xs animate-in fade-in">
+          <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2 text-emerald-700 text-xs animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-            <span>Vehicle details updated successfully in the showroom system!</span>
+            <span>Data mobil berhasil diperbarui!</span>
           </div>
         )}
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Price (SGD) */}
+            {/* Harga tunai dalam rupiah */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                SGD Nett Price *
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Harga Tunai (Rp) *
               </label>
               <div className="relative">
-                <DollarSign className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Banknote className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="number"
                   value={formData.price || ''}
                   onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
                   required
                   min={10000}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-bold text-amber-400 focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 font-semibold text-amber-700 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
             </div>
 
             {/* Status Unit */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Availability Status *
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Status Ketersediaan *
               </label>
               <select
                 value={formData.status || 'available'}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as CarStatus })}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-semibold focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 font-semibold focus:outline-none focus:border-amber-500 transition-colors"
               >
-                <option value="available">Available (Ready Stock)</option>
-                <option value="reserved">Reserved / Booking</option>
-                <option value="sold">Sold (Closed)</option>
+                <option value="available">Tersedia</option>
+                <option value="reserved">Dipesan</option>
+                <option value="sold">Terjual</option>
               </select>
             </div>
 
-            {/* COE Expiry */}
+            {/* Jatuh tempo pajak kendaraan */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                COE Expiry (LTA)
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Pajak Berlaku Sampai
               </label>
               <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Calendar className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  value={formData.coe_expiry || ''}
-                  onChange={(e) => setFormData({ ...formData, coe_expiry: e.target.value })}
-                  placeholder="e.g. 10-Year COE (till 2032)"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  value={formData.tax_expiry || ''}
+                  onChange={(e) => setFormData({ ...formData, tax_expiry: e.target.value })}
+                  placeholder="Contoh: 31 Agustus 2027"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 />
               </div>
             </div>
 
-            {/* Depreciation (SGD/year) */}
+            {/* Pajak tahunan dalam rupiah */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Annual Depreciation (SGD/year)
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Pajak Tahunan (Rp)
               </label>
               <input
                 type="number"
-                value={formData.depreciation_sgd || ''}
-                onChange={(e) => setFormData({ ...formData, depreciation_sgd: Number(e.target.value) })}
-                placeholder="24500"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                value={formData.annual_tax_idr || ''}
+                onChange={(e) => setFormData({ ...formData, annual_tax_idr: Number(e.target.value) })}
+                placeholder="12500000"
+                className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
 
             {/* Location / Hub */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Showroom Hub Location
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Lokasi Showroom
               </label>
               <div className="relative">
-                <MapPin className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <MapPin className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <select
-                  value={formData.location || 'Leng Kee Showroom (South/Central)'}
+                  value={formData.location || "Medan, Sumatera Utara"}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
                 >
-                  <option value="Leng Kee Showroom (South/Central)">Leng Kee Showroom (South/Central)</option>
+                  <option value="Medan, Sumatera Utara">Medan, Sumatera Utara</option>
                 </select>
               </div>
             </div>
 
             {/* Mileage (KM) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Mileage (KM)
+              <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+                Kilometer
               </label>
               <input
                 type="number"
                 value={formData.mileage_km || ''}
                 onChange={(e) => setFormData({ ...formData, mileage_km: Number(e.target.value) })}
                 placeholder="12500"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Vehicle Overview & Condition
+            <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
+              Deskripsi & Kondisi Mobil
             </label>
             <textarea
               rows={3}
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+              className="py-2.5 px-4 rounded-xl bg-zinc-100 hover:bg-zinc-100 text-zinc-600 text-xs font-semibold transition-colors cursor-pointer"
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="py-2.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+              className="py-2.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-900 text-xs font-semibold flex items-center gap-2 shadow-none  transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+              <span>{isSaving ? "Menyimpan..." : "Simpan Perubahan"}</span>
             </button>
           </div>
         </form>

@@ -1,3 +1,4 @@
+import { whatsappUrl } from '@/lib/locale';
 import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, LogIn } from 'lucide-react';
@@ -5,8 +6,8 @@ import { ShieldCheck, LogIn } from 'lucide-react';
 const SOCIAL_LINKS = [
   {
     name: 'Facebook',
-    href: 'https://facebook.com/apexautosg',
-    ariaLabel: 'Apex Auto on Facebook',
+    href: 'https://facebook.com/apexautomedan',
+    ariaLabel: "Apex Auto di Facebook",
     hoverClasses:
       'hover:text-[#1877F2] hover:border-[#1877F2]/40 hover:bg-[#1877F2]/10 hover:shadow-[0_4px_12px_rgba(24,119,242,0.2)]',
     icon: (
@@ -21,8 +22,8 @@ const SOCIAL_LINKS = [
   },
   {
     name: 'Instagram',
-    href: 'https://instagram.com/apexautosg',
-    ariaLabel: 'Apex Auto on Instagram',
+    href: 'https://instagram.com/apexautomedan',
+    ariaLabel: "Apex Auto di Instagram",
     hoverClasses:
       'hover:text-[#E4405F] hover:border-[#E4405F]/40 hover:bg-[#E4405F]/10 hover:shadow-[0_4px_12px_rgba(228,64,95,0.2)]',
     icon: (
@@ -37,8 +38,8 @@ const SOCIAL_LINKS = [
   },
   {
     name: 'WhatsApp',
-    href: 'https://wa.me/6581234567?text=Hello%20Apex%20Auto%2C%20I%20would%20like%20to%20inquire%20about%20your%20vehicles%20and%20services.',
-    ariaLabel: 'Chat with Apex Auto on WhatsApp',
+    href: whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang mobil dan layanan showroom."),
+    ariaLabel: "Hubungi Apex Auto melalui WhatsApp",
     hoverClasses:
       'hover:text-[#25D366] hover:border-[#25D366]/40 hover:bg-[#25D366]/10 hover:shadow-[0_4px_12px_rgba(37,211,102,0.2)]',
     icon: (
@@ -77,15 +78,15 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
               Apex Auto
             </Link>
             <p className={`text-xs mt-1 max-w-sm ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>
-              Singapore&apos;s premier destination for curated luxury, sports, and exotic automobiles.
+              Showroom mobil premium bekas pilihan di Medan. Melayani pembelian tunai, kredit, dan tukar tambah.
             </p>
           </div>
 
           <nav className="flex flex-wrap items-center gap-6">
             {[
-              { href: '/inventory', label: 'Inventory' },
-              { href: '/', label: 'Featured' },
-              { href: '/tentang-kami', label: 'About Us' },
+              { href: '/inventory', label: "Pilihan Mobil" },
+              { href: '/', label: "Pilihan Unggulan" },
+              { href: '/tentang-kami', label: "Tentang Kami" },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -110,7 +111,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
               }`}
             >
               <LogIn className="w-3.5 h-3.5 text-amber-500" />
-              <span>Login</span>
+              <span>Masuk</span>
             </Link>
           </nav>
         </div>
@@ -122,14 +123,14 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
           }`}
         >
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1.5 text-center sm:text-left">
-            <p>&copy; {new Date().getFullYear()} Apex Auto. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Apex Auto. Seluruh hak cipta dilindungi.</p>
             <span className="hidden sm:inline opacity-30">•</span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className={`w-3.5 h-3.5 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`} />
-              LTA Licensed Motor Dealer
+              Mobil Pilihan · Dokumen Jelas
             </span>
             <span className="hidden sm:inline opacity-30">•</span>
-            <span>UEN: 202012345A</span>
+            <span>Medan, Sumatera Utara</span>
             <span className="hidden sm:inline opacity-30">•</span>
             <Link
               href="/login"
@@ -137,7 +138,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
                 isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600'
               }`}
             >
-              Staff Portal
+              Portal Staf
             </Link>
           </div>
 
@@ -148,7 +149,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
                 isDark ? 'text-zinc-500' : 'text-zinc-400'
               }`}
             >
-              Follow Us
+              Ikuti Kami
             </span>
             <div className="flex items-center gap-2">
               {SOCIAL_LINKS.map((item) => (

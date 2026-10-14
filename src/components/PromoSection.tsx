@@ -1,5 +1,8 @@
 'use client';
 
+import {formatRupiah, whatsappUrl } from '@/lib/locale';
+
+
 import React, { useState } from 'react';
 import { MOCK_PROMOS } from '@/data/mock-promos';
 import { PromoItem } from '@/types/promo';
@@ -20,10 +23,10 @@ function PromoCard({
         <h3 className="text-base font-semibold text-zinc-900 leading-snug">
           {promo.title}
         </h3>
-        {promo.discount_sgd && (
+        {promo.discount_idr && (
           <p className="mt-2 text-2xl font-bold text-zinc-900 tabular-nums">
-            S${promo.discount_sgd.toLocaleString('en-SG')}
-            <span className="text-sm font-normal text-zinc-400 ml-1.5">savings</span>
+            {formatRupiah(promo.discount_idr)}
+            <span className="text-sm font-normal text-zinc-400 ml-1.5">potongan</span>
           </p>
         )}
       </div>
@@ -31,21 +34,19 @@ function PromoCard({
       {/* Actions */}
       <div className="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
         <a
-          href={`https://wa.me/6581234567?text=${encodeURIComponent(
-            `Hello Apex Auto, I would like to claim: ${promo.title}`
-          )}`}
+          href={whatsappUrl(`Halo Apex Auto Medan, saya ingin informasi promo: ${promo.title}`)}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           <MessageCircle className="w-3.5 h-3.5" />
-          Claim
+          Tanya Promo
         </a>
         <button
           onClick={() => onTerms(promo)}
           className="text-sm text-zinc-400 hover:text-zinc-700 font-medium transition-colors"
         >
-          Terms
+          Ketentuan
         </button>
       </div>
     </div>
@@ -79,7 +80,7 @@ export function PromoSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header — minimal */}
         <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight mb-10 sm:mb-14">
-          Promotions
+          Promo
         </h2>
 
         {/* Grid */}

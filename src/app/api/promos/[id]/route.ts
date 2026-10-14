@@ -15,7 +15,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Promotion not found.',
+          error: "Promo tidak ditemukan.",
         },
         { status: 404 }
       );
@@ -30,7 +30,7 @@ export async function GET(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to retrieve promo detail.',
+        error: "Gagal memuat detail promo.",
       },
       { status: 500 }
     );
@@ -50,7 +50,7 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          error: `Promotion with id ${id} not found.`,
+          error: `Promo dengan kode ${id} tidak ditemukan.`,
         },
         { status: 404 }
       );
@@ -58,7 +58,7 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: `Promotion "${updated.title}" successfully updated.`,
+      message: `Promo "${updated.title}" berhasil diperbarui.`,
       data: updated,
     });
   } catch (error) {
@@ -66,7 +66,7 @@ export async function PUT(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update promotion.',
+        error: "Gagal memperbarui promo.",
       },
       { status: 500 }
     );
@@ -83,7 +83,7 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: `Promotion ${id} successfully removed.`,
+      message: `Promo ${id} berhasil dihapus.`,
       deleted: success,
     });
   } catch (error) {
@@ -91,7 +91,7 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete promotion.',
+        error: "Gagal menghapus promo.",
       },
       { status: 500 }
     );

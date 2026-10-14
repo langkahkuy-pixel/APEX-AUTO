@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export interface AuthUser {
   name: string;
+  full_name?: string;
   email: string;
   role: string;
 }
@@ -25,7 +26,7 @@ export function useAuth() {
       const stored = localStorage.getItem('apex_auth_session');
       if (stored) {
         const parsed = JSON.parse(stored) as AuthSession;
-        setSession(parsed);
+        setSession({ ...parsed, user: { ...parsed.user, name: parsed.user.name || parsed.user.full_name || 'Admin Apex Medan' } });
       } else {
         setSession(null);
       }

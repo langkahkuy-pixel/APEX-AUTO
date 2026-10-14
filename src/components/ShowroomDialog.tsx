@@ -35,7 +35,7 @@ export function ShowroomDialog({ title, onClose, children, side = false, wide = 
     >
       <div className={`flex items-center justify-between border-b px-6 py-5 ${side ? 'border-white/10' : 'border-zinc-200'}`}>
         <h2 className="text-xl font-bold tracking-tight">{title}</h2>
-        <button onClick={onClose} aria-label={`Close ${title.toLowerCase()}`} className="rounded-lg p-2 transition-colors hover:bg-zinc-500/15 focus-visible:outline-2 focus-visible:outline-amber-500">
+        <button onClick={onClose} aria-label={`Tutup ${title.toLowerCase()}`} className="rounded-lg p-2 transition-colors hover:bg-zinc-500/15 focus-visible:outline-2 focus-visible:outline-amber-500">
           <X className="h-5 w-5" />
         </button>
       </div>
