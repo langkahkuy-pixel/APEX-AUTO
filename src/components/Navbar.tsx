@@ -6,26 +6,43 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronRight } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '/', label: "Beranda" },
-  { href: '/inventory', label: "Pilihan Mobil" },
-  { href: '/tentang-kami', label: "Tentang Kami" },
+  { href: '/#beranda', id: 'beranda', label: 'Beranda' },
+  { href: '/#mobil-kami', id: 'mobil-kami', label: 'Mobil Kami' },
+  { href: '/#testimoni', id: 'testimoni', label: 'Testimoni' },
+  { href: '/#tentang-kami', id: 'tentang-kami', label: 'Tentang Kami' },
+  { href: '/#kontak', id: 'kontak', label: 'Kontak' },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('beranda');
   const pathname = usePathname();
+  const solid = scrolled || pathname !== '/';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (pathname !== '/') return;
+    const sections = NAV_LINKS.map(link => document.getElementById(link.id)).filter((section): section is HTMLElement => !!section);
+    const onScroll = () => {
+      const current = [...sections].reverse().find(section => section.getBoundingClientRect().top <= 120);
+      setActiveSection(current?.id ?? 'beranda');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pathname]);
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        solid
           ? 'bg-white/90 backdrop-blur-md border-b border-zinc-200 text-zinc-900'
           : 'bg-transparent border-b border-transparent text-white'
       }`}
@@ -33,24 +50,24 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand — wordmark only */}
-          <Link href="/" className="text-base font-bold tracking-[0.15em] uppercase">
+          <Link href="/#beranda" className="text-base font-bold tracking-[0.15em] uppercase">
             Apex Auto
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = pathname === '/' && activeSection === link.id;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={`text-[13px] font-medium tracking-wide transition-colors ${
                     isActive
-                      ? scrolled
+                      ? solid
                         ? 'text-zinc-900 font-semibold'
                         : 'text-white font-semibold'
-                      : scrolled
+                      : solid
                         ? 'text-zinc-500 hover:text-zinc-900'
                         : 'text-white/70 hover:text-white'
                   }`}
@@ -70,7 +87,7 @@ export function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className={`lg:hidden p-2 rounded-lg transition-colors ${
-                scrolled ? 'text-zinc-700 hover:bg-zinc-100' : 'text-white/80 hover:bg-white/10'
+                solid ? 'text-zinc-700 hover:bg-zinc-100' : 'text-white/80 hover:bg-white/10'
               }`}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -87,7 +104,7 @@ export function Navbar() {
       >
         <nav className="px-6 pb-4 space-y-1 bg-white border-t border-zinc-100">
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
+              const isActive = pathname === '/' && activeSection === link.id;
             return (
               <Link
                 key={link.href}

@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 
 const FLAGSHIP_SHOWROOM = { ...SHOWROOM, tagline: 'Showroom Mobil Premium & Ruang Konsultasi' };
+const MAP_QUERY = new URL(SHOWROOM.mapUrl).searchParams.get('query') || SHOWROOM.address;
+const MAP_EMBED_URL = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=15&hl=id&output=embed`;
 
 export function ContactShowroomSection() {
   const [name, setName] = useState('');
@@ -75,7 +77,7 @@ export function ContactShowroomSection() {
   };
 
   return (
-    <section id="contact-showroom" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="kontak" className="scroll-mt-16 py-20 sm:py-28">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10 sm:mb-14">
@@ -86,7 +88,7 @@ export function ContactShowroomSection() {
             Kunjungi Showroom Kami di Medan
           </h2>
           <p className="mt-2 text-sm text-zinc-500 max-w-xl">
-            Lihat langsung mobil pilihan dan konsultasikan pembelian tunai, kredit, atau tukar tambah bersama tim kami.
+            Lihat langsung mobil pilihan dan konsultasikan pembelian tunai atau kredit bersama tim kami.
           </p>
         </div>
 
@@ -207,9 +209,11 @@ export function ContactShowroomSection() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-3">
+                <form onSubmit={handleSubmit} aria-label="Formulir kontak showroom" className="space-y-3">
                   <div>
+                    <label htmlFor="showroom-contact-name" className="mb-1.5 block text-xs font-semibold text-zinc-700">Nama lengkap</label>
                     <input
+                      id="showroom-contact-name"
                       type="text"
                       placeholder="Nama Lengkap"
                       value={name}
@@ -223,7 +227,9 @@ export function ContactShowroomSection() {
                     {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
                   </div>
                   <div>
+                    <label htmlFor="showroom-contact-details" className="mb-1.5 block text-xs font-semibold text-zinc-700">WhatsApp atau email</label>
                     <input
+                      id="showroom-contact-details"
                       type="text"
                       placeholder="WhatsApp atau Email"
                       value={contact}
@@ -236,7 +242,9 @@ export function ContactShowroomSection() {
                     />
                     {errors.contact && <p className="text-xs text-red-500 mt-1">{errors.contact}</p>}
                   </div>
+                  <label htmlFor="showroom-contact-interest" className="mb-1.5 block text-xs font-semibold text-zinc-700">Minat pembelian</label>
                   <select
+                    id="showroom-contact-interest"
                     value={interest}
                     onChange={(e) => setInterest(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-lg bg-zinc-50 border border-zinc-200 text-sm text-zinc-800 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 transition-colors appearance-none"
@@ -245,10 +253,11 @@ export function ContactShowroomSection() {
                     <option value="SUV / MPV Keluarga">SUV / MPV Keluarga</option>
                     <option value="Mobil Listrik / Hibrida">Mobil Listrik / Hibrida</option>
                     <option value="Konsultasi Kredit / Dokumen">Konsultasi Kredit / Dokumen</option>
-                    <option value="Titip Jual / Tukar Tambah">Titip Jual / Tukar Tambah</option>
                     <option value="Jadwalkan Kunjungan">Jadwalkan Kunjungan</option>
                   </select>
+                  <label htmlFor="showroom-contact-message" className="mb-1.5 block text-xs font-semibold text-zinc-700">Pertanyaan (opsional)</label>
                   <textarea
+                    id="showroom-contact-message"
                     placeholder="Pertanyaan Anda (opsional)"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -284,6 +293,33 @@ export function ContactShowroomSection() {
               )}
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 overflow-hidden rounded-2xl border border-zinc-200 bg-white sm:mt-14">
+          <div className="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            <div>
+              <h3 className="flex items-center gap-2 text-base font-semibold text-zinc-900">
+                <MapPin className="h-4 w-4 text-amber-600" aria-hidden="true" />
+                Lokasi Showroom
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-zinc-500">{FLAGSHIP_SHOWROOM.address}</p>
+            </div>
+            <a href={FLAGSHIP_SHOWROOM.mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start text-sm font-semibold text-zinc-800 transition-colors hover:text-amber-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-600 sm:self-auto">
+              Petunjuk Arah
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only"> (buka Google Maps di tab baru)</span>
+            </a>
+          </div>
+          <iframe
+            title="Peta lokasi showroom Apex Auto di Ring Road, Medan"
+            src={MAP_EMBED_URL}
+            width="100%"
+            height="420"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+            className="block h-72 w-full border-0 bg-zinc-100 sm:h-[420px]"
+          />
         </div>
       </div>
     </section>

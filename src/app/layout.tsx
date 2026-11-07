@@ -11,7 +11,7 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Apex Auto Medan | Showroom Mobil Premium Bekas",
   description:
-    "Temukan mobil premium bekas pilihan di Apex Auto Medan. Harga rupiah, pemeriksaan kondisi, STNK/BPKB, tunai, kredit bank/leasing, dan tukar tambah.",
+    "Temukan mobil premium bekas pilihan di Apex Auto Medan. Harga rupiah, pemeriksaan kondisi, STNK/BPKB, serta pilihan pembelian tunai atau kredit.",
   keywords: [
     "showroom mobil premium Medan",
     "mobil bekas pilihan",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: 'id_ID',
     title: "Apex Auto Medan | Showroom Mobil Premium Bekas",
     description:
-      "Mobil premium bekas pilihan dengan harga rupiah yang jelas, kelengkapan dokumen, serta pilihan tunai, kredit, dan tukar tambah.",
+      "Mobil premium bekas pilihan dengan harga rupiah yang jelas, kelengkapan dokumen, serta pilihan pembelian tunai atau kredit.",
     type: 'website',
   },
 };

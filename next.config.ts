@@ -5,12 +5,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/contact',
-        destination: '/tentang-kami#contact-showroom',
+        destination: '/#kontak',
         permanent: true,
       },
       {
         source: '/promotions',
-        destination: '/#services',
+        destination: '/#mobil-kami',
         permanent: true,
       },
     ];

@@ -26,9 +26,9 @@ export function CarDetailContent({ car, relatedCars }: { car: Car; relatedCars: 
     <main className="flex-1 bg-[#171717] pb-16 pt-16 text-white sm:pb-24">
       <div className="border-b border-white/10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-4 px-5 py-6 sm:px-8">
-          <Link href="/inventory" className={`inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-white ${focusStyle}`}><ArrowLeft className="h-5 w-5" /> Kembali ke pilihan mobil</Link>
+          <Link href="/#mobil-kami" className={`inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-white ${focusStyle}`}><ArrowLeft className="h-5 w-5" /> Kembali ke pilihan mobil</Link>
           <span className="hidden h-6 w-px bg-white/20 sm:block" />
-          <nav aria-label="Navigasi halaman" className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-white/55"><Link href="/inventory" className={`hover:text-amber-400 ${focusStyle}`}>Koleksi</Link><span>/</span><Link href={`/inventory?brand=${encodeURIComponent(car.brand)}`} className={`hover:text-amber-400 ${focusStyle}`}>{car.brand}</Link></nav>
+          <nav aria-label="Navigasi halaman" className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-white/55"><Link href="/#mobil-kami" className={`hover:text-amber-400 ${focusStyle}`}>Koleksi</Link><span>/</span><Link href={`/?brand=${encodeURIComponent(car.brand)}#mobil-kami`} className={`hover:text-amber-400 ${focusStyle}`}>{car.brand}</Link></nav>
           <button onClick={() => toggleSaved(car.id)} aria-pressed={saved} aria-label={saved ? "Hapus mobil dari daftar tersimpan" : "Simpan mobil"} className={`ml-auto inline-flex items-center gap-2 text-sm font-semibold hover:text-amber-400 ${saved ? 'text-amber-400' : 'text-white/75'} ${focusStyle}`}>{saved ? "Tersimpan" : "Simpan"}<Heart className={`h-5 w-5 ${saved ? 'fill-current' : ''}`} /></button>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function CarDetailContent({ car, relatedCars }: { car: Car; relatedCars: 
             </div></div>
           </div>
         </section>
-        {relatedCars.length > 0 && <section className="mt-16 border-t border-white/15 pt-10" aria-labelledby="related-vehicles"><div className="mb-7 flex flex-wrap items-center justify-between gap-4"><h2 id="related-vehicles" className="text-2xl font-semibold tracking-tight">Mobil lain yang mungkin Anda suka</h2><Link href="/inventory" className={`inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-white ${focusStyle}`}>Lihat Pilihan Mobil <ArrowRight className="h-4 w-4" /></Link></div><div className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">{relatedCars.map(item => <CarCard key={item.id} car={item} saved={savedIds.includes(item.id)} onToggleSave={toggleSaved} />)}</div></section>}
+        {relatedCars.length > 0 && <section className="mt-16 border-t border-white/15 pt-10" aria-labelledby="related-vehicles"><div className="mb-7 flex flex-wrap items-center justify-between gap-4"><h2 id="related-vehicles" className="text-2xl font-semibold tracking-tight">Mobil lain yang mungkin Anda suka</h2><Link href="/#mobil-kami" className={`inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-white ${focusStyle}`}>Lihat Pilihan Mobil <ArrowRight className="h-4 w-4" /></Link></div><div className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">{relatedCars.map(item => <CarCard key={item.id} car={item} saved={savedIds.includes(item.id)} onToggleSave={toggleSaved} />)}</div></section>}
       </div>
       {offerOpen && <MakeOfferModal car={car} onClose={() => setOfferOpen(false)} />}
     </main>

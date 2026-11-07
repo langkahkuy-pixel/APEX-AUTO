@@ -83,7 +83,7 @@ export function BuyingStepsSection() {
           </ol>
 
           <div className="mt-10 flex flex-col gap-3 border-t border-zinc-200 pt-7 sm:flex-row sm:items-center sm:gap-5 lg:mt-12">
-            <Link href="/inventory" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-lg bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-600">
+            <Link href="/#mobil-kami" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-lg bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-600">
               Lihat Pilihan Mobil
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>

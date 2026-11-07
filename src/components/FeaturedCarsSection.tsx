@@ -78,7 +78,7 @@ export function FeaturedCarsSection() {
             Pilihan Unggulan
           </h2>
           <Link
-            href="/inventory"
+            href="/#mobil-kami"
             className="group flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors"
           >
             Lihat semua

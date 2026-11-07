@@ -38,7 +38,7 @@ const SOCIAL_LINKS = [
   },
   {
     name: 'WhatsApp',
-    href: whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang mobil dan layanan showroom."),
+    href: whatsappUrl("Halo Apex Auto Medan, saya ingin bertanya tentang pilihan mobil."),
     ariaLabel: "Hubungi Apex Auto melalui WhatsApp",
     hoverClasses:
       'hover:text-[#25D366] hover:border-[#25D366]/40 hover:bg-[#25D366]/10 hover:shadow-[0_4px_12px_rgba(37,211,102,0.2)]',
@@ -70,7 +70,7 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
           <div>
             <Link
-              href="/"
+              href="/#beranda"
               className={`text-sm font-bold tracking-[0.15em] uppercase ${
                 isDark ? 'text-white' : 'text-zinc-900'
               }`}
@@ -84,9 +84,11 @@ export function Footer({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
 
           <nav className="flex flex-wrap items-center gap-6">
             {[
-              { href: '/inventory', label: "Pilihan Mobil" },
-              { href: '/', label: "Pilihan Unggulan" },
-              { href: '/tentang-kami', label: "Tentang Kami" },
+              { href: '/#beranda', label: 'Beranda' },
+              { href: '/#mobil-kami', label: 'Mobil Kami' },
+              { href: '/#testimoni', label: 'Testimoni' },
+              { href: '/#tentang-kami', label: 'Tentang Kami' },
+              { href: '/#kontak', label: 'Kontak' },
             ].map((link) => (
               <Link
                 key={link.href}

@@ -4,7 +4,6 @@ import { formatRupiah } from '@/lib/locale';
 
 
 import { useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, Heart, ChevronDown, ArrowRight, ArrowLeftRight, X } from 'lucide-react';
@@ -18,6 +17,7 @@ export function CatalogSection() {
   const params = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [showAllCars, setShowAllCars] = useState(false);
   const [compareIds, setCompareIds] = useState(['', '', '']);
   const [cars, setCars] = useState<Car[]>(MOCK_CARS);
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -49,13 +49,13 @@ export function CatalogSection() {
     const nextParams = new URLSearchParams(window.location.search);
     if (!value || value === 'all' || (key === 'sort' && value === 'price-desc')) nextParams.delete(key);
     else nextParams.set(key, value);
-    window.history.replaceState(null, '', `/inventory${nextParams.size ? `?${nextParams}` : ''}`);
+    window.history.replaceState(null, '', `/${nextParams.size ? `?${nextParams}` : ''}#mobil-kami`);
   }
 
   function resetFilters() {
     const nextParams = new URLSearchParams(window.location.search);
     ['q', 'brand', 'type', 'price', 'year', 'location', 'sort'].forEach(key => nextParams.delete(key));
-    window.history.replaceState(null, '', `/inventory${nextParams.size ? `?${nextParams}` : ''}`);
+    window.history.replaceState(null, '', `/${nextParams.size ? `?${nextParams}` : ''}#mobil-kami`);
   }
 
   const filteredCars = useMemo(() => {
@@ -86,23 +86,11 @@ export function CatalogSection() {
   const years = [...new Set(cars.map(car => car.year))].sort((a, b) => b - a);
   const activeCount = [brand, body, price, year, location].filter(value => value !== 'all').length;
   const hasFilters = activeCount > 0 || !!query || sort !== 'price-desc';
+  const visibleCars = showAllCars || hasFilters || showSaved ? filteredCars : filteredCars.slice(0, 6);
 
   return (
-    <section id="katalog" className="flex-1 bg-[#121212] pb-16 text-white sm:pb-24">
-      <div className="mx-auto max-w-7xl px-5 pt-8 sm:px-8 sm:pt-12">
-        <div className="relative min-h-44 overflow-hidden bg-zinc-900 sm:aspect-[16/5]">
-          <Image src="/picture/Gemini_Generated_Image_91pk1h91pk1h91pk.jpg" alt="Mobil sport premium dengan pemandangan pantai" fill preload sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover object-center" />
-          <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/65 to-black/10" />
-          <div className="relative flex min-h-44 flex-col justify-center px-6 py-8 sm:h-full sm:px-10">
-            <nav aria-label="Navigasi halaman" className="mb-4 flex items-center gap-3 text-xs text-white/60 sm:text-sm">
-              <Link href="/" className="hover:text-amber-400">Beranda</Link><span>/</span><span className="text-white">Pilihan Mobil</span>
-            </nav>
-            <h1 className="text-4xl font-extrabold uppercase tracking-tight sm:text-5xl">Pilihan Mobil</h1>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8 border-y border-white/10 bg-[#171717]">
+    <section id="mobil-kami" aria-label="Mobil Kami" className="scroll-mt-16 bg-[#121212] pb-16 text-white sm:pb-24">
+      <div className="border-y border-white/10 bg-[#171717]">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <form role="search" onSubmit={event => event.preventDefault()} className="flex items-center gap-3 border-b border-white/10 py-4">
             <Search className="h-5 w-5 shrink-0 text-amber-400" />
@@ -152,9 +140,10 @@ export function CatalogSection() {
       <div className="mx-auto max-w-7xl px-5 pt-8 sm:px-8">
         {loadState !== 'ready' && <p role="status" className="mb-5 text-xs text-white/50">{loadState === 'loading' ? "Memuat koleksi mobil showroom..." : "Koleksi terbaru belum dapat dimuat. Menampilkan koleksi contoh showroom."}</p>}
         {(query || activeCount > 0) && <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-l-2 border-amber-400 bg-[#202020] px-4 py-3"><p className="text-sm text-white/65">{query ? <>Hasil pencarian <strong className="text-white">&ldquo;{query}&rdquo;</strong></> : "Koleksi sesuai filter"} <span className="ml-2 text-white/40">{filteredCars.length} ditemukan</span></p><button onClick={resetFilters} className="text-xs font-bold text-amber-400 hover:text-white">Hapus filter</button></div>}
-        {filteredCars.length ? <div className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">{filteredCars.map(car => <CarCard key={car.id} car={car} saved={savedIds.includes(car.id)} onToggleSave={toggleSaved} />)}</div>
+        {filteredCars.length ? <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-5 lg:grid-cols-3">{visibleCars.map(car => <CarCard key={car.id} car={car} saved={savedIds.includes(car.id)} onToggleSave={toggleSaved} compactMobile />)}</div>
           : <div className="border border-white/10 bg-[#181818] px-6 py-16 text-center"><Heart className="mx-auto mb-4 h-7 w-7 text-white/30" /><h2 className="text-xl font-semibold">{showSaved ? "Belum ada mobil tersimpan yang sesuai." : "Tidak ada mobil yang sesuai pencarian."}</h2><p className="mt-2 text-sm text-white/45">{showSaved ? "Simpan mobil menggunakan ikon hati atau jelajahi seluruh koleksi." : "Coba merek, model, atau kombinasi filter lain."}</p><button onClick={() => { resetFilters(); if (showSaved) updateParam('saved', ''); }} className="mt-6 rounded-full border border-amber-400/40 px-5 py-3 text-sm font-semibold text-amber-400 hover:bg-amber-400 hover:text-black">{showSaved ? "Lihat semua mobil" : "Atur ulang filter"}</button></div>}
-        <div className="mt-12 flex flex-wrap justify-between gap-3 border-t border-white/10 pt-5 text-sm text-white/45"><p>{filteredCars.length ? `Menampilkan 1 sampai ${filteredCars.length} dari ${filteredCars.length} hasil` : "Tidak ada hasil"}</p>{filteredCars.length > 0 && <p>Halaman 01 dari 01</p>}</div>
+        {!showAllCars && !hasFilters && !showSaved && filteredCars.length > visibleCars.length && <div className="mt-10 text-center"><button onClick={() => setShowAllCars(true)} className="inline-flex min-h-12 items-center gap-2 rounded-full border border-amber-400 px-6 py-3 text-sm font-semibold text-amber-400 transition-colors hover:bg-amber-400 hover:text-black">Tampilkan semua {filteredCars.length} mobil <ArrowRight className="h-4 w-4" /></button></div>}
+        <div className="mt-12 flex flex-wrap justify-between gap-3 border-t border-white/10 pt-5 text-sm text-white/45"><p>{filteredCars.length ? `Menampilkan 1 sampai ${visibleCars.length} dari ${filteredCars.length} hasil` : "Tidak ada hasil"}</p></div>
       </div>
     </section>
   );

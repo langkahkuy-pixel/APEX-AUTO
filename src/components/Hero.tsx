@@ -45,6 +45,7 @@ export function Hero() {
 
   return (
     <section
+      id="beranda"
       role="region"
       aria-roledescription="carousel"
       aria-label="Banner mobil pilihan Apex Auto"
@@ -108,7 +109,7 @@ export function Hero() {
           {/* Action CTAs */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
-              href="/inventory"
+              href="/#mobil-kami"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
             >
               <span>Lihat Mobil</span>
@@ -116,7 +117,7 @@ export function Hero() {
             </Link>
 
             <Link
-              href="/tentang-kami#contact-showroom"
+              href="/#kontak"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-white/30 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
             >
               <span>Kunjungi Kami</span>

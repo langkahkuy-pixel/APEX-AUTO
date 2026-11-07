@@ -25,7 +25,7 @@ export function WhatsAppButton({
   if (variant === 'floating' && (pathname.startsWith('/admin') || ['/login', '/forgot-password'].includes(pathname))) return null;
 
   // Construct automated prefilled message based on context
-  let message = 'Halo Apex Auto Medan, saya ingin bertanya tentang pilihan mobil, pembelian tunai/kredit, dan tukar tambah.';
+  let message = 'Halo Apex Auto Medan, saya ingin bertanya tentang pilihan mobil dan pembelian tunai atau kredit.';
 
   if (car) {
     message = `Halo Apex Auto Medan, saya tertarik dengan ${car.brand} ${car.model} (${car.year}) seharga ${formatRupiah(car.price)} (kode ${car.id}). Mohon konfirmasi ketersediaan, dokumen, dan pilihan pembayarannya.`;

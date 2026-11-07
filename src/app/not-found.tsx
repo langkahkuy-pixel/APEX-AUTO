@@ -13,7 +13,7 @@ export default function NotFound() {
           Halaman atau mobil yang Anda cari belum tersedia. Jelajahi koleksi mobil kami atau kembali ke beranda.
         </p>
         <div className="mt-8 flex flex-wrap gap-4">
-          <Link href="/inventory" className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-black hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400">Lihat Pilihan Mobil</Link>
+          <Link href="/#mobil-kami" className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-black hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400">Lihat Pilihan Mobil</Link>
           <Link href="/" className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold hover:border-amber-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400">Kembali ke Beranda</Link>
         </div>
       </main>

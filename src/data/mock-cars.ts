@@ -609,14 +609,14 @@ export const MOCK_CARS: Car[] = [
       {
         "id": "img-013-1",
         "car_id": "car-013",
-        "url": "https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=1200&q=80",
+        "url": "https://images.unsplash.com/photo-1748466245947-bb2e22e758ed?auto=format&fit=crop&w=1200&q=80",
         "is_main": true,
         "sort_order": 1
       },
       {
         "id": "img-013-2",
         "car_id": "car-013",
-        "url": "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=1200&q=80",
+        "url": "https://images.unsplash.com/photo-1560282105-222992ffb774?auto=format&fit=crop&w=1200&q=80",
         "is_main": false,
         "sort_order": 2
       }

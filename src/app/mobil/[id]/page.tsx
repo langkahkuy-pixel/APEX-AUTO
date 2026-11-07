@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { MOCK_CARS } from '@/data/mock-cars';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { ExploreMoreSection } from '@/components/ExploreMoreSection';
 import { CarDetailContent } from '@/components/CarDetailContent';
 import { getSqliteCarById, getSqliteCars } from '@/db/sqlite';
 
@@ -65,6 +66,7 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
     <div className="min-h-screen flex flex-col bg-[#171717] text-white">
       <Navbar />
       <CarDetailContent key={car.id} car={car} relatedCars={relatedCars} />
+      <ExploreMoreSection from="detail" theme="dark" />
       <Footer theme="dark" />
     </div>
   );
